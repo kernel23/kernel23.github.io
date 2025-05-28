@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCED Blood Tests: An Interactive Exploration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Visualization & Content Choices:
+        - Intro: Text blocks. Goal: Inform. Justification: Foundational knowledge. Method: HTML/Tailwind.
+        - MCED Technologies (Table 1 data): Interactive cards/modal. Goal: Organize, Inform. Interaction: Click to reveal details. Justification: Detailed exploration of specific tests. Method: HTML/Tailwind, JS.
+        - Statistical Evidence (Performance Metrics & Table 2 data): Grouped Bar Chart (Chart.js for key test Sens/Spec), Interactive cards/modal for trial data. Goal: Compare, Inform. Interaction: Hover tooltips, click for trial details. Justification: Visual comparison and digestible trial data. Method: Chart.js, HTML/Tailwind, JS.
+        - Optimal Screening Frequencies (Table 3 data): Grouped Bar Chart (Chart.js for key metrics). Goal: Compare, Inform. Interaction: Hover tooltips. Justification: Clear visual contrast. Method: Chart.js.
+        - Benefits: Bulleted list with icons. Goal: Inform. Justification: Quick summary. Method: HTML/Tailwind.
+        - Challenges & Ethics: Grouped text blocks. Goal: Inform. Justification: Detailed explanation. Method: HTML/Tailwind.
+        - Role of AI: Text block. Goal: Inform. Justification: Explain AI's importance. Method: HTML/Tailwind.
+        - MCEDs vs. Traditional: Two-column layout. Goal: Compare. Justification: Direct comparison. Method: HTML/Tailwind.
+        - Global Perspectives: Accordion/tabbed sub-section for organizations. Goal: Inform. Interaction: Click to expand/view. Justification: Concise viewpoints. Method: HTML/Tailwind, JS.
+        - Conclusion: Text block. Goal: Inform, Summarize. Justification: Concluding thoughts. Method: HTML/Tailwind.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FAF7F5; color: #4A5568; }
+        .tab-button { transition: background-color 0.3s, color 0.3s; }
+        .tab-button.active { background-color: #3B82F6; color: white; }
+        .tab-button:not(.active):hover { background-color: #EAE0DA; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .chart-container { position: relative; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto; height: 350px; max-height: 450px; }
+        @media (min-width: 768px) { .chart-container { height: 400px; } }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: #FAF7F5; margin: 10% auto; padding: 20px; border: 1px solid #EAE0DA; width: 80%; max-width: 700px; border-radius: 8px; position: relative; }
+        .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-button:hover, .close-button:focus { color: #4A5568; text-decoration: none; }
+        h2 { color: #2D3748; }
+        h3 { color: #2D3748; }
+        .table-like { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
+        .table-like th, .table-like td { border: 1px solid #EAE0DA; padding: 8px; text-align: left; }
+        .table-like th { background-color: #EAE0DA; }
+         .icon-placeholder { display: inline-block; width: 20px; height: 20px; background-color: #3B82F6; border-radius: 4px; margin-right: 8px; vertical-align: middle; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-[#EAE0DA] shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <h1 class="text-2xl md:text-3xl font-bold text-[#2D3748] text-center md:text-left">Exploring Multi-Cancer Early Detection (MCED) Blood Tests</h1>
+        </div>
+        <nav class="bg-white shadow-sm">
+            <div class="container mx-auto px-2 sm:px-4 overflow-x-auto">
+                <div class="flex space-x-1 sm:space-x-2 py-2 justify-center md:justify-start whitespace-nowrap">
+                    <button class="tab-button active text-xs sm:text-sm px-3 py-2 rounded-md font-medium" onclick="showSection('intro')">Introduction</button>
+                    <button class="tab-button text-xs sm:text-sm px-3 py-2 rounded-md font-medium" onclick="showSection('tech')">Technologies</button>
+                    <button class="tab-button text-xs sm:text-sm px-3 py-2 rounded-md font-medium" onclick="showSection('stats')">Effectiveness</button>
+                    <button class="tab-button text-xs sm:text-sm px-3 py-2 rounded-md font-medium" onclick="showSection('frequency')">Screening Frequency</button>
+                    <button class="tab-button text-xs sm:text-sm px-3 py-2 rounded-md font-medium" onclick="showSection('benefits')">Benefits</button>
+                    <button class="tab-button text-xs sm:text-sm px-3 py-2 rounded-md font-medium" onclick="showSection('challenges')">Challenges & Ethics</button>
+                    <button class="tab-button text-xs sm:text-sm px-3 py-2 rounded-md font-medium" onclick="showSection('ai')">Role of AI</button>
+                    <button class="tab-button text-xs sm:text-sm px-3 py-2 rounded-md font-medium" onclick="showSection('comparison')">MCEDs vs Traditional</button>
+                    <button class="tab-button text-xs sm:text-sm px-3 py-2 rounded-md font-medium" onclick="showSection('perspectives')">Global Perspectives</button>
+                    <button class="tab-button text-xs sm:text-sm px-3 py-2 rounded-md font-medium" onclick="showSection('conclusion')">Conclusion</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 md:p-8">
+        <section id="intro" class="content-section active">
+            <h2 class="text-2xl font-semibold mb-4">1. Introduction to MCED Blood Tests</h2>
+            <p class="mb-3">This section introduces Multi-Cancer Early Detection (MCED) tests, an emerging technology aimed at identifying signals of multiple cancer types from a single blood sample, often before symptoms appear. You'll learn about their significance in addressing cancers that currently lack screening protocols and the fundamental goal of shifting diagnoses to earlier, more treatable stages.</p>
+            <p class="mb-3">MCED tests analyze various biomarkers shed by cancer cells into the bloodstream, such as DNA fragments (ctDNA), RNA, or proteins. Common approaches include analyzing cfDNA for genetic mutations and epigenetic changes like DNA methylation. Other biomarkers include microRNAs and specific proteins. Many tests are moving towards multi-omics approaches, integrating data from various biomarker classes to improve detection.</p>
+            <p class="mb-3">It's important to note the nuance in terminology: some experts prefer "Multi-Cancer Detection (MCD)" over "MCED" because not all cancers detected are at the earliest stages, and early detection doesn't always guarantee reduced mortality. Managing expectations about current capabilities is crucial.</p>
+            <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md mt-6">
+                <p class="font-bold">Key Challenge Addressed:</p>
+                <p>Nearly half of all cancers diagnosed, responsible for approximately 70% of cancer-related deaths, currently lack recommended screening protocols and are often detected at advanced stages.</p>
+            </div>
+        </section>
+
+        <section id="tech" class="content-section">
+            <h2 class="text-2xl font-semibold mb-4">2. The Current Landscape of MCED Technologies</h2>
+            <p class="mb-6">This section provides an overview of prominent MCED tests currently in development or use, detailing their underlying technologies, targeted cancers, and key research initiatives. Explore the cards below to learn about individual tests from the report's Table 1. Note that performance data can vary significantly and often comes from different study types and stages of development.</p>
+            <div id="mcedTechContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        </section>
+
+        <section id="stats" class="content-section">
+            <h2 class="text-2xl font-semibold mb-4">3. Statistical Evidence: Performance Metrics and Clinical Trial Outcomes</h2>
+            <p class="mb-3">Evaluating MCED tests relies on key metrics like sensitivity (correctly identifying cancer), specificity (correctly identifying no cancer), positive predictive value (PPV - probability a positive test means cancer), and negative predictive value (NPV). This section explores these metrics for some leading tests and summarizes outcomes from major studies/trials as detailed in the report (Table 2). Remember that sensitivity for early-stage cancers is a critical area of ongoing research.</p>
+            
+            <div class="chart-container my-8">
+                <canvas id="testPerformanceChart"></canvas>
+            </div>
+            <p class="text-center text-sm text-gray-600 mb-6">Comparison of reported Sensitivity and Specificity for selected MCED tests. Note: Data sources and study populations vary (e.g., Galleri/PATHFINDER & CancerSEEK/DETECT-A in asymptomatic populations; miONCO-Dx initial data from a broader patient cohort, awaiting large-scale asymptomatic trial validation).</p>
+
+            <h3 class="text-xl font-semibold mt-8 mb-4">Key Clinical Trial/Study Outcomes (from Report Table 2)</h3>
+             <p class="mb-6">Below are summaries from key clinical trials and major studies on MCEDs. Click on each study to see more details. These studies are crucial for understanding the real-world performance and potential impact of MCED tests.</p>
+            <div id="clinicalTrialsContainer" class="space-y-4">
+            </div>
+        </section>
+
+        <section id="frequency" class="content-section">
+            <h2 class="text-2xl font-semibold mb-4">4. Optimal Screening Frequencies: Insights from Modelling</h2>
+            <p class="mb-3">How often should MCED tests be administered? This section delves into insights primarily from modelling studies, like the Sasieni et al. study, which compared annual versus biennial screening. These models help estimate potential impacts on diagnostic yield, stage shift, and mortality, guiding the design of ongoing large-scale trials. The optimal frequency involves balancing benefits with costs and the burden of false positives.</p>
+
+            <div class="chart-container my-8">
+                <canvas id="screeningFrequencyChart"></canvas>
+            </div>
+            <p class="text-center text-sm text-gray-600 mb-6">Modelled impact of Annual vs. Biennial MCED Screening (Sasieni et al., Fast Tumour Growth Scenario). These are projections and represent potential upper bounds of benefit, assuming ideal conditions.</p>
+            
+            <h3 class="text-xl font-semibold mt-8 mb-4">Detailed Comparison: Annual vs. Biennial Screening (Modelled)</h3>
+            <p class="mb-3">The table below, derived from the Sasieni et al. modelling study (report Table 3), highlights key differences in projected outcomes between annual and biennial screening under a fast tumour growth scenario, compared to usual care. This helps illustrate the trade-offs involved in choosing a screening interval.</p>
+            <div class="overflow-x-auto">
+                <table class="table-like w-full">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Annual Screening</th>
+                            <th>Biennial Screening</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Additional Cancer Signals Detected/year/100,000 screened</td>
+                            <td>370 more</td>
+                            <td>292 more</td>
+                        </tr>
+                        <tr>
+                            <td>Reduction in Late-Stage (III-IV) Diagnoses</td>
+                            <td>49% fewer</td>
+                            <td>39% fewer</td>
+                        </tr>
+                        <tr>
+                            <td>Reduction in 5-Year Deaths</td>
+                            <td>21% fewer</td>
+                            <td>17% fewer</td>
+                        </tr>
+                        <tr>
+                            <td>Positive Predictive Value (PPV)</td>
+                            <td>43%</td>
+                            <td>54%</td>
+                        </tr>
+                        <tr>
+                            <td>Deaths Averted per 100,000 Tests (Aggressive Cancer Scenario)</td>
+                            <td>84 (prevents more deaths/year)</td>
+                            <td>132 (more efficient per test)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="benefits" class="content-section">
+            <h2 class="text-2xl font-semibold mb-4">5. Benefits and Potential Impact of Yearly Blood Tests</h2>
+            <p class="mb-6">Regular MCED testing holds considerable promise. This section highlights the potential positive impacts, from detecting a broader range of cancers earlier to improving patient outcomes and screening accessibility. The ultimate goal is to meaningfully reduce cancer-related mortality, especially for cancers currently lacking effective screening.</p>
+            <ul class="space-y-4">
+                <li class="flex items-start">
+                    <span class="icon-placeholder mt-1"></span>
+                    <div>
+                        <h3 class="font-semibold">Broader Cancer Coverage</h3>
+                        <p>Detects signals from many cancer types, including those with no current screening methods (e.g., pancreatic, ovarian).</p>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="icon-placeholder mt-1"></span>
+                    <div>
+                        <h3 class="font-semibold">Earlier Detection & Stage Shift</h3>
+                        <p>Potential to significantly reduce late-stage diagnoses, allowing for less invasive and more effective treatments.</p>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="icon-placeholder mt-1"></span>
+                    <div>
+                        <h3 class="font-semibold">Improved Survival Rates</h3>
+                        <p>Earlier diagnosis is strongly linked to better prognoses and increased survival.</p>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="icon-placeholder mt-1"></span>
+                    <div>
+                        <h3 class="font-semibold">Increased Accessibility & Adherence</h3>
+                        <p>Blood tests are generally less invasive, potentially leading to higher screening uptake.</p>
+                    </div>
+                </li>
+                 <li class="flex items-start">
+                    <span class="icon-placeholder mt-1"></span>
+                    <div>
+                        <h3 class="font-semibold">Reduced Health Disparities</h3>
+                        <p>May improve screening access for underserved populations.</p>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <section id="challenges" class="content-section">
+            <h2 class="text-2xl font-semibold mb-4">6. Challenges, Limitations, and Ethical Considerations</h2>
+            <p class="mb-6">Despite their promise, MCEDs face significant hurdles. This section explores critical challenges such as test accuracy (false positives/negatives), overdiagnosis, economic implications, logistical difficulties in follow-up, and complex ethical issues related to patient anxiety, informed consent, and equity of access.</p>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-1">Test Accuracy: False Positives & False Negatives</h3>
+                    <p>False positives lead to anxiety and unnecessary procedures. False negatives provide false reassurance. Sensitivity for early-stage cancers is a key challenge.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-1">Overdiagnosis and Overtreatment</h3>
+                    <p>Risk of detecting indolent cancers that might never have caused harm, leading to unnecessary treatment.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-1">Economic Implications</h3>
+                    <p>High test costs and expenses for follow-up diagnostics. Cost-effectiveness is still under evaluation.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-1">Logistical Hurdles</h3>
+                    <p>Ensuring timely and equitable diagnostic follow-up. Lack of standardized pathways for positive MCED results. Need for provider education.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-1">Ethical Considerations</h3>
+                    <p>Patient anxiety, ensuring true informed consent, communicating complex results, and ensuring equitable access to tests and follow-up care.</p>
+                </div>
+                 <div>
+                    <h3 class="text-lg font-semibold mb-1">Need for Robust Evidence</h3>
+                    <p>A broad consensus calls for more large-scale, long-term RCTs to definitively establish clinical utility and harm-benefit balance.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ai" class="content-section">
+            <h2 class="text-2xl font-semibold mb-4">7. The Role of Artificial Intelligence in Advancing MCEDs</h2>
+            <p class="mb-3">Artificial Intelligence (AI) and Machine Learning (ML) are fundamental to MCED technology. This section explains how AI/ML algorithms are used to analyze complex biological data, detect subtle cancer-specific signatures, and predict the cancer signal origin (CSO). The quality and diversity of training data are paramount for AI model performance and equity.</p>
+            <p class="mb-3">AI excels at signal detection and pattern recognition from vast datasets (cfDNA sequences, methylation, proteins, miRNAs). It's also crucial for predicting the CSO, which guides diagnostic follow-up. Future potential includes personalized screening and dynamic learning models. However, the "black box" nature of some AI models and the need for diverse training data are important considerations.</p>
+            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md mt-6">
+                <p class="font-bold">AI's Key Contributions:</p>
+                <ul class="list-disc list-inside ml-4">
+                    <li>Sifting through massive datasets to find cancer signals.</li>
+                    <li>Predicting the likely origin of a detected cancer signal.</li>
+                    <li>Integrating data from multiple biomarker types (multi-omics).</li>
+                    <li>Continuously improving test accuracy through learning.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="comparison" class="content-section">
+            <h2 class="text-2xl font-semibold mb-4">8. Comparative Analysis: MCEDs versus Traditional Single-Cancer Screening</h2>
+            <p class="mb-6">MCEDs offer a different approach compared to established single-cancer screening methods (like mammography or colonoscopy). This section provides a comparative overview, highlighting their respective strengths and weaknesses. The current consensus is that MCEDs are intended to supplement, not replace, existing evidence-based screening tests.</p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-3 text-blue-600">MCED Tests</h3>
+                    <p class="font-semibold">Strengths:</p>
+                    <ul class="list-disc list-inside mb-3 ml-4 space-y-1">
+                        <li>Broader coverage (many cancer types, including unscreened ones).</li>
+                        <li>Single blood sample (less invasive, potentially higher uptake).</li>
+                        <li>Potential for earlier detection of hard-to-detect malignancies.</li>
+                    </ul>
+                    <p class="font-semibold">Weaknesses/Challenges:</p>
+                    <ul class="list-disc list-inside ml-4 space-y-1">
+                        <li>Variable sensitivity, especially for Stage I cancers.</li>
+                        <li>Risk of false positives and false negatives.</li>
+                        <li>Potential for overdiagnosis.</li>
+                        <li>Uncertainty in diagnostic follow-up if CSO is unclear.</li>
+                        <li>High cost, often not FDA-approved/covered by insurance yet.</li>
+                        <li>Mortality benefit largely unproven by completed RCTs.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-3 text-green-600">Traditional Single-Cancer Screening</h3>
+                    <p class="font-semibold">Strengths:</p>
+                    <ul class="list-disc list-inside mb-3 ml-4 space-y-1">
+                        <li>Proven efficacy for specific cancers (mortality reduction or prevention).</li>
+                        <li>Established guidelines for use and follow-up.</li>
+                        <li>May offer higher sensitivity for its specific target cancer.</li>
+                        <li>Some methods offer diagnostic and therapeutic capabilities (e.g., colonoscopy).</li>
+                    </ul>
+                    <p class="font-semibold">Weaknesses/Challenges:</p>
+                    <ul class="list-disc list-inside ml-4 space-y-1">
+                        <li>Limited scope (one cancer at a time).</li>
+                        <li>Some methods can be invasive or uncomfortable.</li>
+                        <li>Radiation exposure with some imaging.</li>
+                        <li>False positives and overdiagnosis can also occur.</li>
+                    </ul>
+                </div>
+            </div>
+             <p class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 rounded-md">
+                <strong>Important Note:</strong> MCEDs are generally intended to supplement, not replace, existing evidence-based screening tests. Patients should continue with recommended screenings like mammograms and colonoscopies.
+            </p>
+        </section>
+
+        <section id="perspectives" class="content-section">
+            <h2 class="text-2xl font-semibold mb-4">9. Global Perspectives and Expert Opinions</h2>
+            <p class="mb-6">The emergence of MCEDs has prompted varied responses from major health organizations and researchers globally. This section summarizes these perspectives, reflecting a mix of cautious optimism, calls for rigorous evidence from large-scale trials, and considerations for practical implementation. Click on each organization to see a summary of their stance based on the report.</p>
+            <div id="expertOpinionsContainer" class="space-y-3">
+            </div>
+        </section>
+
+        <section id="conclusion" class="content-section">
+            <h2 class="text-2xl font-semibold mb-4">10. Conclusion and Future Directions</h2>
+            <p class="mb-3">This section summarizes the current state and future outlook for MCED blood tests. While they represent a promising frontier in oncology with the potential to shift diagnoses earlier and cover unscreened cancers, significant challenges remain. The future hinges on robust evidence from ongoing large-scale trials to validate their clinical utility, cost-effectiveness, and harm-benefit balance.</p>
+            <p class="mb-3">Key future directions include: definitively proving mortality reduction, identifying optimal tests and screening intervals, minimizing false positives/overdiagnosis, developing clear follow-up pathways, and ensuring equitable access. A cautious, evidence-driven approach is essential for integrating these innovative technologies into clinical practice responsibly.</p>
+            <h3 class="text-lg font-semibold mt-6 mb-2">Priorities for Stakeholders:</h3>
+            <ul class="list-disc list-inside space-y-2 ml-4">
+                <li><strong>Research Community:</strong> Complete large RCTs, innovate in biomarker/AI development, ensure diverse trial participation.</li>
+                <li><strong>Policymakers/Regulators:</strong> Establish evidence-based approval pathways, develop implementation guidelines if proven effective, address equitable access.</li>
+                <li><strong>Healthcare Providers:</strong> Stay updated on evidence, engage in shared decision-making, reinforce that MCEDs don't replace current screenings.</li>
+            </ul>
+            <p class="mt-4 italic">The path to widespread, responsible MCED adoption requires a robust ecosystem of patient/provider education, diagnostic infrastructure, sustainable payment models, and public trust.</p>
+        </section>
+    </main>
+
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle" class="text-xl font-semibold mb-3">Details</h3>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <footer class="text-center py-8 mt-12 border-t border-[#EAE0DA]">
+        <p class="text-sm text-gray-600">This interactive application summarizes the "Yearly Blood Tests for Early Cancer Detection: A Global Research Analysis" report. Information is for educational purposes and based on the provided source document.</p>
+    </footer>
+
+    <script>
+        const mcedTechnologies = [
+            { name: "Galleri", developer: "GRAIL Bio UK Ltd. / GRAIL, Inc.", tech: "cfDNA methylation patterns, CSO prediction", targets: ">50 cancer types", performance: "Specificity ~99.5%; Overall Sensitivity ~51.5% (Stage I-III: 40.7%); CSO accuracy ~89-90%", trials: "NHS-Galleri (UK, ongoing); PATHFINDER (US/Canada, ongoing/completed); CCGA (completed); LDT in US" },
+            { name: "miONCO-Dx", developer: "Xgenera, Univ. of Southampton", tech: "microRNA expression, AI for presence & location", targets: "12 lethal/common cancers", performance: "Initial data: >99% Sens/Spec (all 12 cancers, all stages I-IV); CSO accuracy 96-98%", trials: "8,000 patient UK clinical trial planned/funded" },
+            { name: "CancerSEEK", developer: "Exact Sciences, Johns Hopkins Univ.", tech: "8 protein biomarkers, mutations in 16 genes", targets: "8 common cancers initially, later expanded", performance: "Median Sens ~70% (proof-of-concept), Spec >99%; DETECT-A (asymptomatic): Sens 27.1%, Spec 98.9%", trials: "DETECT-A (completed); ASCEND (ongoing); FDA Breakthrough Device Designation" },
+            { name: "Cancerguard™ EX", developer: "Exact Sciences", tech: "Multiple biomarker classes, imaging-based diagnostic pathway", targets: "Multiple cancers", performance: "Modelling: >40% reduction in late-stage incidence, up to 18% mortality reduction (high-risk groups)", trials: "Falcon registry (25,000 participants); LDT launch H2 2025 planned" },
+            { name: "Aurora", developer: "AnchorDx", tech: "Targeted methylation sequencing", targets: "Lung, breast, colorectal, gastric, esophageal", performance: "84% Sens (Lung), 99% Spec (Lung)", trials: "Development phase" },
+            { name: "CancerRadar", developer: "Early Diagnostics", tech: "cfDNA fragmentation, methylation, CNVs, microbial composition", targets: "Lung, colon, gastric, liver", performance: "85.60% Sens, 99% Spec", trials: "Development phase" },
+            { name: "cfMeDIP-seq", developer: "Adela Inc.", tech: "5mC enrichment & sequencing", targets: "AML, pancreatic, lung (MCED); Head & Neck (MRD)", performance: "MCED: AUC 0.92–0.98; MRD (H&N): Sens 91% @ 88% Spec", trials: "MRD test for H&N cancer validated, commercialization planned 2025" },
+            { name: "DEEPGEN™", developer: "Quantgene", tech: "NGS, low-frequency genetic abnormalities, ML", targets: "7 cancers (bladder, prostate, lung, liver, pancreatic, colorectal, breast)", performance: "Overall Sens: 43% @ 99% Spec; 57% @ 95% Spec; Stage 1 Sens: 51% @ 95% Spec", trials: "Prospective case-control study results published" },
+            { name: "DELFI", developer: "Delfi Diagnostics", tech: "cfDNA fragmentation profiles, ML", targets: "Lung, breast, colorectal, pancreatic, gastric, bile duct, ovarian", performance: "Overall Sens 73%, Spec 98%. FirstLook Lung NPV 99.8%", trials: "FirstLook Lung test validated; DELFI-TF for treatment monitoring launched" },
+            { name: "PanTum Detect®", developer: "Zyagnum AG", tech: "Epitope detection in monocytes (TKTL1, Apo10)", targets: "Cholangiocellular, pancreatic, colorectal (PanTum Detect); Oral, breast, prostate (EDIM-TKTL1/Apo10)", performance: "PanTum Detect: 100% Sens, 96.2% Spec; EDIM: 95.8% Sens, 97.3% Spec", trials: "EU approved medical product; Large screening study (Hamburg) ongoing" },
+            { name: "IvyGeneCORE®", developer: "Laboratory for Advanced Medicine", tech: "Methylation analysis", targets: "Validated for breast, colon, liver, lung", performance: "84% Sens, 90% Spec", trials: "Commercially available" },
+            { name: "PanSeer", developer: "Singlera Genomics", tech: "Semi-targeted PCR libraries, sequencing, methylation", targets: "Lung, colorectal, gastric, liver, esophageal", performance: "87.6% Sens, 96.1% Spec", trials: "Large Chinese study (123,115 participants) completed" }
+        ];
+
+        const clinicalTrials = [
+            { name: "NHS-Galleri Trial (UK)", population: "140,000 volunteers, 50–77 yrs, asymptomatic", test: "Galleri", findings: "Primary endpoint: reduction in late-stage (III/IV) cancers. 1st yr data: \"high accuracy\" (not detailed). Final results exp. from 2026. Cancer-specific mortality (5yr f/up) is secondary endpoint.", interval: "3 appts over 2 yrs (~annual)", caveats: "Interim data not sufficient for immediate pilot. Full trial completion vital." },
+            { name: "PATHFINDER Study (US/Canada)", population: "6,662 participants, ≥50 yrs, asymptomatic/higher risk", test: "Galleri", findings: "Sens 20.8% (overall, asymptomatic), Spec 99.5%, PPV 43.1%, NPV 98.5%. Initial study: 1.4% positive rate, 38% true diagnoses.", interval: "N/A (single test point)", caveats: "Study to evaluate feasibility, diagnostic methods." },
+            { name: "DETECT-A Study (US)", population: "~10,000 women, 65-75 yrs, asymptomatic", test: "CancerSEEK", findings: "Sens 27.1%, Spec 98.9%, PPV 19.4%, NPV 99.3%. Stage I-II Sens 12.7%.", interval: "N/A (single test point)", caveats: "Lower sensitivity in prospective screening setting than initial proof-of-concept." },
+            { name: "Sasieni et al. Modelling Study", population: "Modelled population 50-79 yrs (US SEER data)", test: "Generic MCED", findings: "Annual: 49% fewer late-stage, 21% fewer 5-yr deaths (modelled). Biennial: 39% fewer late-stage, 17% fewer 5-yr deaths (modelled).", interval: "Annual / Biennial", caveats: "Modelled estimates, ideal assumptions, represent upper bounds of benefit." },
+            { name: "miONCO-Dx (Initial Data)", population: "Data from 20,000 patients (details not specified)", test: "miONCO-Dx", findings: ">99% Sens & Spec for 12 cancers (all stages I-IV); CSO accuracy 96-98%.", interval: "N/A", caveats: "Initial data, requires validation in prospective screening trials." },
+            { name: "NIHR Systematic Review (UK)", population: "Review of 36 studies (various designs)", test: "Various MCEDs", findings: "High Spec (>96%) common. Sens highly variable. Lower sens for early stages.", interval: "N/A", caveats: "No completed RCTs, most studies high risk of bias, limited patient-relevant outcomes." },
+            { name: "Cancerguard™ EX Modelling", population: "Modelled high-risk groups", test: "Cancerguard™ EX", findings: "Annual testing: >40% reduction in late-stage incidence, up to 18% mortality reduction (modelled).", interval: "Annual", caveats: "Modelling study, not direct trial results." }
+        ];
+
+        const expertOpinions = [
+            { org: "National Cancer Institute (NCI) - US", stance: "Cautious optimism. Emphasizes rigorous RCTs before wide adoption. Prefers term 'MCD'. Mortality reduction is gold standard. Concerns: harms, cost, equity, public understanding." },
+            { org: "NHS England & UK National Screening Committee", stance: "Overseeing NHS-Galleri trial (results from 2026). Initial Galleri data promising but insufficient for immediate large pilot. Awaiting final trial results." },
+            { org: "Cancer Research UK (CRUK)", stance: "MCEDs are 'promising', could aid earlier diagnosis and improve survival. Stresses need to translate tech to clinical benefit. Anticipates sufficient evidence for rollout by 2032." },
+            { org: "American Society of Clinical Oncology (ASCO)", stance: "Recognizes MCEDs as new screening approach. Developing evaluation recommendations. Notes many LDTs may precede mortality trial results." },
+            { org: "Association of Cancer Care Centers (ACCC)", stance: "Supports legislation for Medicare coverage of FDA-approved MCED tests." },
+            { org: "European Society for Medical Oncology (ESMO)", stance: "No specific guidelines for MCEDs in general population screening (as per report). Incorporates liquid biopsy for other oncology applications." },
+            { org: "World Health Organization (WHO) & US Preventive Services Task Force (USPSTF)", stance: "No recommendations on MCD/MCED tests for cancer screening (as per report)." }
+        ];
+
+        function populateMcedTech() {
+            const container = document.getElementById('mcedTechContainer');
+            container.innerHTML = '';
+            mcedTechnologies.forEach(tech => {
+                const card = `
+                    <div class="bg-white p-4 rounded-lg shadow hover:shadow-xl transition-shadow duration-300 cursor-pointer" onclick="showModalDetails('${tech.name}', 'tech')">
+                        <h3 class="text-lg font-semibold text-blue-700 mb-2">${tech.name}</h3>
+                        <p class="text-sm"><strong>Developer:</strong> ${tech.developer}</p>
+                        <p class="text-sm"><strong>Technology:</strong> ${tech.tech.substring(0,50)}...</p>
+                        <p class="text-sm text-blue-600 hover:text-blue-800 mt-2">Click for more details</p>
+                    </div>`;
+                container.innerHTML += card;
+            });
+        }
+
+        function populateClinicalTrials() {
+            const container = document.getElementById('clinicalTrialsContainer');
+            container.innerHTML = '';
+            clinicalTrials.forEach(trial => {
+                const item = `
+                    <div class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow duration-300 cursor-pointer" onclick="showModalDetails('${trial.name}', 'trial')">
+                        <h4 class="text-md font-semibold text-blue-700 mb-1">${trial.name}</h4>
+                        <p class="text-sm"><strong>Population:</strong> ${trial.population.substring(0,70)}...</p>
+                        <p class="text-sm text-blue-600 hover:text-blue-800 mt-1">Click for more details</p>
+                    </div>`;
+                container.innerHTML += item;
+            });
+        }
+        
+        function populateExpertOpinions() {
+            const container = document.getElementById('expertOpinionsContainer');
+            container.innerHTML = '';
+            expertOpinions.forEach((opinion, index) => {
+                const item = `
+                <div class="border border-gray-300 rounded-md">
+                    <button class="w-full text-left p-3 font-medium bg-gray-100 hover:bg-gray-200 focus:outline-none flex justify-between items-center" onclick="toggleAccordionItem('opinion-${index}')">
+                        ${opinion.org}
+                        <span class="transform transition-transform duration-300" id="icon-opinion-${index}">&#9660;</span>
+                    </button>
+                    <div id="opinion-${index}" class="p-3 border-t border-gray-300 hidden">
+                        <p class="text-sm">${opinion.stance}</p>
+                    </div>
+                </div>`;
+                container.innerHTML += item;
+            });
+        }
+
+        function toggleAccordionItem(itemId) {
+            const item = document.getElementById(itemId);
+            const icon = document.getElementById(`icon-${itemId}`);
+            if (item.classList.contains('hidden')) {
+                item.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                item.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+
+        const modal = document.getElementById('detailsModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+
+        function showModalDetails(name, type) {
+            let item;
+            let content = '';
+            if (type === 'tech') {
+                item = mcedTechnologies.find(t => t.name === name);
+                if (item) {
+                    modalTitle.textContent = `${item.name} Details`;
+                    content = `
+                        <p><strong>Developer:</strong> ${item.developer}</p>
+                        <p><strong>Underlying Technology/Biomarkers:</strong> ${item.tech}</p>
+                        <p><strong>Key Cancers Targeted:</strong> ${item.targets}</p>
+                        <p><strong>Reported Performance Highlights:</strong> ${item.performance}</p>
+                        <p><strong>Key Clinical Trial(s) & Current Status:</strong> ${item.trials}</p>
+                    `;
+                }
+            } else if (type === 'trial') {
+                 item = clinicalTrials.find(t => t.name === name);
+                 if (item) {
+                    modalTitle.textContent = `${item.name} Details`;
+                    content = `
+                        <p><strong>Population:</strong> ${item.population}</p>
+                        <p><strong>Test Used:</strong> ${item.test}</p>
+                        <p><strong>Key Statistical Findings:</strong> ${item.findings}</p>
+                        <p><strong>Screening Interval (if applicable):</strong> ${item.interval}</p>
+                        <p><strong>Stated Limitations/Key Caveats:</strong> ${item.caveats}</p>
+                    `;
+                 }
+            }
+            modalBody.innerHTML = content;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            if (sectionId === 'stats' && !document.getElementById('testPerformanceChart').chart) {
+                renderTestPerformanceChart();
+            }
+            if (sectionId === 'frequency' && !document.getElementById('screeningFrequencyChart').chart) {
+                renderScreeningFrequencyChart();
+            }
+             if (sectionId === 'tech') {
+                populateMcedTech();
+            }
+            if (sectionId === 'stats') {
+                populateClinicalTrials();
+            }
+            if (sectionId === 'perspectives') {
+                populateExpertOpinions();
+            }
+        }
+        
+        function formatLabel(str, maxLen = 16) {
+            if (str.length <= maxLen) return str;
+            const parts = [];
+            let currentPart = '';
+            str.split(' ').forEach(word => {
+                if ((currentPart + word).length > maxLen) {
+                    parts.push(currentPart.trim());
+                    currentPart = word + ' ';
+                } else {
+                    currentPart += word + ' ';
+                }
+            });
+            parts.push(currentPart.trim());
+            return parts;
+        }
+
+        function renderTestPerformanceChart() {
+            const ctx = document.getElementById('testPerformanceChart').getContext('2d');
+            if (document.getElementById('testPerformanceChart').chart) {
+                document.getElementById('testPerformanceChart').chart.destroy();
+            }
+            document.getElementById('testPerformanceChart').chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Galleri (PATHFINDER)', 'CancerSEEK (DETECT-A)', 'miONCO-Dx (Initial Data*)'],
+                    datasets: [{
+                        label: 'Sensitivity (%)',
+                        data: [20.8, 27.1, 99], // Using 99 as >99%
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)', // Blue
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Specificity (%)',
+                        data: [99.5, 98.9, 99], // Using 99 as >99%
+                        backgroundColor: 'rgba(16, 185, 129, 0.7)', // Green
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Percentage (%)' }
+                        },
+                        x: { ticks: { callback: function(value, index, values) { return formatLabel(this.getLabelForValue(value)); } } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+        }
+
+        function renderScreeningFrequencyChart() {
+            const ctx = document.getElementById('screeningFrequencyChart').getContext('2d');
+             if (document.getElementById('screeningFrequencyChart').chart) {
+                document.getElementById('screeningFrequencyChart').chart.destroy();
+            }
+            document.getElementById('screeningFrequencyChart').chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Reduction in Late-Stage Diagnoses', 'Reduction in 5-Year Deaths'],
+                    datasets: [{
+                        label: 'Annual Screening (%)',
+                        data: [49, 21],
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Biennial Screening (%)',
+                        data: [39, 17],
+                        backgroundColor: 'rgba(239, 68, 68, 0.7)', // Red
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Percentage Reduction (%)' }
+                        },
+                        x: { ticks: { callback: function(value, index, values) { return formatLabel(this.getLabelForValue(value)); } } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('intro'); // Show intro section by default
+            populateMcedTech();
+            populateClinicalTrials();
+            populateExpertOpinions();
+        });
+
+    </script>
+</body>
+</html>
