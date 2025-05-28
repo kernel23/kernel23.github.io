@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBM Na! Program: Interactive Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Adjusted for better viewing */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; 
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            padding: 0.75rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-link.active {
+            background-color: #10b981; /* emerald-500 */
+            color: white;
+        }
+        .nav-link:not(.active):hover {
+            background-color: #f0fdfa; /* emerald-50 */
+            color: #059669; /* emerald-600 */
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .pro-con-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .pro-item::before {
+            content: '✅';
+            margin-right: 0.5rem;
+            color: #10b981; /* emerald-500 */
+        }
+        .con-item::before {
+            content: '❌';
+            margin-right: 0.5rem;
+            color: #ef4444; /* red-500 */
+        }
+        .accordion-button {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #374151; /* gray-700 */
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: background-color 0.3s ease;
+            font-weight: 600;
+            border-radius: 0.375rem;
+            margin-bottom: 0.25rem;
+        }
+        .accordion-button:hover, .accordion-button.active {
+            background-color: #e5e7eb; /* gray-200 */
+        }
+        .accordion-content {
+            padding: 0 1rem;
+            background-color: white;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border: 1px solid #e5e7eb; /* gray-200 */
+            border-top: none;
+            border-radius: 0 0 0.375rem 0.375rem;
+        }
+        .stat-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .stat-value {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700;
+            color: #10b981; /* emerald-500 */
+        }
+        .stat-label {
+            font-size: 0.875rem; /* text-sm */
+            color: #6b7280; /* gray-500 */
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body class="bg-amber-50 text-stone-700 antialiased">
+
+    <header class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center">
+            <h1 class="text-3xl font-bold text-emerald-600">Benteng Bigas Meron Na! (BBM Na!) Program Analysis</h1>
+            <nav id="mainNav" class="mt-4 sm:mt-0 flex flex-wrap justify-center">
+                <a data-target="overview" class="nav-link active">Overview</a>
+                <a data-target="programDetails" class="nav-link">Program Details</a>
+                <a data-target="economicImpact" class="nav-link">Economic</a>
+                <a data-target="agriImpact" class="nav-link">Agricultural</a>
+                <a data-target="socialImpact" class="nav-link">Social</a>
+                <a data-target="recommendations" class="nav-link">Recommendations</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <section id="overview" class="content-section active">
+            <h2 class="text-2xl font-semibold mb-6 text-emerald-700 border-b-2 border-emerald-200 pb-2">Program Overview</h2>
+            <p class="mb-6 text-lg leading-relaxed">
+                The "Benteng Bigas Meron Na!" (BBM Na!) program is a flagship initiative by the Philippine government aimed at making rice affordable at ₱20 per kilogram. This interactive analysis explores the program's mechanics, its economic, agricultural, and social implications, and potential pathways forward based on a comprehensive report. The goal is to provide immediate relief to Filipino households, particularly vulnerable sectors and minimum wage earners, by subsidizing the nation's staple food.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="stat-card">
+                    <div class="stat-value">₱20/kg</div>
+                    <div class="stat-label">Subsidized Rice Price</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">120,000</div>
+                    <div class="stat-label">Min. Wage Earners to Benefit (June)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">15M</div>
+                    <div class="stat-label">Households Targeted by 2028</div>
+                </div>
+                 <div class="stat-card">
+                    <div class="stat-value">₱5 Billion</div>
+                    <div class="stat-label">Current Contingency Fund Allocation</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3.9 MMT</div>
+                    <div class="stat-label">Projected Rice Imports (2024)</div>
+                </div>
+                 <div class="stat-card">
+                    <div class="stat-value">69.7%</div>
+                    <div class="stat-label">Projected Rice Self-Sufficiency (2024/25)</div>
+                </div>
+            </div>
+            <p class="mb-4 leading-relaxed">
+                This application will guide you through the intricacies of the BBM Na! program. Use the navigation above to explore its detailed mechanics, the multifaceted impacts on the economy, agriculture, and society, and the strategic recommendations for its sustainable implementation. Each section offers insights into the program's strengths, weaknesses, and the broader context of rice in the Philippines.
+            </p>
+        </section>
+
+        <section id="programDetails" class="content-section">
+            <h2 class="text-2xl font-semibold mb-6 text-emerald-700 border-b-2 border-emerald-200 pb-2">Program Mechanics & Context</h2>
+            <p class="mb-6 text-lg leading-relaxed">
+                This section details the operational framework of the BBM Na! program, including its target beneficiaries, purchase limits, distribution channels, and funding mechanisms. It also provides context on the current state of the Philippine rice market and a brief history of rice policies.
+            </p>
+
+            <div class="mb-8 p-6 bg-white rounded-lg shadow">
+                <h3 class="text-xl font-semibold mb-3 text-emerald-600">Target Beneficiaries</h3>
+                <p class="mb-2">Initially: Vulnerable sectors (indigents, seniors, PWDs, solo parents).</p>
+                <p class="mb-2">Expansion (June): ~120,000 minimum wage earners.</p>
+                <p>Long-term Vision (by 2028): Up to 15 million households (approx. 60 million Filipinos).</p>
+            </div>
+
+            <div class="mb-8 p-6 bg-white rounded-lg shadow">
+                <h3 class="text-xl font-semibold mb-3 text-emerald-600">Purchase Limits</h3>
+                <p class="mb-2">Minimum Wage Earners: Up to 10 kg/month.</p>
+                <p>Vulnerable Sectors (4Ps, seniors, PWDs, solo parents): Up to 30 kg/month.</p>
+            </div>
+
+            <div class="mb-8 p-6 bg-white rounded-lg shadow">
+                <h3 class="text-xl font-semibold mb-3 text-emerald-600">Distribution Channels</h3>
+                <p class="mb-2">Primary: Kadiwa ng Pangulo (KNP) centers.</p>
+                <p class="mb-2">Role of LGUs: Key in implementation and beneficiary eligibility determination (in areas with shared subsidy).</p>
+                <p>For Minimum Wage Earners: System being finalized by DA & DOLE; may involve companies procuring from FTI/NFA for employee distribution.</p>
+            </div>
+            
+            <div class="mb-8 p-6 bg-white rounded-lg shadow">
+                <h3 class="text-xl font-semibold mb-3 text-emerald-600">Funding & Subsidy</h3>
+                <p class="mb-2">Current: ₱5 billion from Office of the President's contingency fund (₱4.5B for subsidy, ₱0.5B for logistics).</p>
+                <p class="mb-2">Mechanism: Shared cost (FTI & LGUs cover difference from market price, e.g., ₱33/kg NFA rice vs ₱20/kg subsidized). FTI covers full subsidy for Kadiwa sales.</p>
+                <p class="mb-2">Future Projections: DA seeks ₱10B for FTI (2026), NFA seeks ₱27B for palay procurement (2026) for a 15-day buffer.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="p-6 bg-white rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-3 text-emerald-600">Philippine Rice Market Snapshot</h3>
+                    <p class="mb-2"><strong>Consumption:</strong> 151.3 kg/capita (2024 est.), 16.5 MMT total (2024 est.).</p>
+                    <p class="mb-2"><strong>Production:</strong> 12.5 MMT (2024), expected 12.25 MMT (2025/26).</p>
+                    <p class="mb-2"><strong>Self-Sufficiency:</strong> Projected 69.7% (2024/25).</p>
+                    <p class="mb-2"><strong>Imports:</strong> World's top importer. 3.9 MMT (2024 est.), 5.4 MMT (2024/25 est.).</p>
+                    <p class="mb-2"><strong>Retail Prices (May 2025):</strong> Regular milled ₱43.74/kg. Special imported up to ₱65/kg (Jan 2025).</p>
+                    <p class="mb-2"><strong>Farmgate Palay Prices (2025):</strong> Dropped to ₱17.50/kg (from ₱27-₱28/kg in 2024).</p>
+                    <p><strong>NFA Buying Price:</strong> ₱18-₱24/kg (up to ₱30/kg approved); New range ₱19-₱23 (dry), ₱16-₱19 (wet).</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow">
+                     <h3 class="text-xl font-semibold mb-3 text-emerald-600">Rice Prices Comparison</h3>
+                    <div class="chart-container"><canvas id="ricePricesChart"></canvas></div>
+                    <p class="text-xs text-center mt-2 text-stone-500">Illustrative average prices.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="economicImpact" class="content-section">
+            <h2 class="text-2xl font-semibold mb-6 text-emerald-700 border-b-2 border-emerald-200 pb-2">Economic Implications</h2>
+            <p class="mb-6 text-lg leading-relaxed">
+                The BBM Na! program has significant economic effects, offering immediate benefits to consumers but also posing fiscal challenges and market considerations. This section weighs the pros and cons.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-emerald-600 pro-con-title">Pros</h3>
+                    <ul class="space-y-3">
+                        <li class="pro-item"><strong>Consumer Relief & Enhanced Purchasing Power:</strong> Significant savings for beneficiaries due to ₱20/kg price vs. market rates (e.g., ₱43.74/kg regular).</li>
+                        <li class="pro-item"><strong>Retail Price Stabilization & Inflation Management:</strong> Creates competitive pressure, potentially lowering overall rice prices and helping manage inflation.</li>
+                        <li class="pro-item"><strong>NFA Stock Rotation & Reduced Spoilage:</strong> Facilitates efficient use of NFA buffer stock (7.56M bags as of Apr 2025), frees warehouse space, and prevents spoilage losses.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-red-600 pro-con-title">Cons</h3>
+                    <ul class="space-y-3">
+                        <li class="con-item"><strong>Significant Fiscal Burden:</strong> Current ₱5B is short-term. Projected losses ₱10-12B. 2026 budget requests total ~₱40B (DA/NFA). Raises sustainability concerns.</li>
+                        <li class="con-item"><strong>Market Distortions & Impact on Private Retailers:</strong> ₱20/kg price well below market can squeeze private sector margins and disincentivize investment.</li>
+                        <li class="con-item"><strong>Broader Macroeconomic Implications:</strong> Sustained high subsidy costs (if debt-financed) could increase national debt and impact interest rates. PIDS notes high financial burden.</li>
+                        <li class="con-item"><strong>Historical Inefficiency:</strong> Past NFA subsidies showed high transfer costs (e.g., $1 subsidy costing NFA $2.2), suggesting potential for inefficiency.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 p-6 bg-white rounded-lg shadow">
+                <h3 class="text-xl font-semibold mb-3 text-emerald-600">Fiscal Outlook: Program Funding</h3>
+                <div class="chart-container"><canvas id="fiscalBurdenChart"></canvas></div>
+                <p class="text-xs text-center mt-2 text-stone-500">Illustrative funding figures.</p>
+            </div>
+        </section>
+
+        <section id="agriImpact" class="content-section">
+            <h2 class="text-2xl font-semibold mb-6 text-emerald-700 border-b-2 border-emerald-200 pb-2">Agricultural & Supply Chain Implications</h2>
+            <p class="mb-6 text-lg leading-relaxed">
+                The program directly affects local rice farmers and the overall rice supply chain. This section explores the benefits for farmers through NFA procurement alongside challenges like depressed farmgate prices and supply chain inefficiencies.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-emerald-600 pro-con-title">Pros</h3>
+                    <ul class="space-y-3">
+                        <li class="pro-item"><strong>Support for Local Farmers via NFA Procurement:</strong> Uses NFA stock (locally sourced), clears warehouses, enables NFA to buy more local palay at ₱18-₱30/kg.</li>
+                        <li class="pro-item"><strong>Incentives for Increased Local Production:</strong> Aims to ensure profitable returns for farmers, potentially stabilizing farmgate prices and encouraging planting. DA studying "suggested floor price."</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-red-600 pro-con-title">Cons</h3>
+                    <ul class="space-y-3">
+                        <li class="con-item"><strong>Insufficient NFA Procurement & Depressed Farmgate Prices:</strong> Farmgate prices dropped to ₱17.50/kg (2025) due to imported rice oversupply. NFA procures only 3-4% of local production (ideal 20%), limiting its impact.</li>
+                        <li class="con-item"><strong>Supply Chain Inefficiencies & Post-Harvest Losses:</strong> Significant losses (16.4% of rice crops) due to old methods and poor facilities. Logistical challenges in distribution.</li>
+                        <li class="con-item"><strong>Disincentives for Private Investment:</strong> Subsidies can distort market, discouraging private investment in milling, storage, and distribution.</li>
+                        <li class="con-item"><strong>Debate: Subsidies vs. Structural Reforms:</strong> Experts argue long-term security needs structural reforms (infrastructure, R&D) over just price subsidies.</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="stat-card">
+                    <div class="stat-value">16.4%</div>
+                    <div class="stat-label">Estimated Post-Harvest Losses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3-4%</div>
+                    <div class="stat-label">NFA's Share of Local Palay Procurement (vs. 20% ideal)</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="socialImpact" class="content-section">
+            <h2 class="text-2xl font-semibold mb-6 text-emerald-700 border-b-2 border-emerald-200 pb-2">Social Implications</h2>
+            <p class="mb-6 text-lg leading-relaxed">
+                 At its heart, the BBM Na! program is a social initiative. This section examines its impact on people, focusing on enhanced food access for vulnerable groups, alongside challenges like targeting and potential dependency.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-emerald-600 pro-con-title">Pros</h3>
+                    <ul class="space-y-3">
+                        <li class="pro-item"><strong>Enhanced Food Access & Affordability:</strong> Directly eases financial burden for low-income households, seniors, PWDs, solo parents, and minimum wage earners.</li>
+                        <li class="pro-item"><strong>Improved Quality of Life & Reduced Financial Stress:</strong> Frees up household budgets for other essentials, potentially improving well-being and stability.</li>
+                        <li class="pro-item"><strong>Political Fulfillment & Public Trust:</strong> Fulfills a major campaign promise, potentially enhancing trust in government responsiveness.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-red-600 pro-con-title">Cons</h3>
+                    <ul class="space-y-3">
+                        <li class="con-item"><strong>Targeting Challenges, Exclusion & Leakage:</strong> Risk of eligible poor being missed and benefits reaching non-poor. Distribution system finalization is key.</li>
+                        <li class="con-item"><strong>Potential for Misuse, Hoarding & Corruption:</strong> Large-scale subsidies are vulnerable. President Marcos noted smuggling and hoarding issues.</li>
+                        <li class="con-item"><strong>Risk of Dependency & Disincentive for Self-Sufficiency:</strong> Long-term subsidies might foster dependency if not paired with livelihood programs.</li>
+                        <li class="con-item"><strong>Pilot Phase Uncertainty:</strong> Program is in "pilot test" to gather data. Full long-term operational model still developing, implying inherent uncertainty.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="recommendations" class="content-section">
+            <h2 class="text-2xl font-semibold mb-6 text-emerald-700 border-b-2 border-emerald-200 pb-2">Conclusions & Recommendations</h2>
+            <p class="mb-6 text-lg leading-relaxed">
+                The BBM Na! program offers vital short-term relief but faces challenges in long-term sustainability and broader impact. This section outlines key recommendations from the report to enhance its effectiveness and contribute to genuine food security.
+            </p>
+            <div id="recommendationsAccordion" class="space-y-2">
+                <div>
+                    <button class="accordion-button">1. Strengthen Fiscal Sustainability & Transparency</button>
+                    <div class="accordion-content" style="max-height: 0px;">
+                        <ul class="list-disc pl-5 py-4 space-y-2">
+                            <li><strong>Diversify Funding Sources:</strong> Explore options beyond contingency funds (e.g., re-evaluate rice import tariff revenues).</li>
+                            <li><strong>Cost-Benefit Analysis & Public Reporting:</strong> Conduct regular, transparent analyses and report true transfer costs.</li>
+                            <li><strong>Integrate into National Budget:</strong> With clear metrics and sunset clauses for periodic review.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <button class="accordion-button">2. Re-evaluate and Reform NFA's Mandate & Capacity</button>
+                    <div class="accordion-content" style="max-height: 0px;">
+                        <ul class="list-disc pl-5 py-4 space-y-2">
+                            <li><strong>Clarify NFA's Dual Role:</strong> Strategically manage tension between consumer price stabilization and farmer income support. Consider RTL adjustments for more NFA flexibility.</li>
+                            <li><strong>Enhance Procurement Efficiency:</strong> Invest in NFA's operational capacity (modernization, storage, logistics) to procure more local palay.</li>
+                            <li><strong>Implement Formal Floor Price Mechanism:</strong> For palay, backed by robust NFA procurement.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <button class="accordion-button">3. Prioritize Long-term Structural Agricultural Reforms</button>
+                    <div class="accordion-content" style="max-height: 0px;">
+                        <ul class="list-disc pl-5 py-4 space-y-2">
+                            <li><strong>Invest in Productivity-Enhancing Infrastructure:</strong> Irrigation, post-harvest facilities, mechanization.</li>
+                            <li><strong>Support Research & Development:</strong> Climate-resilient varieties, sustainable farming.</li>
+                            <li><strong>Empower Farmers:</strong> Direct access to credit, inputs, markets; reduce middlemen dependence.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <button class="accordion-button">4. Refine Targeting & Distribution Mechanisms</button>
+                    <div class="accordion-content" style="max-height: 0px;">
+                        <ul class="list-disc pl-5 py-4 space-y-2">
+                            <li><strong>Leverage Digital ID & E-vouchers:</strong> For precise targeting, reduced leakage, and anti-corruption.</li>
+                            <li><strong>Data-Driven Adaptation:</strong> Use pilot test data for iterative adjustments and M&E.</li>
+                            <li><strong>Complementary Social Programs:</strong> Integrate with livelihood, skills training for self-sufficiency.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-800 text-amber-50 py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 BBM Na! Program Interactive Analysis. Information based on the provided report.</p>
+            <p class="text-sm text-stone-400 mt-1">This is a simulated application for informational purposes.</p>
+        </div>
+    </footer>
+
+    <script>
+        const navLinks = document.querySelectorAll('#mainNav a');
+        const contentSections = document.querySelectorAll('.content-section');
+
+        function setActiveSection(targetId) {
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.dataset.target === targetId);
+            });
+            contentSections.forEach(section => {
+                section.classList.toggle('active', section.id === targetId);
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = e.target.dataset.target;
+                setActiveSection(targetId);
+            });
+        });
+
+        const accordionButtons = document.querySelectorAll('.accordion-button');
+        accordionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                button.classList.toggle('active');
+                if (content.style.maxHeight && content.style.maxHeight !== "0px") {
+                    content.style.maxHeight = "0px";
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+        
+        function createRicePricesChart() {
+            const ctx = document.getElementById('ricePricesChart')?.getContext('2d');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Subsidized (BBM Na!)', 'Regular Milled (Market)', 'Special Imported (Peak)', 'Farmgate Palay (2025)', 'NFA Palay Buying (High)'],
+                    datasets: [{
+                        label: 'Price per kg (₱)',
+                        data: [20, 43.74, 65, 17.50, 30],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.7)', // emerald-500
+                            'rgba(245, 158, 11, 0.7)', // amber-500
+                            'rgba(239, 68, 68, 0.7)',  // red-500
+                            'rgba(96, 165, 250, 0.7)', // blue-400
+                            'rgba(22, 163, 74, 0.7)' // green-600
+                        ],
+                        borderColor: [
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(96, 165, 250, 1)',
+                            'rgba(22, 163, 74, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Price (PHP per kg)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `₱${context.raw.toFixed(2)}`;
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Comparison of Rice & Palay Prices'
+                        }
+                    }
+                }
+            });
+        }
+
+        function createFiscalBurdenChart() {
+            const ctx = document.getElementById('fiscalBurdenChart')?.getContext('2d');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Current Allocation', 'Projected Loss (Annual)', '2026 DA/NFA Request'],
+                    datasets: [{
+                        label: 'Amount (Billion ₱)',
+                        data: [5, 11, 40], // Using average for projected loss
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)', // blue-500
+                            'rgba(239, 68, 68, 0.7)',  // red-500
+                            'rgba(245, 158, 11, 0.7)'  // amber-500
+                        ],
+                        borderColor: [
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(245, 158, 11, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Amount (Billion PHP)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `₱${context.raw} Billion`;
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Program Financial Overview'
+                        }
+                    }
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            setActiveSection('overview'); // Set initial active section
+            if (document.getElementById('ricePricesChart')) {
+                 createRicePricesChart();
+            }
+            if (document.getElementById('fiscalBurdenChart')) {
+                createFiscalBurdenChart();
+            }
+        });
+
+    </script>
+</body>
+</html>
