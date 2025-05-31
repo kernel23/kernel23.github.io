@@ -15,7 +15,7 @@
         }
 
         .container {
-            max-width: 900px; /* Increased max-width for table */
+            max-width: 950px; /* Increased max-width for controls and table */
             margin: 20px auto;
             padding: 20px;
             background-color: #fff;
@@ -29,32 +29,90 @@
             margin-bottom: 30px;
         }
 
+        .controls {
+            display: flex;
+            flex-wrap: wrap; /* Allow controls to wrap on smaller screens */
+            gap: 15px; /* Spacing between control elements */
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+        }
+
+        .controls label {
+            font-weight: bold;
+            margin-right: 5px;
+            align-self: center;
+        }
+
+        .controls input[type="text"],
+        .controls select {
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            flex-grow: 1; /* Allow input/select to grow */
+        }
+
+        .controls input[type="text"] {
+            min-width: 200px; /* Minimum width for search bar */
+        }
+
         /* Table Styles */
         .links-table {
             width: 100%;
-            border-collapse: collapse; /* Removes space between cell borders */
+            border-collapse: collapse;
             margin-bottom: 30px;
         }
 
         .links-table th, .links-table td {
-            border: 1px solid #ddd; /* Light gray border for cells */
-            padding: 12px 15px; /* Padding within cells */
-            text-align: left; /* Align text to the left */
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: middle; /* Align content vertically */
         }
 
         .links-table th {
-            background-color: #0056b3; /* Blue background for headers */
-            color: #fff; /* White text for headers */
+            background-color: #0056b3;
+            color: #fff;
             font-weight: bold;
         }
 
+        .links-table th.sortable {
+            cursor: pointer; /* Indicate header is clickable */
+            position: relative; /* For positioning sort arrows */
+        }
+
+        .links-table th.sortable::after { /* Basic arrow, changes with sort direction */
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            margin-top: -7px; /* Center arrow */
+            border: 5px solid transparent;
+        }
+        .links-table th.sortable.asc::after {
+            content: ' ▲'; /* Up arrow for ascending */
+            font-size: 0.8em;
+            position: absolute;
+            right: 5px;
+            color: #fff;
+        }
+        .links-table th.sortable.desc::after {
+            content: ' ▼'; /* Down arrow for descending */
+            font-size: 0.8em;
+            position: absolute;
+            right: 5px;
+            color: #fff;
+        }
+
+
         .links-table tbody tr:nth-child(even) {
-            background-color: #f9f9f9; /* Zebra striping for rows */
+            background-color: #f9f9f9;
         }
 
         .links-table tbody tr:hover {
-            background-color: #f1f1f1; /* Highlight row on hover */
-            cursor: default; /* Change cursor to indicate row is not directly clickable */
+            background-color: #f1f1f1;
         }
 
         .links-table td a {
@@ -68,7 +126,6 @@
             color: #0056b3;
             text-decoration: underline;
         }
-        /* --- END TABLE INTERACTIVE PART --- */
 
         p.footer {
             text-align: center;
@@ -77,54 +134,221 @@
             color: #666;
         }
 
-        /* Responsive Table Wrapper */
         .table-responsive-wrapper {
-            overflow-x: auto; /* Adds horizontal scroll if table is too wide */
+            overflow-x: auto;
         }
 
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #777;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Available Documents & Links</h1> <div class="table-responsive-wrapper">
+        <h1>Available Documents & Links</h1>
+
+        <div class="controls">
+            <div>
+                <label for="searchInput">Search Title:</label>
+                <input type="text" id="searchInput" placeholder="Enter keywords...">
+            </div>
+            <div>
+                <label for="typeFilter">Filter by Type:</label>
+                <select id="typeFilter">
+                    <option value="">All Types</option>
+                    </select>
+            </div>
+            <div>
+                <label for="yearFilter">Filter by Year:</label>
+                <select id="yearFilter">
+                    <option value="">All Years</option>
+                    </select>
+            </div>
+        </div>
+
+        <div class="table-responsive-wrapper">
             <table class="links-table">
                 <thead>
                     <tr>
                         <th>Title</th>
                         <th>Type</th>
-                        <th>Date Created</th>
-                    </tr>
+                        <th id="dateSortHeader" class="sortable">Date Created</th> </tr>
                 </thead>
-                <tbody>
+                <tbody id="linksTableBody">
                     <tr>
                         <td><a href="flue_curing_research.html">(RESEARCH) A Comprehensive Analysis of Dehumidification Processes in the Flue-Curing of Tobacco Leaves</a></td>
-                        <td>Research</td> <td>May 31, 2025</td>
+                        <td data-type="Research">Research</td>
+                        <td data-date="2025-05-31">May 31, 2025</td>
                     </tr>
                     <tr>
                         <td><a href="flue_curing.html">A Comprehensive Analysis of Dehumidification Processes in the Flue-Curing of Tobacco Leaves</a></td>
-                        <td>Webpage</td> <td>May 31, 2025</td>
+                        <td data-type="Webpage">Webpage</td>
+                        <td data-date="2025-05-31">May 31, 2025</td>
                     </tr>
                     <tr>
                         <td><a href="FESS_Unlimited_Electricity.html">Flywheel Energy Generators: Principles, Advancements, and Future Potential</a></td>
-                        <td>Webpage</td> <td>May 31, 2025</td>
+                        <td data-type="Webpage">Webpage</td>
+                        <td data-date="2025-05-31">May 31, 2025</td>
                     </tr>
                     <tr>
                         <td><a href="BBM NA.html">Benteng Bigas Meron Na!</a></td>
-                        <td>Webpage</td> <td>May 28, 2025</td>
+                        <td data-type="Webpage">Webpage</td>
+                        <td data-date="2025-05-28">May 28, 2025</td>
                     </tr>
                     <tr>
                         <td><a href="MCED_Blood_Test_Report.html">Exploring Multi-Cancer Early Detection (MCED) Blood Tests</a></td>
-                        <td>Report / Research</td> <td>May 28, 2025</td>
+                        <td data-type="Report / Research">Report / Research</td>
+                        <td data-date="2025-05-28">May 28, 2025</td>
                     </tr>
                     <tr>
                         <td><a href="MCED_Blood_Test_Infograph.html">Exploring Multi-Cancer Early Detection (MCED) Blood Tests (INFOGRAPH)</a></td>
-                        <td>Infographics</td> <td>May 28, 2025</td>
+                        <td data-type="Infographics">Infographics</td>
+                        <td data-date="2025-05-28">May 28, 2025</td>
                     </tr>
                     </tbody>
             </table>
+            <div id="noResultsMessage" class="no-results" style="display: none;">No documents found matching your criteria.</div>
         </div>
 
         <p class="footer">Copyright 2025 - Generated by AI</p>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const typeFilter = document.getElementById('typeFilter');
+            const yearFilter = document.getElementById('yearFilter');
+            const tableBody = document.getElementById('linksTableBody');
+            const dateSortHeader = document.getElementById('dateSortHeader');
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            let originalData = [];
+            let currentSortOrder = 'none'; // 'asc', 'desc', 'none'
+
+            function parseTable() {
+                const rows = tableBody.querySelectorAll('tr');
+                const data = [];
+                const types = new Set();
+                const years = new Set();
+
+                rows.forEach(row => {
+                    const titleLink = row.cells[0].querySelector('a');
+                    const title = titleLink ? titleLink.textContent.trim() : '';
+                    const href = titleLink ? titleLink.href : '';
+                    const type = row.cells[1].textContent.trim();
+                    const dateString = row.cells[2].textContent.trim();
+                    const dateISO = row.cells[2].dataset.date; // Expecting YYYY-MM-DD
+
+                    if (type) types.add(type);
+                    if (dateISO) {
+                        const year = new Date(dateISO).getFullYear();
+                        if (!isNaN(year)) years.add(year);
+                    }
+
+                    data.push({
+                        title: title,
+                        href: href,
+                        type: type,
+                        dateString: dateString,
+                        dateObject: dateISO ? new Date(dateISO) : null
+                    });
+                });
+                
+                // Populate type filter
+                types.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type;
+                    typeFilter.appendChild(option);
+                });
+
+                // Populate year filter
+                Array.from(years).sort((a,b) => b - a).forEach(year => { // Sort years descending
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearFilter.appendChild(option);
+                });
+                return data;
+            }
+
+            function renderTable(dataToRender) {
+                tableBody.innerHTML = ''; // Clear existing rows
+                if (dataToRender.length === 0) {
+                    noResultsMessage.style.display = 'block';
+                    return;
+                }
+                noResultsMessage.style.display = 'none';
+
+                dataToRender.forEach(item => {
+                    const row = tableBody.insertRow();
+                    row.insertCell().innerHTML = `<a href="${item.href}">${item.title}</a>`;
+                    const typeCell = row.insertCell();
+                    typeCell.textContent = item.type;
+                    typeCell.dataset.type = item.type; // For consistency if needed later
+
+                    const dateCell = row.insertCell();
+                    dateCell.textContent = item.dateString;
+                    dateCell.dataset.date = item.dateObject ? item.dateObject.toISOString().split('T')[0] : '';
+
+                });
+            }
+
+            function applyFiltersAndSort() {
+                let filteredData = [...originalData]; // Start with a copy of the original data
+
+                // Search filter
+                const searchTerm = searchInput.value.toLowerCase();
+                if (searchTerm) {
+                    filteredData = filteredData.filter(item => item.title.toLowerCase().includes(searchTerm));
+                }
+
+                // Type filter
+                const selectedType = typeFilter.value;
+                if (selectedType) {
+                    filteredData = filteredData.filter(item => item.type === selectedType);
+                }
+
+                // Year filter
+                const selectedYear = yearFilter.value;
+                if (selectedYear) {
+                    filteredData = filteredData.filter(item => item.dateObject && item.dateObject.getFullYear() === parseInt(selectedYear));
+                }
+
+                // Sorting
+                if (currentSortOrder === 'asc') {
+                    filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? a.dateObject - b.dateObject : 0);
+                } else if (currentSortOrder === 'desc') {
+                    filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? b.dateObject - a.dateObject : 0);
+                }
+                // If 'none', original (or rather, last filtered) order is maintained
+
+                renderTable(filteredData);
+            }
+
+            // Initialize
+            originalData = parseTable();
+            renderTable(originalData); // Initial render
+
+            // Event Listeners
+            searchInput.addEventListener('input', applyFiltersAndSort);
+            typeFilter.addEventListener('change', applyFiltersAndSort);
+            yearFilter.addEventListener('change', applyFiltersAndSort);
+
+            dateSortHeader.addEventListener('click', () => {
+                dateSortHeader.classList.remove('asc', 'desc'); // Clear previous sort classes
+                if (currentSortOrder === 'none' || currentSortOrder === 'desc') {
+                    currentSortOrder = 'asc';
+                    dateSortHeader.classList.add('asc');
+                } else {
+                    currentSortOrder = 'desc';
+                    dateSortHeader.classList.add('desc');
+                }
+                applyFiltersAndSort();
+            });
+        });
+    </script>
 </body>
 </html>
