@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tobacco Flue-Curing Dehumidification Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Visualization & Content Choices: 
+        - Report Content (various sections) & Basic Thermodynamics: Goal -> Assess understanding. Viz/Presentation -> 50 Multiple-choice questions. Interaction -> Radio button selection for answers, 'Next'/'Prev' buttons to proceed, 'Submit' at end. Justification -> Standard and effective method for knowledge assessment. Text-based questions and answers are clear and direct. Method -> JavaScript for question logic, scoring, and navigation.
+        - Feedback/Results: Goal -> Inform user of performance. Viz/Presentation -> Text display of score (percentage and count), list of incorrect answers with correct ones. Interaction -> 'Retry Quiz' button. Justification -> Provides clear feedback and allows for re-engagement. Method -> JavaScript DOM manipulation.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f2937; /* gray-800 */
+        }
+        h1, h2, h3 {
+            font-family: 'Roboto Slab', serif;
+            color: #1e3a8a; /* blue-800 */
+        }
+        .quiz-container {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .answer-option {
+            transition: background-color 0.2s ease-in-out;
+        }
+        .answer-option:hover {
+            background-color: #e0e7ff; /* indigo-100 */
+        }
+        .answer-option input:checked + label {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            border-color: #2563eb; /* blue-600 */
+        }
+        .progress-bar-fill {
+            transition: width 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="quiz-container w-full max-w-2xl p-6 md:p-8">
+        <header class="text-center mb-6">
+            <h1 class="text-2xl md:text-3xl font-bold">Flue-Curing Dehumidification Quiz</h1>
+            <p class="text-sm text-gray-600 mt-1">Test your knowledge on the science and technology of tobacco curing.</p>
+        </header>
+
+        <div id="quiz-area">
+            <div id="question-container" class="mb-6">
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm text-gray-500 mb-1">
+                        <span>Question <span id="question-number">1</span> of <span id="total-questions">50</span></span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full progress-bar-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                <h2 id="question-text" class="text-lg md:text-xl font-semibold mb-4">Loading question...</h2>
+                <div id="answer-options" class="space-y-3">
+                    </div>
+            </div>
+
+            <div id="feedback-area" class="text-sm mb-4 min-h-[20px]"></div>
+
+            <div class="flex justify-between items-center">
+                <button id="prev-button" class="py-2 px-4 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors disabled:opacity-50" disabled>Previous</button>
+                <button id="next-button" class="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Next Question</button>
+                <button id="submit-button" class="hidden py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">Submit Answers</button>
+            </div>
+        </div>
+
+        <div id="results-area" class="hidden text-center">
+            <h2 class="text-2xl font-bold mb-4">Quiz Results</h2>
+            <p class="text-xl mb-2">You scored <span id="score" class="font-bold text-blue-700">0</span> out of <span id="total-score" class="font-bold">0</span> (<span id="score-percentage" class="font-bold text-blue-700">0%</span>).</p>
+            <div id="incorrect-answers-summary" class="mt-4 text-left text-sm">
+                <h3 class="font-semibold text-md mb-2">Review your answers:</h3>
+                <ul id="incorrect-list" class="space-y-2 max-h-96 overflow-y-auto"></ul>
+            </div>
+            <button id="retry-button" class="mt-6 py-2 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Retry Quiz</button>
+        </div>
+    </div>
+
+<script>
+const quizData = [
+    {
+        question: "What is the primary objective of the 'yellowing' stage in tobacco flue-curing?",
+        options: [
+            "To rapidly dry the leaf and fix its color.",
+            "To degrade chlorophyll and convert starches to sugars.",
+            "To increase nicotine content through enzymatic reactions.",
+            "To remove all moisture from the leaf stem."
+        ],
+        answer: "To degrade chlorophyll and convert starches to sugars.",
+        explanation: "The yellowing stage requires high humidity to keep leaf cells alive and facilitate chlorophyll degradation and starch-to-sugar conversion (Source Report Sec 1.3, 5.1)."
+    },
+    {
+        question: "Which dehumidification technology is noted for its high thermal efficiency (e.g., ~66.5%) and significant TSNA reduction capabilities in flue-curing?",
+        options: [
+            "Traditional Coal-fired Bulk Curing Barns (TCCB)",
+            "Compressor-Based Condensation Dehumidifiers",
+            "Heat Pump Dehumidification Systems (HPCB)",
+            "Solar-Assisted Ventilation Systems"
+        ],
+        answer: "Heat Pump Dehumidification Systems (HPCB)",
+        explanation: "HPCBs have shown superior thermal efficiency (~66.5%) and significant TSNA reduction compared to TCCBs (Source Report Sec 2.2, Table 2.1)."
+    },
+    {
+        question: "According to the report, what is a major disadvantage of Traditional Coal-fired Bulk Curing Barns (TCCB)?",
+        options: [
+            "High initial equipment cost.",
+            "Complexity in controlling humidity.",
+            "Low energy efficiency and high heat loss.",
+            "Inability to achieve high curing temperatures."
+        ],
+        answer: "Low energy efficiency and high heat loss.",
+        explanation: "TCCBs are characterized by low thermal efficiency (~42%) and significant heat losses (Source Report Sec 2.1, 4.1, Table 2.1)."
+    },
+    {
+        question: "TSNA formation in tobacco during curing is primarily linked to:",
+        options: [
+            "Excessive sunlight exposure.",
+            "The activity of nitrate-reducing bacteria under anaerobic conditions.",
+            "Rapid degradation of sugars.",
+            "High levels of nicotine oxidation."
+        ],
+        answer: "The activity of nitrate-reducing bacteria under anaerobic conditions.",
+        explanation: "TSNAs are formed by nitrosation of alkaloids, influenced by nitrites from nitrate-reducing bacteria under anaerobic conditions (Source Report Sec 3.3, 8.3)."
+    },
+    {
+        question: "What does a higher 'dehumidification ratio per unit of energy' indicate?",
+        options: [
+            "Faster overall curing time.",
+            "Higher quality of cured tobacco.",
+            "Greater moisture removal efficiency per unit of energy consumed.",
+            "Lower initial investment cost for the dehumidification system."
+        ],
+        answer: "Greater moisture removal efficiency per unit of energy consumed.",
+        explanation: "This KPI quantifies moisture removed per unit of energy; a higher ratio signifies greater efficiency (Source Report Sec 4.3)."
+    },
+    {
+        question: "Which of the following is a key advantage of desiccant-based dehumidification systems?",
+        options: [
+            "They require no energy for regeneration.",
+            "They are most effective at very high temperatures.",
+            "They can achieve very low relative humidity levels, even at lower temperatures.",
+            "They have the lowest initial capital cost of all systems."
+        ],
+        answer: "They can achieve very low relative humidity levels, even at lower temperatures.",
+        explanation: "Desiccant systems can achieve very low RH and are effective at lower temperatures where condensation systems are less efficient (Source Report Sec 2.3, Table 2.1)."
+    },
+    {
+        question: "Increasing the Dry-Bulb Temperature (DBT) during the stem-drying stage (e.g., to 72°C) can lead to:",
+        options: [
+            "Increased TSNA levels and lower sugar content.",
+            "Reduced energy consumption costs and improved appearance quality.",
+            "Significantly longer curing times but better aroma.",
+            "Higher nicotine content and a darker leaf color."
+        ],
+        answer: "Reduced energy consumption costs and improved appearance quality.",
+        explanation: "Increasing DBT in SDS (e.g., to 72°C) can reduce energy costs, shorten curing time, and improve appearance (Source Report Sec 3.1, 4.1, Table 3.1)."
+    },
+    {
+        question: "What is a primary practical challenge in implementing advanced dehumidification systems like HPCB?",
+        options: [
+            "Their inability to reduce TSNAs effectively.",
+            "Their tendency to over-dry tobacco, reducing quality.",
+            "High initial capital cost.",
+            "Their reliance on coal as an energy source."
+        ],
+        answer: "High initial capital cost.",
+        explanation: "High initial capital cost is a significant barrier for advanced systems like HPCB (Source Report Sec 8.1)."
+    },
+    {
+        question: "The psychrometric parameter 'wet-bulb depression' is an indicator of:",
+        options: [
+            "The leaf's internal moisture content.",
+            "The air's drying potential.",
+            "The efficiency of the heating system.",
+            "The amount of chlorophyll remaining in the leaf."
+        ],
+        answer: "The air's drying potential.",
+        explanation: "The wet-bulb depression (DBT-WBT) is a direct indicator of the air's drying potential; a larger depression means drier air (Source Report Sec 1.3)."
+    },
+    {
+        question: "Which advanced modeling technique was reported to perform best in predicting several key chemical components (like moisture, sugars, starch) from color values in flue-cured tobacco?",
+        options: [
+            "Linear Regression",
+            "ANOVA",
+            "Random Forest (RF)",
+            "Fuzzy Logic Control"
+        ],
+        answer: "Random Forest (RF)",
+        explanation: "Random Forest (RF) models performed best in predicting several key chemical components from color values, achieving high RPD (Source Report Sec 7.2, Table 7.1)."
+    },
+    {
+        question: "What is a primary reason for controlling moisture during flue-curing, beyond preservation against spoilage?",
+        options: [
+            "To increase the leaf's final weight for higher sale price.",
+            "To facilitate specific biochemical transformations crucial for developing flavor and aroma.",
+            "To make the leaves more resistant to physical damage during handling.",
+            "To reduce the overall curing time by at least 50%."
+        ],
+        answer: "To facilitate specific biochemical transformations crucial for developing flavor and aroma.",
+        explanation: "Effective dehumidification is intricately linked to biochemical transformations like chlorophyll degradation and starch-to-sugar conversion, vital for quality (Source Report Sec 1.1)."
+    },
+    {
+        question: "What was a significant factor driving the evolution from traditional flue-curing barns to more advanced facilities?",
+        options: [
+            "A desire to impart more smoke flavor into the tobacco.",
+            "The need to cure tobacco at much lower temperatures.",
+            "Limitations of traditional systems like TCCB in terms of energy efficiency and temperature uniformity.",
+            "A shift towards air-curing instead of flue-curing."
+        ],
+        answer: "Limitations of traditional systems like TCCB in terms of energy efficiency and temperature uniformity.",
+        explanation: "Traditional systems like TCCB suffered from poor temperature uniformity and high energy consumption, driving the need for advancement (Source Report Sec 1.2)."
+    },
+    {
+        question: "According to Fick's law of diffusion, how does maintaining lower humidity in the curing air affect the drying rate of tobacco leaves?",
+        options: [
+            "It has no significant effect on the drying rate.",
+            "It decreases the drying rate by reducing vapor pressure.",
+            "It accelerates the drying rate by increasing the water vapor concentration gradient.",
+            "It only affects the drying rate if temperatures are above 50°C."
+        ],
+        answer: "It accelerates the drying rate by increasing the water vapor concentration gradient.",
+        explanation: "Maintaining lower humidity increases the concentration gradient of water vapor, accelerating the drying rate according to Fick's law (Source Report Sec 1.3)."
+    },
+    {
+        question: "What is the core principle behind the energy efficiency of Heat Pump Dehumidification Systems (HPCB)?",
+        options: [
+            "They use a highly efficient type of fuel.",
+            "They operate in a vacuum to reduce heat loss.",
+            "They recover latent heat from moisture condensation and reuse it to heat the dried air.",
+            "They employ advanced solar panels for primary power."
+        ],
+        answer: "They recover latent heat from moisture condensation and reuse it to heat the dried air.",
+        explanation: "HPCBs achieve energy efficiency by recovering latent heat released during condensation and using it to reheat the drier air in a closed-loop operation (Source Report Sec 2.2)."
+    },
+    {
+        question: "After a solid desiccant material in a dehumidifier becomes saturated with moisture, what process is typically required to make it effective again?",
+        options: [
+            "Washing it with water.",
+            "Exposing it to high humidity.",
+            "Regenerating it, usually by applying heat to drive off the adsorbed water.",
+            "Compressing it to squeeze out the moisture."
+        ],
+        answer: "Regenerating it, usually by applying heat to drive off the adsorbed water.",
+        explanation: "Once saturated, solid desiccants must be regenerated, typically by applying heat to drive off the adsorbed water (Source Report Sec 2.3)."
+    },
+    {
+        question: "What undesirable outcome can occur if dehumidification is too rapid during the initial 'yellowing' stage of flue-curing?",
+        options: [
+            "The leaves become too sweet.",
+            "The chlorophyll degradation process may be incomplete, 'setting' green color.",
+            "Nicotine levels can drop too low.",
+            "The leaves develop an overly brittle texture."
+        ],
+        answer: "The chlorophyll degradation process may be incomplete, 'setting' green color.",
+        explanation: "Rapid drying during the yellowing phase can lead to incomplete chlorophyll degradation and the undesirable 'setting' of green color (Source Report Sec 3.1)."
+    },
+    {
+        question: "Which chemical transformation is central to the development of sweetness in flue-cured tobacco?",
+        options: [
+            "Conversion of proteins to amino acids.",
+            "Breakdown of nicotine into simpler alkaloids.",
+            "Enzymatic conversion of starches into sugars.",
+            "Oxidation of phenolic compounds."
+        ],
+        answer: "Enzymatic conversion of starches into sugars.",
+        explanation: "A key biochemical event in flue-curing is the enzymatic conversion of starches into sugars, which contribute to sweetness (Source Report Sec 3.2)."
+    },
+    {
+        question: "How do the operational costs of HPCB systems generally compare to those of TCCB systems, according to the report?",
+        options: [
+            "HPCB systems have higher operational costs.",
+            "Operational costs are roughly similar for both.",
+            "HPCB systems have demonstrated significantly lower operational costs.",
+            "TCCB systems have lower energy costs but higher labor costs."
+        ],
+        answer: "HPCB systems have demonstrated significantly lower operational costs.",
+        explanation: "One study reported the unit cost for HPCB as 1.34 CNY/kg, significantly lower than 2.67 CNY/kg for TCCB (Source Report Sec 4.2)."
+    },
+    {
+        question: "Why is maintaining good airflow distribution throughout the tobacco mass crucial during the curing process?",
+        options: [
+            "To ensure all leaves receive direct sunlight.",
+            "To quickly cool down the barn after each stage.",
+            "To prevent anaerobic microenvironments which can promote TSNA formation.",
+            "To increase the density of the cured tobacco."
+        ],
+        answer: "To prevent anaerobic microenvironments which can promote TSNA formation.",
+        explanation: "Sufficient airflow helps prevent the formation of anaerobic microenvironments, which are conducive to TSNA formation (Source Report Sec 5.2)."
+    },
+    {
+        question: "To enhance the statistical validity of findings in flue-curing research, what is a standard practice regarding experimental design?",
+        options: [
+            "Conducting experiments only during the summer months.",
+            "Using a single, large batch of tobacco for all treatments.",
+            "Conducting studies over multiple harvesting seasons and including multiple replications for each treatment.",
+            "Minimizing the number of variables measured to simplify analysis."
+        ],
+        answer: "Conducting studies over multiple harvesting seasons and including multiple replications for each treatment.",
+        explanation: "To account for variability, studies are often conducted over multiple seasons and include replications for each treatment (Source Report Sec 6.1)."
+    },
+    {
+        question: "In statistical analysis of flue-curing data, what is ANOVA (Analysis of Variance) commonly used for?",
+        options: [
+            "To determine the exact chemical formula of TSNAs.",
+            "To compare the mean values of a parameter (e.g., sugar content) across three or more different curing treatments.",
+            "To predict the future market price of tobacco.",
+            "To measure the physical dimensions of the curing barn."
+        ],
+        answer: "To compare the mean values of a parameter (e.g., sugar content) across three or more different curing treatments.",
+        explanation: "ANOVA is widely used to compare the means of three or more groups to see if there are statistically significant differences (Source Report Sec 7.1)."
+    },
+    {
+        question: "A Residual Prediction Deviation (RPD) value greater than 2.0 in a machine learning model for predicting tobacco chemical components generally suggests that the model:",
+        options: [
+            "Is not suitable for predictive purposes.",
+            "Requires significantly more data to be reliable.",
+            "Has good predictive capability.",
+            "Is likely overfitting the training data."
+        ],
+        answer: "Has good predictive capability.",
+        explanation: "An RPD value greater than or equal to 2 is generally considered to indicate that the model has good predictive capability (Source Report Sec 7.3)."
+    },
+    {
+        question: "How can specific curing procedures, like the 'dry-ball temperature set and wet-ball temperature degradation' method, affect the microbial communities on tobacco leaves?",
+        options: [
+            "They aim to completely sterilize the leaves of all microbes.",
+            "They can be more favorable for maintaining microbial diversity, which may impact quality.",
+            "They primarily promote the growth of harmful bacteria.",
+            "They have no significant impact on microbial communities."
+        ],
+        answer: "They can be more favorable for maintaining microbial diversity, which may impact quality.",
+        explanation: "Certain procedures can maintain microbial diversity, which may be linked to desirable transformations and quality (Source Report Sec 8.3)."
+    },
+    {
+        question: "What is a primary benefit of integrating solar energy into tobacco curing systems?",
+        options: [
+            "It allows for curing at sub-zero temperatures.",
+            "It significantly increases the nicotine content of the tobacco.",
+            "It reduces reliance on fossil fuels and can lower operational energy costs.",
+            "It eliminates the need for ventilation in the curing barn."
+        ],
+        answer: "It reduces reliance on fossil fuels and can lower operational energy costs.",
+        explanation: "Solar-assisted systems aim to reduce fossil fuel consumption and can lower operational energy costs (Source Report Sec 2.4, Table 2.1)."
+    },
+    {
+        question: "During which stage of flue-curing are the highest temperatures (e.g., up to 71-75°C) typically employed?",
+        options: [
+            "Yellowing Stage",
+            "Leaf Drying (Color Fixing) Stage",
+            "Stem Drying Stage",
+            "Re-ordering Stage"
+        ],
+        answer: "Stem Drying Stage",
+        explanation: "The stem drying stage uses the highest temperatures to thoroughly dry the resilient midribs and stems (Source Report Sec 5.1)."
+    },
+    {
+        question: "What is Near-Infrared Spectroscopy (NIRS) commonly used for in modern flue-curing research?",
+        options: [
+            "To measure the structural strength of the curing barn.",
+            "For rapid, non-destructive analysis of chemical components like sugars and nicotine in tobacco.",
+            "To identify different types of insects that may infest tobacco.",
+            "To monitor noise levels within the curing facility."
+        ],
+        answer: "For rapid, non-destructive analysis of chemical components like sugars and nicotine in tobacco.",
+        explanation: "NIRS is used for rapid, non-destructive analysis of conventional chemical components in cured tobacco (Source Report Sec 6.3)."
+    },
+    {
+        question: "What is a key challenge related to the operational aspect of advanced dehumidification systems in flue-curing?",
+        options: [
+            "They are too simple and offer limited control options.",
+            "The control complexity and need for skilled operators for installation, calibration, and maintenance.",
+            "They operate too slowly, significantly extending curing times.",
+            "They are only effective for very small batches of tobacco."
+        ],
+        answer: "The control complexity and need for skilled operators for installation, calibration, and maintenance.",
+        explanation: "The installation, calibration, operation, and maintenance of advanced control systems can be complex, requiring skilled operators (Source Report Sec 8.1)."
+    },
+    {
+        question: "The market grade of flue-cured tobacco, which determines its economic value, is based on:",
+        options: [
+            "The farmer's personal preference.",
+            "The geographical origin of the tobacco only.",
+            "Official standards (e.g., USDA) assessing physical attributes like color, body, texture, and injury.",
+            "The age of the curing barn used."
+        ],
+        answer: "Official standards (e.g., USDA) assessing physical attributes like color, body, texture, and injury.",
+        explanation: "Market grade is assigned based on official standards like those from the USDA, which assess a combination of physical attributes (Source Report Sec 3.4)."
+    },
+    {
+        question: "The movement of water vapor from the interior of a tobacco leaf to the surrounding air during curing is fundamentally a process of:",
+        options: [
+            "Nuclear fusion.",
+            "Sedimentation.",
+            "Mass transfer, driven by vapor pressure differences.",
+            "Chemical combustion."
+        ],
+        answer: "Mass transfer, driven by vapor pressure differences.",
+        explanation: "The removal of water from tobacco leaves is a mass transfer process, driven by a difference in water vapor pressure (Source Report Sec 1.3)."
+    },
+    {
+        question: "What is a primary advantage of using automated control systems with sensors in flue-curing?",
+        options: [
+            "They eliminate the need for any heating or dehumidification equipment.",
+            "They allow for manual adjustments to be made more frequently by operators.",
+            "They enhance consistency in cured leaf quality and reduce reliance on subjective operator judgment.",
+            "They are designed to maximize the moisture content of the cured leaves."
+        ],
+        answer: "They enhance consistency in cured leaf quality and reduce reliance on subjective operator judgment.",
+        explanation: "Automated systems aim to enhance consistency, reduce reliance on subjective judgment, and enable more sophisticated curing schedules (Source Report Sec 5.3)."
+    },
+    {
+        question: "In thermodynamics, 'temperature' is a measure of:",
+        options: [
+            "The total heat energy contained in a substance.",
+            "The average kinetic energy of the particles in a substance.",
+            "The heat capacity of a substance.",
+            "The rate of energy transfer."
+        ],
+        answer: "The average kinetic energy of the particles in a substance.",
+        explanation: "Temperature is a measure of the average kinetic energy of the atoms or molecules in a system."
+    },
+    {
+        question: "The First Law of Thermodynamics is often expressed as ΔU = Q - W. What does ΔU represent?",
+        options: [
+            "The work done by the system.",
+            "The heat added to the system.",
+            "The change in internal energy of the system.",
+            "The change in entropy of the system."
+        ],
+        answer: "The change in internal energy of the system.",
+        explanation: "In the equation ΔU = Q - W, ΔU represents the change in the internal energy of the system, Q is the heat added, and W is the work done by the system."
+    },
+    {
+        question: "Which of these is an example of heat transfer primarily by conduction in a curing barn setting?",
+        options: [
+            "Warm air rising from a heater.",
+            "Heat moving from the inside of a metal flue pipe to its outside surface.",
+            "Sunlight warming the tobacco leaves through a window.",
+            "A fan blowing air across the leaves."
+        ],
+        answer: "Heat moving from the inside of a metal flue pipe to its outside surface.",
+        explanation: "Conduction is heat transfer through direct contact within a material, like heat moving through the metal of a flue pipe."
+    },
+    {
+        question: "If the dry-bulb temperature of air is 30°C and its wet-bulb temperature is 20°C, what can be inferred about its relative humidity?",
+        options: [
+            "The relative humidity is 100%.",
+            "The relative humidity is very low.",
+            "The relative humidity is less than 100% and the air has drying potential.",
+            "The air is supersaturated."
+        ],
+        answer: "The relative humidity is less than 100% and the air has drying potential.",
+        explanation: "A wet-bulb depression (DBT-WBT > 0) indicates that the relative humidity is less than 100%, and the air can still absorb more moisture."
+    },
+    {
+        question: "When water evaporates from tobacco leaves, it absorbs energy from its surroundings. This energy is primarily used to:",
+        options: [
+            "Increase the temperature of the water vapor.",
+            "Break the chemical bonds within water molecules.",
+            "Overcome intermolecular forces and change liquid water to vapor (latent heat of vaporization).",
+            "Increase the kinetic energy of the remaining liquid water."
+        ],
+        answer: "Overcome intermolecular forces and change liquid water to vapor (latent heat of vaporization).",
+        explanation: "The energy absorbed during evaporation is primarily latent heat of vaporization, used to change the phase from liquid to gas."
+    },
+    {
+        question: "The Second Law of Thermodynamics helps explain why:",
+        options: [
+            "Energy is always conserved in any process.",
+            "Heat naturally flows from hotter objects to colder objects, not the other way around without work.",
+            "It's impossible to create a perpetual motion machine of the first kind.",
+            "Absolute zero temperature can be easily achieved."
+        ],
+        answer: "Heat naturally flows from hotter objects to colder objects, not the other way around without work.",
+        explanation: "The Second Law dictates the direction of spontaneous processes, including that heat flows from hot to cold, and that entropy tends to increase."
+    },
+    {
+        question: "What happens to the dew point temperature of an air parcel if moisture is added to it while keeping its pressure and dry-bulb temperature constant?",
+        options: [
+            "The dew point temperature decreases.",
+            "The dew point temperature increases.",
+            "The dew point temperature remains the same.",
+            "The dew point temperature becomes equal to the dry-bulb temperature."
+        ],
+        answer: "The dew point temperature increases.",
+        explanation: "Adding moisture means the air needs to be cooled less to reach saturation, so the dew point temperature increases."
+    },
+    {
+        question: "A heat pump used for dehumidification has a COP of 3.0. This means that for every 1 unit of electrical energy consumed by the heat pump:",
+        options: [
+            "It removes 3 units of moisture.",
+            "It delivers 3 units of useful heating/cooling effect.",
+            "It operates for 3 hours.",
+            "Its temperature increases by 3 degrees Celsius."
+        ],
+        answer: "It delivers 3 units of useful heating/cooling effect.",
+        explanation: "COP is the ratio of useful heat delivered (or removed) to the energy input. A COP of 3 means it delivers 3 units of useful thermal energy for every 1 unit of input energy."
+    },
+    {
+        question: "Heat transfer by radiation is unique because it:",
+        options: [
+            "Requires a medium (solid, liquid, or gas) to propagate.",
+            "Only occurs at very high temperatures.",
+            "Can occur through a vacuum (like space).",
+            "Is always less efficient than conduction or convection."
+        ],
+        answer: "Can occur through a vacuum (like space).",
+        explanation: "Radiation is the transfer of heat via electromagnetic waves and does not require a medium, unlike conduction and convection."
+    },
+    {
+        question: "In a closed system, if no heat is added or removed (Q=0) and no work is done (W=0), what does the First Law of Thermodynamics imply about the internal energy (U) of the system?",
+        options: [
+            "Internal energy increases.",
+            "Internal energy decreases.",
+            "Internal energy remains constant.",
+            "Internal energy becomes zero."
+        ],
+        answer: "Internal energy remains constant.",
+        explanation: "If Q=0 and W=0, then ΔU = Q - W = 0, meaning the internal energy does not change."
+    },
+    {
+        question: "How do traditional coal-fired bulk curing barns (TCCB) typically manage humidity, and what is a major consequence of this method related to energy?",
+        options: [
+            "By using desiccant wheels, which results in very dry tobacco but is energy intensive for regeneration.",
+            "By heating air to increase its moisture-carrying capacity and then venting the hot, moist air, leading to significant energy loss.",
+            "By cooling air using refrigerant cycles, which has high initial costs but low running costs.",
+            "By relying solely on natural ambient conditions and manual ventilation, resulting in inconsistent curing and minimal energy cost."
+        ],
+        answer: "By heating air to increase its moisture-carrying capacity and then venting the hot, moist air, leading to significant energy loss.",
+        explanation: "TCCBs often manage humidity by heating air and then venting the hot, moist air, which is an open-loop process leading to significant energy loss (Source Report Sec 2.1)."
+    },
+    {
+        question: "What is a key aspect of the patented method US8151804B2 aimed at preventing TSNA formation during tobacco curing?",
+        options: [
+            "Adding specific chemical inhibitors to the tobacco leaves before curing.",
+            "Using extremely low curing temperatures throughout all stages.",
+            "Maintaining sufficient airflow to prevent anaerobic conditions, alongside controlled humidity and temperature.",
+            "Exclusively using indirect solar energy for the entire curing process."
+        ],
+        answer: "Maintaining sufficient airflow to prevent anaerobic conditions, alongside controlled humidity and temperature.",
+        explanation: "The patent describes a method involving controlled airflow to prevent anaerobic conditions, plus humidity and temperature control, to minimize TSNA formation (Source Report Sec 3.3)."
+    },
+    {
+        question: "The significantly higher thermal efficiency of HPCB (e.g., 66.53%) compared to TCCB (e.g., 42.02%) is primarily attributed to:",
+        options: [
+            "HPCBs using a more potent and efficient fuel source.",
+            "TCCBs having superior insulation materials in their construction.",
+            "HPCBs recovering and reusing energy from the moist exhaust air in a closed-loop operation.",
+            "HPCBs operating at much lower overall temperatures, thus requiring less energy input."
+        ],
+        answer: "HPCBs recovering and reusing energy from the moist exhaust air in a closed-loop operation.",
+        explanation: "HPCBs' closed-loop operation with energy recovery (reusing heat from condensation) is the main reason for their higher thermal efficiency compared to TCCBs which vent heated air (Source Report Sec 4.1)."
+    },
+    {
+        question: "What is a potential negative consequence of insufficient ventilation during tobacco curing, particularly in relation to moisture levels?",
+        options: [
+            "The tobacco leaves drying out too quickly, leading to brittleness.",
+            "A significant increase in fuel consumption due to the need for constant reheating.",
+            "Excessively high humidity levels, which can slow down the drying process and potentially cause 'houseburn' (rot).",
+            "The formation of ice crystals on the tobacco leaves if ambient temperatures are low."
+        ],
+        answer: "Excessively high humidity levels, which can slow down the drying process and potentially cause 'houseburn' (rot).",
+        explanation: "Insufficient ventilation can lead to excessively high humidity, slowing drying and potentially causing 'houseburn' or other quality defects (Source Report Sec 5.2)."
+    },
+    {
+        question: "In flue-curing research, parameters such as sugar content, nicotine levels, TSNA concentrations, and total nitrogen would be categorized as:",
+        options: [
+            "Barn environmental control parameters.",
+            "Physical characteristics of the cured leaf.",
+            "Chemical composition of the cured leaf.",
+            "Energy consumption and economic indicators."
+        ],
+        answer: "Chemical composition of the cured leaf.",
+        explanation: "These are all measures of the leaf's chemical composition, which are critical quality indicators (Source Report Sec 6.2)."
+    },
+    {
+        question: "For what purpose are Fuzzy Logic Controllers, ANNs, or ANFIS sometimes employed in the context of tobacco curing, according to the report?",
+        options: [
+            "To accurately measure the weight of tobacco leaves before and after curing.",
+            "To model complex, non-linear curing dynamics for more adaptive and intelligent control of the curing environment.",
+            "To analyze the genetic makeup of different tobacco cultivars to predict their curing behavior.",
+            "To forecast long-term global tobacco market prices based on current curing trends."
+        ],
+        answer: "To model complex, non-linear curing dynamics for more adaptive and intelligent control of the curing environment.",
+        explanation: "Fuzzy logic, ANNs, and ANFIS are used for modeling complex curing dynamics to achieve more intelligent and adaptive control (Source Report Sec 7.2, 5.3)."
+    },
+    {
+        question: "What is an innovative feature of the curing barn design described in patent CN201444911U?",
+        options: [
+            "It utilizes individual, sealed curing chambers for each tobacco leaf to ensure perfect uniformity.",
+            "It transforms the traditional time-sequenced curing stages into a spatially sequenced process using connected drying tunnels with gradient conditions.",
+            "It relies entirely on microwave radiation for drying, eliminating the need for heated air.",
+            "It is designed for curing tobacco under high-pressure conditions to accelerate chemical changes."
+        ],
+        answer: "It transforms the traditional time-sequenced curing stages into a spatially sequenced process using connected drying tunnels with gradient conditions.",
+        explanation: "The patent CN201444911U describes a novel barn design with multiple separated drying tunnels, allowing tobacco to move through continuous, gradient temperature and humidity zones (Source Report Sec 8.2)."
+    },
+    {
+        question: "What is suggested as a future research need for a more holistic and sustainable evaluation of dehumidification technologies in tobacco curing?",
+        options: [
+            "Focusing solely on the initial capital cost and payback period of new equipment.",
+            "Conducting comprehensive Life Cycle Assessments (LCAs) that consider embodied energy, refrigerant impacts, and end-of-life disposal.",
+            "Testing new technologies exclusively on a single, standardized tobacco variety to reduce variables.",
+            "Reducing the number and complexity of sensors used in curing barns to simplify data collection."
+        ],
+        answer: "Conducting comprehensive Life Cycle Assessments (LCAs) that consider embodied energy, refrigerant impacts, and end-of-life disposal.",
+        explanation: "Comprehensive Life Cycle Assessments (LCAs) are suggested for a more holistic view of sustainability, considering factors beyond just operational energy and costs (Source Report Sec 8.4)."
+    },
+    {
+        question: "If the temperature of a sealed container of air is increased, what happens to the pressure inside, assuming the volume remains constant?",
+        options: [
+            "The pressure decreases.",
+            "The pressure increases.",
+            "The pressure remains the same.",
+            "The pressure change depends on the initial humidity."
+        ],
+        answer: "The pressure increases.",
+        explanation: "According to Gay-Lussac's Law (related to the Ideal Gas Law), for a fixed amount of gas at constant volume, the pressure is directly proportional to its absolute temperature."
+    },
+    {
+        question: "The process of water evaporating from the tobacco leaves and being carried away by air currents within the barn is an example of what type of heat and mass transfer?",
+        options: [
+            "Purely conductive heat transfer.",
+            "Convective heat and mass transfer.",
+            "Radiative heat transfer only.",
+            "Adsorptive mass transfer only."
+        ],
+        answer: "Convective heat and mass transfer.",
+        explanation: "The movement of air (convection) carries away both heat and the evaporated moisture (mass) from the leaves."
+    }
+];
+
+let currentQuestionIndex = 0;
+let userAnswers = new Array(quizData.length).fill(null);
+let score = 0;
+
+const questionContainer = document.getElementById('question-container');
+const questionTextElement = document.getElementById('question-text');
+const answerOptionsElement = document.getElementById('answer-options');
+const prevButton = document.getElementById('prev-button');
+const nextButton = document.getElementById('next-button');
+const submitButton = document.getElementById('submit-button');
+const resultsArea = document.getElementById('results-area');
+const quizArea = document.getElementById('quiz-area');
+const scoreElement = document.getElementById('score');
+const totalScoreElement = document.getElementById('total-score');
+const scorePercentageElement = document.getElementById('score-percentage');
+const retryButton = document.getElementById('retry-button');
+const questionNumberElement = document.getElementById('question-number');
+const totalQuestionsElement = document.getElementById('total-questions');
+const progressBar = document.getElementById('progress-bar');
+const feedbackArea = document.getElementById('feedback-area');
+const incorrectAnswersSummary = document.getElementById('incorrect-answers-summary');
+const incorrectList = document.getElementById('incorrect-list');
+
+
+function loadQuestion(index) {
+    const currentQuestion = quizData[index];
+    questionTextElement.textContent = currentQuestion.question;
+    questionNumberElement.textContent = index + 1;
+    answerOptionsElement.innerHTML = '';
+    feedbackArea.innerHTML = '';
+
+    currentQuestion.options.forEach((option, i) => {
+        const optionId = `q${index}_option${i}`;
+        const div = document.createElement('div');
+        div.className = 'answer-option';
+        
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = `question${index}`;
+        input.value = option;
+        input.id = optionId;
+        input.className = 'sr-only'; // Tailwind class to hide default radio
+        if (userAnswers[index] === option) {
+            input.checked = true;
+        }
+        input.addEventListener('change', () => {
+            userAnswers[index] = option;
+            feedbackArea.innerHTML = ''; // Clear feedback on new selection
+        });
+
+        const label = document.createElement('label');
+        label.htmlFor = optionId;
+        label.textContent = option;
+        label.className = 'block w-full p-3 border border-gray-300 rounded-md cursor-pointer hover:bg-indigo-100 text-sm';
+        
+        div.appendChild(input);
+        div.appendChild(label);
+        answerOptionsElement.appendChild(div);
+    });
+
+    updateNavigationButtons();
+    updateProgressBar();
+}
+
+function updateNavigationButtons() {
+    prevButton.disabled = currentQuestionIndex === 0;
+    if (currentQuestionIndex === quizData.length - 1) {
+        nextButton.classList.add('hidden');
+        submitButton.classList.remove('hidden');
+    } else {
+        nextButton.classList.remove('hidden');
+        submitButton.classList.add('hidden');
+    }
+}
+
+function updateProgressBar() {
+    const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+    progressBar.style.width = `${progress}%`;
+}
+
+// This function is not currently called immediately after each answer, but can be if desired.
+function showFeedback(isCorrect, correctAnswer, explanation) {
+    if (isCorrect) {
+        feedbackArea.innerHTML = `<p class="text-green-600 font-medium">Correct!</p>`;
+    } else {
+        feedbackArea.innerHTML = `
+            <p class="text-red-600 font-medium">Incorrect.</p>
+            <p class="text-gray-700">The correct answer is: <strong>${correctAnswer}</strong></p>
+            <p class="text-xs text-gray-500 mt-1">${explanation}</p>
+        `;
+    }
+}
+
+prevButton.addEventListener('click', () => {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion(currentQuestionIndex);
+    }
+});
+
+nextButton.addEventListener('click', () => {
+    if (userAnswers[currentQuestionIndex] === null) {
+        feedbackArea.innerHTML = `<p class="text-red-500">Please select an answer before proceeding.</p>`;
+        return;
+    }
+    
+    if (currentQuestionIndex < quizData.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion(currentQuestionIndex);
+    }
+});
+
+submitButton.addEventListener('click', () => {
+    if (userAnswers[currentQuestionIndex] === null && currentQuestionIndex === quizData.length -1) {
+         feedbackArea.innerHTML = `<p class="text-red-500">Please select an answer for the last question.</p>`;
+        return;
+    }
+    calculateScore();
+    displayResults();
+});
+
+function calculateScore() {
+    score = 0;
+    quizData.forEach((question, index) => {
+        if (userAnswers[index] === question.answer) {
+            score++;
+        }
+    });
+}
+
+function displayResults() {
+    quizArea.classList.add('hidden');
+    resultsArea.classList.remove('hidden');
+    scoreElement.textContent = score;
+    totalScoreElement.textContent = quizData.length;
+    const percentage = (score / quizData.length) * 100;
+    scorePercentageElement.textContent = `${percentage.toFixed(1)}%`;
+
+    incorrectList.innerHTML = '';
+    if (score === quizData.length) {
+        incorrectAnswersSummary.innerHTML = '<p class="text-green-600 font-semibold">Congratulations! You got all answers correct!</p>';
+    } else {
+        incorrectAnswersSummary.innerHTML = '<h3 class="font-semibold text-md mb-2">Review your incorrect answers:</h3>';
+        quizData.forEach((question, index) => {
+            if (userAnswers[index] !== question.answer) {
+                const li = document.createElement('li');
+                li.className = 'p-2 border border-red-200 bg-red-50 rounded-md';
+                li.innerHTML = `
+                    <p class="font-medium">Q${index + 1}: ${question.question}</p>
+                    <p class="text-red-700">Your answer: ${userAnswers[index] || "Not answered"}</p>
+                    <p class="text-green-700">Correct answer: ${question.answer}</p>
+                    <p class="text-xs text-gray-500 mt-1"><em>${question.explanation}</em></p>
+                `;
+                incorrectList.appendChild(li);
+            }
+        });
+         if (incorrectList.children.length === 0 && score < quizData.length) { 
+            incorrectAnswersSummary.innerHTML = '<p>Something went wrong with displaying incorrect answers, or all non-answered questions were somehow marked correct.</p>';
+        }
+    }
+}
+
+retryButton.addEventListener('click', () => {
+    currentQuestionIndex = 0;
+    userAnswers.fill(null);
+    score = 0;
+    quizArea.classList.remove('hidden');
+    resultsArea.classList.add('hidden');
+    feedbackArea.innerHTML = '';
+    incorrectAnswersSummary.innerHTML = '<h3 class="font-semibold text-md mb-2">Review your answers:</h3>';
+    incorrectList.innerHTML = '';
+    loadQuestion(currentQuestionIndex);
+});
+
+// Initial load
+totalQuestionsElement.textContent = quizData.length;
+loadQuestion(currentQuestionIndex);
+
+</script>
+</body>
+</html>
