@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tobacco Fertilization Research Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .quiz-container { max-width: 800px; margin: auto; }
+        .question-card { background-color: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .option-button {
+            display: block; width: 100%; text-align: left;
+            padding: 0.75rem 1rem; margin-bottom: 0.5rem;
+            border: 1px solid #e5e7eb; border-radius: 0.375rem;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        .option-button:hover { background-color: #f3f4f6; }
+        .option-button.selected { background-color: #d1fae5; border-color: #10b981; } /* Light green for selected */
+        .option-button.correct { background-color: #a7f3d0; border-color: #059669; } /* Green for correct in review */
+        .option-button.incorrect { background-color: #fecaca; border-color: #ef4444; } /* Red for incorrect in review */
+        .nav-button {
+            padding: 0.5rem 1.5rem; border-radius: 0.375rem; font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .progress-bar-bg { background-color: #e5e7eb; }
+        .progress-bar-fg { background-color: #10b981; transition: width 0.3s ease-in-out; }
+        .review-item { border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1rem; }
+        .rationale { font-size: 0.875rem; color: #4b5563; margin-top: 0.25rem; }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div id="quizApp" class="quiz-container w-full">
+        <div id="quizHeader" class="mb-6 text-center">
+            <h1 class="text-3xl font-bold text-emerald-700">Tobacco Fertilization Quiz</h1>
+            <p class="text-stone-600">Test your knowledge on N & K effects in tobacco.</p>
+        </div>
+
+        <div id="quizArea" class="question-card p-6 md:p-8">
+            <div id="progressContainer" class="mb-4">
+                <p id="questionCounter" class="text-sm text-stone-500 text-right mb-1">Question 1 of 50</p>
+                <div class="progress-bar-bg w-full h-2 rounded-full overflow-hidden">
+                    <div id="progressBar" class="progress-bar-fg h-full" style="width: 2%;"></div>
+                </div>
+            </div>
+
+            <h2 id="questionText" class="text-xl font-semibold mb-2">Question text will load here.</h2>
+            <p id="questionHint" class="text-sm text-stone-500 mb-6">Hint will appear here.</p>
+            <div id="optionsContainer" class="space-y-3">
+                </div>
+            <div class="mt-8 flex justify-between items-center">
+                <button id="nextButton" class="nav-button bg-emerald-600 hover:bg-emerald-700 text-white">Next Question</button>
+            </div>
+        </div>
+
+        <div id="resultArea" class="hidden question-card p-6 md:p-8 text-center">
+            <h2 class="text-2xl font-bold text-emerald-700 mb-4">Quiz Completed!</h2>
+            <p id="scoreText" class="text-xl mb-6">Your score: 0/50</p>
+            <button id="reviewButton" class="nav-button bg-blue-600 hover:bg-blue-700 text-white">Review Answers</button>
+        </div>
+
+        <div id="reviewArea" class="hidden mt-8">
+            <h2 class="text-2xl font-bold text-emerald-700 mb-6 text-center">Answer Review</h2>
+            </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // Section I: Introduction
+            {
+                question: "According to the report, which two macronutrients are most critical for the ultimate quality of cured tobacco leaf?",
+                options: [
+                    { text: "Phosphorus and Calcium", rationale: "While important, phosphorus and calcium are not highlighted as the *most* critical for overall cured leaf quality in the introduction.", isCorrect: false },
+                    { text: "Nitrogen and Potassium", rationale: "The introduction explicitly states N and K profoundly influence growth, yield, and most critically, the ultimate quality of the cured leaf.", isCorrect: true },
+                    { text: "Magnesium and Sulfur", rationale: "Magnesium and sulfur are essential, but N and K are emphasized for their broader and more critical impact on quality.", isCorrect: false },
+                    { text: "Iron and Zinc", rationale: "Iron and zinc are micronutrients; the question asks about macronutrients with the most critical impact on quality.", isCorrect: false }
+                ],
+                hint: "Think about the two nutrients that the entire report focuses on."
+            },
+            {
+                question: "What is a primary challenge associated with Muriate of Potash (KCl) as a K source for tobacco?",
+                options: [
+                    { text: "Its low potassium content.", rationale: "KCl is a high-analysis K fertilizer; its K content is not the primary issue.", isCorrect: false },
+                    { text: "Its tendency to cause nitrogen loss.", rationale: "KCl's primary issue is not related to nitrogen loss but to another element it contains.", isCorrect: false },
+                    { text: "Its high chloride content detrimental to burn quality.", rationale: "The report highlights that chloride from KCl is particularly detrimental to tobacco burn characteristics.", isCorrect: true },
+                    { text: "Its poor solubility in water.", rationale: "KCl is generally quite soluble; solubility is not its main drawback for tobacco.", isCorrect: false }
+                ],
+                hint: "Consider the chemical formula of Muriate of Potash and which of its components negatively affects tobacco."
+            },
+            // Section II: Nitrogen Fertilization
+            {
+                question: "Which form of nitrogen is generally preferred by flue-cured tobacco?",
+                options: [
+                    { text: "Ammonium ($NH_4^+$)", rationale: "Excessive ammonium uptake can lead to reductions in yield and quality; it's not the preferred form.", isCorrect: false },
+                    { text: "Urea", rationale: "Urea must first be hydrolyzed to ammonium and then potentially nitrified; it's not directly preferred.", isCorrect: false },
+                    { text: "Nitrate ($NO_3^-$)", rationale: "The report states that for flue-cured tobacco, nitrate is generally considered the preferred N source due to efficient uptake and assimilation.", isCorrect: true },
+                    { text: "Organic Nitrogen", rationale: "While organic N is valuable, the report discusses inorganic forms for preferential uptake, highlighting nitrate.", isCorrect: false }
+                ],
+                hint: "This N form is associated with efficient uptake mechanisms and assimilation pathways in tobacco leaves."
+            },
+            {
+                question: "What is a key strategy mentioned for mitigating ammonium ($NH_4^+$) toxicity in tobacco?",
+                options: [
+                    { text: "Increasing phosphorus supply", rationale: "While phosphorus is essential, the report specifically links another nutrient to mitigating ammonium toxicity.", isCorrect: false },
+                    { text: "Ensuring an adequate supply of Potassium ($K^+$)", rationale: "The report states that adequate potassium plays a crucial role in maintaining ionic balance and mitigating ammonium stress.", isCorrect: true },
+                    { text: "Applying more nitrogen in nitrate form", rationale: "While nitrate is preferred, simply adding more nitrate doesn't directly ameliorate existing ammonium toxicity as effectively as another specific nutrient.", isCorrect: false },
+                    { text: "Liming the soil to raise pH", rationale: "Soil pH is important, but the direct amelioration strategy highlighted involves a specific nutrient interaction.", isCorrect: false }
+                ],
+                hint: "This nutrient helps maintain ionic balance within plant cells under ammonium stress."
+            },
+            {
+                question: "What is the typical effect of increased Nitrogen (N) fertilization on nicotine content in tobacco leaves?",
+                options: [
+                    { text: "Decreases nicotine content", rationale: "Nitrogen is a fundamental component of the nicotine molecule, so increasing N generally doesn't decrease it.", isCorrect: false },
+                    { text: "Has no significant effect on nicotine content", rationale: "Nitrogen availability directly impacts the synthesis of nitrogen-containing compounds like nicotine.", isCorrect: false },
+                    { text: "Generally increases nicotine content", rationale: "As N is a key component of nicotine, N fertilization generally leads to an increase in nicotine content.", isCorrect: true },
+                    { text: "Increases nicotine content only if potassium is deficient", rationale: "While nutrient balance is important, the primary effect of N on nicotine is direct due to its composition.", isCorrect: false }
+                ],
+                hint: "Consider the chemical composition of nicotine."
+            },
+            {
+                question: "What is the main benefit of split nitrogen application, especially via drip irrigation (fertigation)?",
+                options: [
+                    { text: "It primarily reduces the cost of fertilizer.", rationale: "While efficiency might lead to some cost savings, the primary benefit is related to nutrient uptake and utilization.", isCorrect: false },
+                    { text: "It significantly increases soil organic matter.", rationale: "Split N application focuses on nutrient delivery to the plant, not directly on building soil organic matter.", isCorrect: false },
+                    { text: "It improves N uptake and utilization efficiency.", rationale: "The report highlights that split N application, especially with fertigation, improves N uptake and utilization efficiency by matching supply with plant demand.", isCorrect: true },
+                    { text: "It eliminates the risk of nitrate leaching.", rationale: "While it can reduce leaching by better matching plant needs, it doesn't completely eliminate the risk, especially if over-applied.", isCorrect: false }
+                ],
+                hint: "This strategy aims to match nutrient supply with the plant's demand throughout its growth stages."
+            },
+            {
+                question: "Molybdenum (Mo) synergy with Nitrogen (N) is crucial because Mo is an indispensable component of which enzyme?",
+                options: [
+                    { text: "Urease", rationale: "Urease is involved in urea breakdown and its key metal cofactor is nickel, not molybdenum.", isCorrect: false },
+                    { text: "Nitrate Reductase (NR)", rationale: "The report states Mo is an indispensable component of nitrate reductase, which catalyzes the first step in nitrate assimilation.", isCorrect: true },
+                    { text: "Glutamine Synthetase (GS)", rationale: "GS is vital for ammonia assimilation into amino acids but is not directly Mo-dependent.", isCorrect: false },
+                    { text: "Phosphatase", rationale: "Phosphatases are involved in phosphorus metabolism and do not primarily depend on molybdenum for N synergy.", isCorrect: false }
+                ],
+                hint: "This enzyme is involved in the first step of converting nitrate into a usable form for the plant."
+            },
+             {
+                question: "According to Table 1, which N source/strategy is noted for significantly increasing Nitrate Reductase activity by up to 107-fold?",
+                options: [
+                    { text: "Balanced Nitrate-Ammonium", rationale: "Balanced N can improve enzyme activity, but the 107-fold increase is specifically linked to a micronutrient synergy.", isCorrect: false },
+                    { text: "Split N Application", rationale: "Split application improves N use efficiency but doesn't directly cause such a massive specific enzyme activity boost without other factors.", isCorrect: false },
+                    { text: "N + Molybdenum (Mo)", rationale: "Table 1 and the text highlight that N + Mo synergy led to a 107-fold increase in nitrate reductase activity.", isCorrect: true },
+                    { text: "Urea-based", rationale: "Urea's effects are mediated by its conversion products; the specific enzyme boost is tied to Mo.", isCorrect: false }
+                ],
+                hint: "This involves a micronutrient essential for the function of an enzyme that processes nitrate."
+            },
+            // Section III: Potassium Fertilization
+            {
+                question: "Which potassium (K) source is often preferred for tobacco due to its negligible chloride content?",
+                options: [
+                    { text: "Muriate of Potash (KCl)", rationale: "KCl has a very high chloride content, making it generally unsuitable for high-quality tobacco.", isCorrect: false },
+                    { text: "Sulfate of Potash (SOP)", rationale: "The report states SOP is often preferred for chloride-sensitive crops like tobacco as it contains negligible chloride.", isCorrect: true },
+                    { text: "Potassium Chloride (KCl)", rationale: "This is another name for Muriate of Potash and shares the same high chloride issue.", isCorrect: false },
+                    { text: "Ammonium Chloride", rationale: "This is primarily a nitrogen source and also contains chloride, which is undesirable.", isCorrect: false }
+                ],
+                hint: "This K source avoids the detrimental effects of chloride on burn quality."
+            },
+            {
+                question: "What is the primary negative impact of high chloride (Cl⁻) levels from Muriate of Potash (KCl) on tobacco leaf quality?",
+                options: [
+                    { text: "Reduced leaf size", rationale: "While severe toxicity can affect growth, the most cited primary negative impact of chloride is on a specific quality aspect.", isCorrect: false },
+                    { text: "Lowered nicotine content", rationale: "Chloride's main impact is not on nicotine levels but on how the leaf performs when used.", isCorrect: false },
+                    { text: "Impaired burn quality", rationale: "The report repeatedly emphasizes that elevated chloride levels are strongly associated with impaired burn quality.", isCorrect: true },
+                    { text: "Increased susceptibility to fungal diseases", rationale: "While nutrient balance affects disease, chloride's direct, well-known negative effect is on combustion.", isCorrect: false }
+                ],
+                hint: "This quality aspect relates to how the tobacco performs when ignited."
+            },
+            {
+                question: "Which K source is consistently reported to significantly improve fire-holding capacity and is considered one of the best for this attribute?",
+                options: [
+                    { text: "Potassium Nitrate ($KNO_3$)", rationale: "$KNO_3$ promotes good fire-holding but can cause sparkling and dark ash if excessive; another source is cited as 'best' for this specific attribute.", isCorrect: false },
+                    { text: "Sulfate of Potash (SOP)", rationale: "SOP is good for burn quality due to low chloride, but another K source is specifically highlighted for its superior effect on fire-holding capacity.", isCorrect: false },
+                    { text: "Muriate of Potash (KCl)", rationale: "KCl is detrimental to fire-holding capacity due to its high chloride content.", isCorrect: false },
+                    { text: "Potassium Carbonate ($K_2CO_3$)", rationale: "The report states that potassium carbonate is highly regarded and consistently reported to significantly improve fire-holding capacity.", isCorrect: true }
+                ],
+                hint: "This K source is praised for its direct and strong positive effect on the leaf's ability to continue smoldering."
+            },
+            {
+                question: "What is a potential benefit of using Potassium Fulvic Acid (PFA) as a K source, beyond K nutrition?",
+                options: [
+                    { text: "Significantly lowers soil pH", rationale: "PFA is noted for improving soil physicochemical properties, which may include pH adjustments, but not necessarily significant lowering as its primary benefit.", isCorrect: false },
+                    { text: "Increases soil chloride content", rationale: "PFA is an organic source and is not associated with increasing chloride, unlike KCl.", isCorrect: false },
+                    { text: "Improves soil physicochemical properties and microbial communities", rationale: "The report indicates PFA can increase soil organic matter, improve nutrient availability, and enhance beneficial soil microbial communities.", isCorrect: true },
+                    { text: "Primarily acts as a slow-release K fertilizer", rationale: "While it provides K, its broader benefits to soil health are a key distinguishing feature.", isCorrect: false }
+                ],
+                hint: "This emerging organic K source offers advantages related to overall soil vitality."
+            },
+            {
+                question: "Historically, what organic material, a byproduct of tobacco itself, has been used as a K source that also contributes other nutrients and organic matter?",
+                options: [
+                    { text: "Cottonseed meal", rationale: "Cottonseed meal is an organic fertilizer but not a direct byproduct of tobacco used for K.", isCorrect: false },
+                    { text: "Tobacco Stems", rationale: "The report mentions that tobacco stems have historically been used and can supply K, other nutrients, and organic matter.", isCorrect: true },
+                    { text: "Bone meal", rationale: "Bone meal is a source of phosphorus and calcium, not primarily K from tobacco byproducts.", isCorrect: false },
+                    { text: "Wood ash", rationale: "Wood ash contains potassium but is not a byproduct of the tobacco crop itself.", isCorrect: false }
+                ],
+                hint: "Think about recycling parts of the tobacco plant itself as a fertilizer."
+            },
+            {
+                question: "According to Table 2, which K source provides Magnesium (Mg) beneficial for ash color, in addition to K and Sulfur?",
+                options: [
+                    { text: "Potassium Nitrate ($KNO_3$)", rationale: "$KNO_3$ provides K and N, but not significantly Mg or S in the context of ash color benefits mentioned in Table 2.", isCorrect: false },
+                    { text: "Sulfate of Potash-Magnesia", rationale: "Table 2 indicates this source (e.g., Langbeinite) supplies K, Mg, and S, with Mg being beneficial for whiter ash.", isCorrect: true },
+                    { text: "Muriate of Potash (KCl)", rationale: "KCl primarily supplies K and Cl, not Mg or S for ash benefits.", isCorrect: false },
+                    { text: "Potassium Carbonate ($K_2CO_3$)", rationale: "$K_2CO_3$ is excellent for burn but is not noted in Table 2 for providing Mg for ash color.", isCorrect: false }
+                ],
+                hint: "This fertilizer is specifically noted for containing magnesium, which influences ash appearance."
+            },
+            // Section IV: N-K Interactions
+            {
+                question: "What was the optimal $NH_4^+:K^+$ ratio found for tobacco seedling LEAF and ROOT growth in hydroponic studies?",
+                options: [
+                    { text: "1:2 ($NH_4^+:K^+$)", rationale: "The 1:2 ratio was found to be optimal for stem growth, not leaves and roots.", isCorrect: false },
+                    { text: "2:1 ($NH_4^+:K^+$)", rationale: "A higher ammonium to potassium ratio would likely be detrimental, not optimal for these sensitive organs.", isCorrect: false },
+                    { text: "1:1 ($NH_4^+:K^+$)", rationale: "The report states that optimal growth of leaves and roots was achieved with a 1:1 ratio of $NH_4^+$ and $K^+$ (2mM each).", isCorrect: true },
+                    { text: "3:1 ($NH_4^+:K^+$)", rationale: "This ratio would represent excessive ammonium relative to potassium, likely leading to toxicity.", isCorrect: false }
+                ],
+                hint: "The report specifies different optimal ratios for different plant parts of seedlings."
+            },
+            {
+                question: "The efficacy of K fertilization is often diminished under what condition related to Nitrogen?",
+                options: [
+                    { text: "High nitrate availability", rationale: "High nitrate is generally preferred; the issue arises with a lack of N.", isCorrect: false },
+                    { text: "Low Nitrogen (N) availability", rationale: "The report mentions that in conditions of low N availability, the positive effect of K fertilizer is often diminished.", isCorrect: true },
+                    { text: "High ammonium availability", rationale: "High ammonium can cause toxicity, but the question relates to K efficacy being diminished due_to_ N status.", isCorrect: false },
+                    { text: "Balanced N:K ratio", rationale: "A balanced N:K ratio is generally desirable for optimal K efficacy.", isCorrect: false }
+                ],
+                hint: "Potassium's benefits are more apparent when another key nutrient is not limiting."
+            },
+            {
+                question: "What does the interaction between N and K significantly affect, indicating they should not be managed in isolation?",
+                options: [
+                    { text: "Only soil pH", rationale: "While they can influence soil pH, their interaction affects a much broader range of plant parameters.", isCorrect: false },
+                    { text: "Primarily the color of the flower", rationale: "Flower color is not a primary focus of N and K interaction in the context of tobacco yield and quality.", isCorrect: false },
+                    { text: "Dry leaf yield, biomass, harvest index, and leaf nutrient concentrations", rationale: "The report lists these and other parameters as being significantly affected by N-K interactions.", isCorrect: true },
+                    { text: "Only the rate of water uptake", rationale: "While K is involved in osmoregulation, their interaction has wider implications for overall plant performance.", isCorrect: false }
+                ],
+                hint: "Consider the broad impact of these two major nutrients on overall plant productivity and nutrient partitioning."
+            },
+            // Section V: Environmental Footprint
+            {
+                question: "What is a major environmental concern associated with nitrate-based fertilizers?",
+                options: [
+                    { text: "Increased soil salinity", rationale: "While some fertilizers contribute to salinity, the primary concern for nitrates specifically is related to water quality.", isCorrect: false },
+                    { text: "Nitrate leaching and groundwater contamination", rationale: "The report highlights nitrate leaching as a significant risk, potentially contaminating groundwater.", isCorrect: true },
+                    { text: "Excessive release of phosphorus", rationale: "Nitrate fertilizers are sources of nitrogen, not phosphorus; phosphorus pollution is a separate issue.", isCorrect: false },
+                    { text: "Depletion of atmospheric nitrogen", rationale: "Fertilizers add nitrogen to the system; they don't deplete atmospheric nitrogen.", isCorrect: false }
+                ],
+                hint: "This concern relates to the high mobility of nitrate in soil and its potential impact on water resources."
+            },
+            {
+                question: "The use of nitrogen-containing fertilizers is a major anthropogenic source of which potent greenhouse gas?",
+                options: [
+                    { text: "Methane ($CH_4$)", rationale: "Methane is a potent greenhouse gas, but it's primarily associated with livestock and anaerobic decomposition, not directly with N fertilizer application in the same way as another gas.", isCorrect: false },
+                    { text: "Carbon Dioxide ($CO_2$)", rationale: "$CO_2$ is a major greenhouse gas, but N fertilizers are more directly linked to emissions of a different nitrogen-based GHG.", isCorrect: false },
+                    { text: "Nitrous Oxide ($N_2O$)", rationale: "The report states that N fertilizer use is a major source of nitrous oxide, a potent greenhouse gas.", isCorrect: true },
+                    { text: "Sulfur Dioxide ($SO_2$)", rationale: "$SO_2$ is an air pollutant primarily from burning fossil fuels containing sulfur, not directly from N fertilizers.", isCorrect: false }
+                ],
+                hint: "This greenhouse gas contains nitrogen and has a much higher global warming potential than $CO_2$."
+            },
+            {
+                question: "Continuous application of which type of N fertilizer is particularly prone to causing soil acidification?",
+                options: [
+                    { text: "Nitrate-based fertilizers like Calcium Nitrate", rationale: "While any N source can influence pH over time, another form is more directly linked to releasing H+ ions.", isCorrect: false },
+                    { text: "Ammonium-based fertilizers", rationale: "The report states ammonium-based fertilizers are particularly prone to causing acidification due to the nitrification process releasing H+ ions.", isCorrect: true },
+                    { text: "Urea", rationale: "Urea hydrolysis initially raises pH, though subsequent nitrification of ammonium can lead to acidification. Ammonium-based fertilizers have a more direct acidifying step.", isCorrect: false },
+                    { text: "Organic nitrogen fertilizers", rationale: "Organic N sources have complex effects on pH, often buffering it or having less direct acidifying pressure than specific inorganic forms.", isCorrect: false }
+                ],
+                hint: "The microbial conversion of this nitrogen form in the soil releases hydrogen ions."
+            },
+            {
+                question: "What is a primary soil concern related to the use of Muriate of Potash (KCl)?",
+                options: [
+                    { text: "Depletion of soil organic matter", rationale: "KCl's primary impact isn't on organic matter depletion but on soil chemistry.", isCorrect: false },
+                    { text: "Increased soil pH", rationale: "KCl is a neutral salt and doesn't typically increase soil pH; its concern is more related to salt content.", isCorrect: false },
+                    { text: "Soil salinity and chloride accumulation", rationale: "The report mentions that KCl can contribute to soil salinity and chloride accumulation, which can be detrimental.", isCorrect: true },
+                    { text: "Reduced soil aeration", rationale: "While severe salinity can affect soil structure, the direct chemical impact of KCl relates to its ionic components.", isCorrect: false }
+                ],
+                hint: "This K source adds two ions to the soil, one of which can accumulate and cause issues beyond just K nutrition."
+            },
+            {
+                question: "Which of the following is NOT listed as a pathway towards sustainable N and K fertilization in the report?",
+                options: [
+                    { text: "Precision Nutrient Management", rationale: "Precision nutrient management is listed as a key pathway towards sustainability.", isCorrect: false },
+                    { text: "Integrated Nutrient Management (INM)", rationale: "INM, combining mineral and organic sources, is highlighted as a sustainable approach.", isCorrect: false },
+                    { text: "Exclusive reliance on Muriate of Potash for K", rationale: "Exclusive reliance on MOP is problematic due to its chloride content; sustainable pathways focus on better K sources and balanced approaches.", isCorrect: true },
+                    { text: "Optimized Irrigation Management (e.g., Drip Irrigation)", rationale: "Optimized irrigation, like drip systems, is mentioned for improving nutrient use efficiency.", isCorrect: false }
+                ],
+                hint: "Think about which K source has significant drawbacks for tobacco quality and soil health."
+            },
+             {
+                question: "Potassium Fulvic Acid (PFA) application has been shown to increase the relative abundance of which beneficial microbial group in soil?",
+                options: [
+                    { text: "Pathogenic nematodes", rationale: "PFA is noted for inhibiting soil-borne pathogens, not increasing pathogenic nematodes.", isCorrect: false },
+                    { text: "Anaerobic methanogens", rationale: "The report links PFA to aerobic beneficial groups, not specifically anaerobic methanogens.", isCorrect: false },
+                    { text: "Ascomycetes, Bacillus, and Proteobacteria", rationale: "The report states PFA can increase the relative abundance of beneficial groups like Ascomycetes, Bacillus, and Proteobacteria.", isCorrect: true },
+                    { text: "Denitrifying bacteria exclusively", rationale: "While it enhances microbial communities, it's not limited to exclusively denitrifying bacteria; broader beneficial groups are mentioned.", isCorrect: false }
+                ],
+                hint: "The report mentions specific groups of beneficial fungi and bacteria that PFA can promote."
+            },
+            // Section VI: Research Methodologies & Findings
+            {
+                question: "Which experimental design is useful for studying two or more factors where one (e.g., topping) is applied to larger main plots and another (e.g., fertilizer rates) to sub-plots?",
+                options: [
+                    { text: "Completely Randomized Design (CRD)", rationale: "CRD is used when experimental units are homogeneous; it doesn't inherently handle factors applied at different scales like main and sub-plots.", isCorrect: false },
+                    { text: "Split-Plot Design", rationale: "The report mentions Split-Plot Designs as useful for studying factors applied at different plot scales.", isCorrect: true },
+                    { text: "Latin Square Design", rationale: "Latin Square is used to control for two sources of variation (rows and columns), not typically for factors at different plot sizes.", isCorrect: false },
+                    { text: "Paired Comparison Design", rationale: "Paired comparison is used for comparing two treatments under similar conditions, not for multiple factors at different scales.", isCorrect: false }
+                ],
+                hint: "This design is specifically suited for experiments where factors are applied at different levels of experimental units."
+            },
+            {
+                question: "What advanced analytical technique is used to trace the fate of applied fertilizer N within the plant and soil system?",
+                options: [
+                    { text: "Atomic Absorption Spectroscopy (AAS)", rationale: "AAS is used for determining concentrations of specific metal elements, not for tracing N pathways in this manner.", isCorrect: false },
+                    { text: "Gas Chromatography-Mass Spectrometry (GC-MS)", rationale: "GC-MS is used for identifying and quantifying volatile and semi-volatile organic compounds, not primarily for N tracing in this context.", isCorrect: false },
+                    { text: "^15N isotopic analysis", rationale: "The report states that ^15N isotopic analysis is a powerful tool for tracing the fate of applied fertilizer N.", isCorrect: true },
+                    { text: "X-ray Diffraction (XRD)", rationale: "XRD is used for determining the crystallographic structure of materials, not for tracing nutrient pathways.", isCorrect: false }
+                ],
+                hint: "This technique uses a stable isotope of nitrogen."
+            },
+            {
+                question: "Application of Potassium Fulvic Acid (PFA) at 4.65 g/kg soil led to a significant increase in soil available potassium by approximately how much?",
+                options: [
+                    { text: "22%", rationale: "22% was the approximate increase in soil organic matter, not available K.", isCorrect: false },
+                    { text: "96%", rationale: "96% was the approximate increase in available phosphorus, not potassium.", isCorrect: false },
+                    { text: "382%", rationale: "The report highlights a substantial increase of 381.79% in available potassium with PFA application.", isCorrect: true },
+                    { text: "43%", rationale: "43% was the approximate increase in available nitrogen, not potassium.", isCorrect: false }
+                ],
+                hint: "PFA had a particularly large impact on the availability of this specific macronutrient."
+            },
+            {
+                question: "What was the impact of applying chloride ($Cl^-$) at rates of ≥34 kg/ha on foliar total N and $NO_3^-$ concentrations in tobacco, according to the findings?",
+                options: [
+                    { text: "Increased total N and $NO_3^-$", rationale: "The findings indicated a reduction, not an increase, in these N components with chloride application.", isCorrect: false },
+                    { text: "Reduced total N and $NO_3^-$", rationale: "The report states that chloride application at these rates reduced foliar total N and $NO_3^-$ concentrations.", isCorrect: true },
+                    { text: "No significant effect on total N or $NO_3^-$", rationale: "A significant effect was observed, specifically a reduction.", isCorrect: false },
+                    { text: "Increased total N but reduced $NO_3^-$", rationale: "Both total N and $NO_3^-$ were reported to be reduced.", isCorrect: false }
+                ],
+                hint: "Consider the antagonistic or competitive effects chloride might have on nitrogen uptake or assimilation."
+            },
+            {
+                question: "Which ratio of ammonium-N to nitrate-N yielded the highest *sensory quality score* for flue-cured tobacco in one study?",
+                options: [
+                    { text: "7:3 ($NH_4^+:NO_3^-$)", rationale: "The 7:3 ratio resulted in the highest yield and output value in that study, but not the highest sensory quality score.", isCorrect: false },
+                    { text: "10:0 (Pure $NH_4^+$)", rationale: "Pure ammonium is generally associated with poor quality, not the highest sensory score.", isCorrect: false },
+                    { text: "0:10 (Pure $NO_3^-$)", rationale: "While nitrate is preferred, a specific balanced ratio was found to be superior for sensory scores.", isCorrect: false },
+                    { text: "5:5 ($NH_4^+:NO_3^-$)", rationale: "The report states that a balanced 5:5 ratio yielded the highest sensory quality score.", isCorrect: true }
+                ],
+                hint: "The best taste and aroma were associated with a specific balance, not necessarily the highest yield."
+            },
+             {
+                question: "Which NPK fertilization rate (F3 treatment) resulted in the highest cured leaf yield (1125 kg/ha) and better quality markers in one field study?",
+                options: [
+                    { text: "100 N - 75 P - 100 K (kg/ha)", rationale: "This is not the F3 treatment rate described in the 'Statistically Significant Findings' section.", isCorrect: false },
+                    { text: "150 N - 100 P - 150 K (kg/ha)", rationale: "The F3 treatment involved higher N and K values than this option.", isCorrect: false },
+                    { text: "200 N - 125 $P_2O_5$ - 175 $K_2O$ (kg/ha)", rationale: "The report specifies the F3 treatment as 200 kg N/ha, 125 kg $P_2O_5$/ha, and 175 kg $K_2O$/ha, which led to the best results.", isCorrect: true },
+                    { text: "250 N - 150 P - 200 K (kg/ha)", rationale: "The N and K rates in the F3 treatment were slightly lower than this option.", isCorrect: false }
+                ],
+                hint: "Refer to the specific NPK values mentioned for the 'F3 treatment' in the research findings."
+            },
+            // Section VII: Future Research
+            {
+                question: "What is a key deficiency identified in the current understanding of N-form effects that future research should address?",
+                options: [
+                    { text: "Lack of studies on nitrate-N preference", rationale: "Nitrate preference is generally acknowledged; the deficiency lies in understanding effects under diverse contexts and long-term impacts.", isCorrect: false },
+                    { text: "Absence of extensive field studies across diverse agroecological contexts and tobacco varieties", rationale: "The report highlights a notable absence of such extensive field studies for N-form effects, focusing on long-term soil health and comprehensive quality.", isCorrect: true },
+                    { text: "Insufficient data on ammonium toxicity symptoms", rationale: "Ammonium toxicity symptoms are relatively well-described; the gap is more about comparing N forms broadly.", isCorrect: false },
+                    { text: "Overemphasis on organic nitrogen sources", rationale: "The report suggests more research is needed on various inorganic N forms, not that organic N has been overemphasized to the exclusion of others.", isCorrect: false }
+                ],
+                hint: "Future research needs to broaden the scope of N-form studies beyond limited conditions."
+            },
+            {
+                question: "For novel K sources like PFA, what specific type of assessment is highlighted as incomplete and needing more research?",
+                options: [
+                    { text: "Basic potassium content analysis", rationale: "While K content is known, the gap is in its impact on specific end-use qualities.", isCorrect: false },
+                    { text: "Impact on soil pH only", rationale: "PFA's impact on soil pH is noted, but a broader quality assessment is needed.", isCorrect: false },
+                    { text: "Detailed comprehensive quality assessments (burn, texture, aroma, smoke chemistry)", rationale: "The report states their impact on the full spectrum of tobacco leaf quality, especially these parameters, is not well documented compared to traditional sources.", isCorrect: true },
+                    { text: "Effects on early seedling growth only", rationale: "While PFA benefits growth, the research gap points to its effect on the final, marketable leaf quality.", isCorrect: false }
+                ],
+                hint: "The research gap for new K sources relates to how they affect the actual experience of using the tobacco."
+            },
+            {
+                question: "What type of N-K management studies are needed, tailored to specific tobacco varieties and environmental conditions?",
+                options: [
+                    { text: "Studies focusing only on maximizing yield, irrespective of K source", rationale: "Future studies need to integrate K source and consider quality, not just yield with any K.", isCorrect: false },
+                    { text: "More research on isolated N or K effects, not their interaction", rationale: "The need is for *integrated* N-K studies, recognizing their interaction is key.", isCorrect: false },
+                    { text: "Sophisticated research optimizing N:K ratio using specific N *sources* and K *sources*", rationale: "The report calls for research investigating N:K ratios with specific N and K sources tailored to different tobacco types and conditions.", isCorrect: true },
+                    { text: "Replication of historical studies without considering new varieties or stresses", rationale: "Future research needs to address modern varieties and contemporary environmental challenges.", isCorrect: false }
+                ],
+                hint: "The complexity of N and K nutrition requires looking at specific combinations of different types of N and K fertilizers."
+            },
+            {
+                question: "Which of these is NOT listed as a priority for research on minimizing environmental impacts of tobacco fertilization?",
+                options: [
+                    { text: "Evaluating Enhanced Efficiency Fertilizers (EEFs)", rationale: "Evaluating EEFs to reduce losses is listed as a priority.", isCorrect: false },
+                    { text: "Investigating cover cropping and conservation tillage", rationale: "These practices are mentioned for improving soil health and reducing nutrient losses.", isCorrect: false },
+                    { text: "Quantifying greenhouse gas emissions under different N and K regimes", rationale: "Quantifying GHG emissions is a stated research priority.", isCorrect: false },
+                    { text: "Promoting the widespread use of Muriate of Potash (KCl) due to low cost", rationale: "Given KCl's negative impacts, promoting its widespread use is contrary to minimizing environmental harm and improving quality; research focuses on alternatives and mitigation.", isCorrect: true }
+                ],
+                hint: "Consider which K source has known environmental and quality drawbacks."
+            },
+            {
+                question: "What advanced technologies are suggested for deepening investigations into the physiological and molecular mechanisms of N and K effects?",
+                options: [
+                    { text: "Traditional soil nutrient testing only", rationale: "While soil testing is important, advanced molecular tools are suggested for deeper mechanistic understanding.", isCorrect: false },
+                    { text: "Field observation of visual deficiency symptoms only", rationale: "Visual symptoms are basic; the call is for more sophisticated molecular investigations.", isCorrect: false },
+                    { text: "'Omics' technologies (transcriptomics, proteomics, metabolomics) and stable isotopes", rationale: "The report suggests employing 'omics' technologies and stable isotopes to identify regulated genes, proteins, metabolites, and trace nutrient pathways.", isCorrect: true },
+                    { text: "Simple yield measurement comparisons", rationale: "Yield is an outcome; the focus here is on understanding the *underlying processes* at a molecular level.", isCorrect: false }
+                ],
+                hint: "These modern biological research tools allow for a detailed look at gene activity, proteins, and metabolic products."
+            },
+            // Section VIII: Conclusion
+            {
+                question: "What is the overarching theme or path forward emphasized in the conclusion for optimizing N and K fertilization in tobacco?",
+                options: [
+                    { text: "Identifying a single 'best' nitrate and potassium fertilizer for all situations", rationale: "The conclusion explicitly states the path forward is *not* in identifying a single best fertilizer, but in adaptive systems.", isCorrect: false },
+                    { text: "Developing and implementing integrated and adaptive nutrient management systems", rationale: "The conclusion emphasizes a transition towards precision nutrient management and integrated, adaptive systems tailored to specific conditions.", isCorrect: true },
+                    { text: "Increasing the overall rates of N and K application to maximize yield globally", rationale: "The focus is on optimization and balance, not just increasing rates, which can be detrimental.", isCorrect: false },
+                    { text: "Solely relying on historical fertilization practices without new research", rationale: "The conclusion calls for continuous research, innovation, and adaptation, not just relying on past practices.", isCorrect: false }
+                ],
+                hint: "The conclusion points towards a more nuanced and context-specific approach rather than a one-size-fits-all solution."
+            },
+            // Additional questions to reach 50
+            {
+                question: "What is a common symptom of ammonium ($NH_4^+$) toxicity in tobacco plants?",
+                options: [
+                    { text: "Dark green, lush foliage", rationale: "This is usually a sign of adequate or high N, not ammonium toxicity, which causes stress symptoms.", isCorrect: false },
+                    { text: "Leaf chlorosis (yellowing) and stunted growth", rationale: "The report clearly states these are common symptoms of ammonium toxicity.", isCorrect: true },
+                    { text: "Increased flower production", rationale: "Ammonium toxicity typically impairs growth and development, not enhances flowering.", isCorrect: false },
+                    { text: "Thickened, dark roots", rationale: "Root symptoms of ammonium toxicity are usually poor development or damage, not thickening.", isCorrect: false }
+                ],
+                hint: "This symptom indicates a problem with chlorophyll and overall plant development."
+            },
+            {
+                question: "The N:K ratio of 1:2 ($NH_4^+:K^+$) was found optimal for which part of tobacco seedlings in hydroponic studies?",
+                options: [
+                    { text: "Leaves", rationale: "Leaves and roots had an optimal ratio of 1:1.", isCorrect: false },
+                    { text: "Roots", rationale: "Leaves and roots had an optimal ratio of 1:1.", isCorrect: false },
+                    { text: "Stems", rationale: "The report specifies that stem growth was optimal at a 1:2 $NH_4^+:K^+$ ratio.", isCorrect: true },
+                    { text: "Flowers", rationale: "The study focused on seedling vegetative parts, not flowers.", isCorrect: false }
+                ],
+                hint: "Different parts of the seedling showed different optimal ratios for this nutrient balance."
+            },
+            {
+                question: "Which characteristic of Muriate of Potash (KCl) is LEAST problematic for tobacco quality?",
+                options: [
+                    { text: "High chloride content", rationale: "This is the MOST problematic characteristic of KCl for tobacco quality.", isCorrect: false },
+                    { text: "Its potassium content", rationale: "The potassium itself is essential; it's the accompanying chloride that causes issues. Thus, the K content is the least problematic aspect.", isCorrect: true },
+                    { text: "Impact on burn rate", rationale: "Chloride from KCl negatively impacts burn rate.", isCorrect: false },
+                    { text: "Effect on fire-holding capacity", rationale: "Chloride from KCl is highly detrimental to fire-holding capacity.", isCorrect: false }
+                ],
+                hint: "Consider what the plant actually needs from this fertilizer versus what causes negative effects."
+            },
+            {
+                question: "What does 'NUE' stand for in the context of nitrogen fertilization?",
+                options: [
+                    { text: "Nitrogen Underutilization Estimate", rationale: "NUE refers to efficiency, not underutilization.", isCorrect: false },
+                    { text: "Nitrogen Use Efficiency", rationale: "The report defines NUE as Nitrogen-use efficiency, encompassing uptake and utilization.", isCorrect: true },
+                    { text: "New Urea Experiment", rationale: "This is not the meaning of NUE in this context.", isCorrect: false },
+                    { text: "Nitrate Uptake Enhancement", rationale: "While related to N uptake, NUE is a broader term for overall efficiency.", isCorrect: false }
+                ],
+                hint: "This acronym refers to how effectively the plant uses the applied nitrogen."
+            },
+            {
+                question: "What is a primary role of Potassium (K) in tobacco that makes it more important than any other element for a specific quality trait?",
+                options: [
+                    { text: "Increasing leaf thickness", rationale: "While K affects overall health, its unique critical role is in another quality aspect.", isCorrect: false },
+                    { text: "Enhancing chlorophyll production", rationale: "Magnesium and Nitrogen are more directly involved in chlorophyll; K's unique role is elsewhere.", isCorrect: false },
+                    { text: "Promoting desirable combustion characteristics", rationale: "The report states K possesses a uniquely critical function in promoting desirable combustion characteristics.", isCorrect: true },
+                    { text: "Maximizing nicotine synthesis", rationale: "Nitrogen is the primary driver for nicotine synthesis.", isCorrect: false }
+                ],
+                hint: "This quality trait is related to how the tobacco leaf performs when it is lit."
+            },
+            {
+                question: "Excessive Nitrogen (N) application, especially after flowering, can lead to what undesirable outcome?",
+                options: [
+                    { text: "Improved cured leaf quality", rationale: "Excessive late N is generally detrimental, not beneficial, to quality.", isCorrect: false },
+                    { text: "Increased sugar content", rationale: "Excessive late N often has an inverse relationship with sugar content.", isCorrect: false },
+                    { text: "Degradation in the quality of the cured leaf", rationale: "The report states that excessive N supply, particularly after flowering, can have detrimental effects on cured leaf quality.", isCorrect: true },
+                    { text: "Reduced nicotine content", rationale: "While balance is key, late N might increase N compounds, but overall quality degrades.", isCorrect: false }
+                ],
+                hint: "Think about the timing of N application and its impact on the final product's characteristics."
+            },
+            {
+                question: "What is the typical range of normal potassium (K) concentrations in cured tobacco leaves?",
+                options: [
+                    { text: "0.1% to 0.5%", rationale: "This range is too low for a macronutrient like K in tobacco.", isCorrect: false },
+                    { text: "0.5% to 1.5%", rationale: "While 1.5% is approaching adequacy, the typical range is higher.", isCorrect: false },
+                    { text: "2% to 8%", rationale: "The report mentions that normal K concentrations in cured tobacco leaves typically range from 2% to 8%.", isCorrect: true },
+                    { text: "10% to 15%", rationale: "This range is excessively high for K in tobacco leaves.", isCorrect: false }
+                ],
+                hint: "Potassium is a macronutrient, so its concentration in leaves is relatively high."
+            },
+            {
+                question: "Which of these K sources is an emerging *organic* option noted for soil health benefits?",
+                options: [
+                    { text: "Sulfate of Potash (SOP)", rationale: "SOP is a mineral (inorganic) fertilizer.", isCorrect: false },
+                    { text: "Potassium Nitrate ($KNO_3$)", rationale: "$KNO_3$ is a mineral (inorganic) fertilizer.", isCorrect: false },
+                    { text: "Potassium Fulvic Acid (PFA)", rationale: "The report identifies PFA as an emerging organic K source with soil health benefits.", isCorrect: true },
+                    { text: "Muriate of Potash (KCl)", rationale: "KCl is a mineral (inorganic) fertilizer.", isCorrect: false }
+                ],
+                hint: "This K source is not a simple salt but is derived from organic matter."
+            },
+            {
+                question: "What is a key benefit of Integrated Nutrient Management (INM)?",
+                options: [
+                    { text: "Exclusive use of mineral fertilizers", rationale: "INM involves *combining* mineral and organic sources, not exclusive use of mineral ones.", isCorrect: false },
+                    { text: "Maximizing chloride accumulation in leaves", rationale: "INM aims for balanced nutrition and quality, and chloride accumulation is generally undesirable.", isCorrect: false },
+                    { text: "Improving long-term soil health and reducing reliance on synthetic inputs", rationale: "The report states INM aims to improve soil health, enhance nutrient cycling, and reduce reliance on synthetic inputs.", isCorrect: true },
+                    { text: "Simplifying fertilizer application to a single annual dose", rationale: "INM can be more complex, involving multiple sources and timings, not necessarily simplification to a single dose.", isCorrect: false }
+                ],
+                hint: "This approach combines different nutrient sources for broader benefits."
+            },
+            {
+                question: "What is the primary reason tobacco is considered a crop with high nutrient demands?",
+                options: [
+                    { text: "It grows very slowly.", rationale: "Rapid growth often correlates with high nutrient demand, not slow growth.", isCorrect: false },
+                    { text: "It primarily uses micronutrients.", rationale: "While micronutrients are essential, its high demand refers to macronutrients like N, P, and K.", isCorrect: false },
+                    { text: "It leads to rapid depletion of soil N, P, and K reserves.", rationale: "The report states tobacco's high nutrient demand often leads to more rapid depletion of soil N, P, and K.", isCorrect: true },
+                    { text: "It requires acidic soil conditions to absorb nutrients.", rationale: "While pH is important, its high demand is related to the quantity of nutrients it extracts.", isCorrect: false }
+                ],
+                hint: "Consider how tobacco cultivation affects the nutrient content of the soil over time."
+            },
+            {
+                question: "Which cultural practice, when combined with optimal NPK, resulted in high yields and quality markers in one study?",
+                options: [
+                    { text: "Excessive irrigation", rationale: "Excessive irrigation can lead to nutrient leaching and other problems, not optimal outcomes.", isCorrect: false },
+                    { text: "Delayed harvesting", rationale: "Harvest timing is critical for quality, but the specific practice mentioned relates to plant manipulation.", isCorrect: false },
+                    { text: "Malic-hydrazide topping", rationale: "The report mentions combining Malic-hydrazide topping with optimal NPK resulted in the highest yields and quality.", isCorrect: true },
+                    { text: "Close plant spacing", rationale: "Plant spacing affects competition, but the study highlighted a specific type of plant pruning/treatment.", isCorrect: false }
+                ],
+                hint: "This practice involves removing a part of the plant to redirect resources."
+            },
+            {
+                question: "What is a negative consequence of soil acidification caused by certain N fertilizers?",
+                options: [
+                    { text: "Increased availability of all essential nutrients", rationale: "Acidification can reduce the availability of some nutrients (like P, Mo) and increase the toxicity of others (like Al, Mn).", isCorrect: false },
+                    { text: "Enhanced activity of all soil microbial communities", rationale: "Acidification can adversely affect many beneficial soil microbes.", isCorrect: false },
+                    { text: "Reduced availability of phosphorus and molybdenum", rationale: "The report states soil acidification can lead to reduced availability of essential nutrients like P and Mo.", isCorrect: true },
+                    { text: "Improved soil structure and aeration", rationale: "Severe acidification can negatively impact soil structure.", isCorrect: false }
+                ],
+                hint: "Lowering soil pH affects the chemical form and solubility of various nutrients."
+            },
+            {
+                question: "High leaf chloride content (e.g., >1%) from KCl is strongly associated with what negative outcome in tobacco?",
+                options: [
+                    { text: "Significantly increased nicotine levels", rationale: "Chloride's main impact is on burn, not a significant increase in nicotine.", isCorrect: false },
+                    { text: "Impaired burn quality and low fire-holding capacity", rationale: "The report consistently links high chloride to poor burn quality and fire-holding capacity.", isCorrect: true },
+                    { text: "A desirable bright yellow cured leaf color", rationale: "Chloride toxicity can cause leaf abnormalities, not necessarily a desirable color.", isCorrect: false },
+                    { text: "Reduced susceptibility to all leaf spot diseases", rationale: "While nutrient balance affects diseases, chloride's primary negative is on combustion.", isCorrect: false }
+                ],
+                hint: "This ion directly interferes with the way tobacco smolders and burns."
+            },
+            {
+                question: "What is the role of the enzyme Quinolinate Phosphoribosyltransferase (QPT) in tobacco, as mentioned in the report?",
+                options: [
+                    { text: "It is primarily involved in potassium uptake.", rationale: "QPT's role is in biosynthesis pathways, not directly potassium uptake.", isCorrect: false },
+                    { text: "It is involved in both NAD and nicotine biosynthesis.", rationale: "The report states QPT is involved in both NAD and nicotine biosynthesis, and its interference can reduce nicotine.", isCorrect: true },
+                    { text: "It breaks down nitrates in the soil.", rationale: "Nitrate breakdown in soil is microbial; QPT is an enzyme within the plant.", isCorrect: false },
+                    { text: "It enhances sugar transport to the leaves.", rationale: "While K is involved in sugar transport, QPT's role is in specific biosynthetic pathways.", isCorrect: false }
+                ],
+                hint: "This enzyme is linked to the production of a key alkaloid in tobacco."
+            },
+            {
+                question: "What is a common characteristic of Oriental tobacco leaves due to typical growing conditions (limited water and N)?",
+                options: [
+                    { text: "High nitrogenous compound content", rationale: "Limited N supply would lead to low, not high, nitrogenous compounds.", isCorrect: false },
+                    { text: "Low carbohydrate content", rationale: "Limited N often correlates with higher relative carbohydrate accumulation.", isCorrect: false },
+                    { text: "High carbohydrate content and low nitrogenous substances", rationale: "The report characterizes Oriental tobacco this way due to its growing conditions.", isCorrect: true },
+                    { text: "Thick, dark green leaves", rationale: "Limited N and water usually result in thinner, lighter green leaves.", isCorrect: false }
+                ],
+                hint: "Consider how limited nitrogen affects the balance of major chemical components in the leaf."
+            },
+            {
+                question: "Which K source is NOT generally recommended if the primary goal is to achieve the best possible burn quality in tobacco?",
+                options: [
+                    { text: "Sulfate of Potash (SOP)", rationale: "SOP is generally good for burn quality due to low chloride.", isCorrect: false },
+                    { text: "Potassium Carbonate ($K_2CO_3$)", rationale: "$K_2CO_3$ is excellent for burn quality.", isCorrect: false },
+                    { text: "Muriate of Potash (KCl)", rationale: "KCl is highly detrimental to burn quality due to its chloride content and thus not recommended for this goal.", isCorrect: true },
+                    { text: "Potassium Nitrate ($KNO_3$)", rationale: "$KNO_3$ promotes good fire-holding, though it can have other minor burn issues if excessive.", isCorrect: false }
+                ],
+                hint: "One of these K sources contains an element that directly interferes with good combustion."
+            },
+            {
+                question: "The report suggests that the 'hidden' components of K fertilizers, like anions (Cl⁻, SO₄²⁻), are often primary drivers of what?",
+                options: [
+                    { text: "The fertilizer's color and smell", rationale: "The color and smell are not the primary differentiating effects discussed.", isCorrect: false },
+                    { text: "Differentiating effects on tobacco quality and soil chemistry", rationale: "The report states these anions are often primary drivers of differentiating effects on quality and soil chemistry.", isCorrect: true },
+                    { text: "The plant's preference for sunlight", rationale: "These components affect leaf chemistry and soil, not directly sunlight preference.", isCorrect: false },
+                    { text: "The rate of photosynthesis exclusively", rationale: "While K is involved in photosynthesis, the anions' specific effects are broader on quality and soil.", isCorrect: false }
+                ],
+                hint: "These non-potassium parts of the fertilizer salt have significant impacts beyond just supplying K."
+            },
+            {
+                question: "What is 'hygroscopicity' in cured tobacco leaves, a property influenced by potassium salts?",
+                options: [
+                    { text: "The leaf's resistance to tearing", rationale: "This relates to physical strength or elasticity, not directly hygroscopicity.", isCorrect: false },
+                    { text: "The intensity of its aroma", rationale: "Aroma is a complex chemical property, not hygroscopicity.", isCorrect: false },
+                    { text: "Its ability to absorb moisture from the air", rationale: "The report defines hygroscopicity ('coming into case') as the ability to absorb moisture, making leaves pliable.", isCorrect: true },
+                    { text: "The speed at which it burns", rationale: "Burn rate is a combustion property, distinct from hygroscopicity.", isCorrect: false }
+                ],
+                hint: "This property is important for handling cured leaves without breakage."
+            },
+            {
+                question: "One of the proposed future research areas for novel K sources like PFA is a thorough analysis of what, besides quality and soil benefits?",
+                options: [
+                    { text: "Their visual appeal as a fertilizer product", rationale: "Visual appeal of the fertilizer itself is not a primary research focus.", isCorrect: false },
+                    { text: "Economic viability analysis", rationale: "The report suggests a thorough economic viability analysis, considering cost, yield, and quality premiums.", isCorrect: true },
+                    { text: "Compatibility with all pesticide types", rationale: "While important, the specific future research point highlighted was economic.", isCorrect: false },
+                    { text: "Ease of transport over long distances", rationale: "Logistics are a practical concern but not the specific research imperative mentioned for PFA's future.", isCorrect: false }
+                ],
+                hint: "This analysis considers the practical and financial aspects of using a new fertilizer."
+            },
+            {
+                question: "What is a key aim of using Enhanced Efficiency Fertilizers (EEFs)?",
+                options: [
+                    { text: "To increase the chloride content of the soil", rationale: "EEFs aim to improve nutrient use and reduce losses, not increase chloride.", isCorrect: false },
+                    { text: "To improve nutrient availability to the plant while reducing losses to the environment", rationale: "The report states EEFs are designed to improve nutrient availability and reduce environmental losses.", isCorrect: true },
+                    { text: "To make fertilizers more colorful and easier to see", rationale: "The efficiency aspect relates to nutrient delivery and environmental impact, not appearance.", isCorrect: false },
+                    { text: "To rapidly acidify the soil for specific crop needs", rationale: "While some fertilizers acidify, EEFs focus on controlled nutrient release and loss reduction.", isCorrect: false }
+                ],
+                hint: "These fertilizers are designed to be 'smarter' in how they release nutrients."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        const questionTextEl = document.getElementById('questionText');
+        const questionHintEl = document.getElementById('questionHint');
+        const optionsContainerEl = document.getElementById('optionsContainer');
+        const nextButtonEl = document.getElementById('nextButton');
+        const quizAreaEl = document.getElementById('quizArea');
+        const resultAreaEl = document.getElementById('resultArea');
+        const reviewAreaEl = document.getElementById('reviewArea');
+        const scoreTextEl = document.getElementById('scoreText');
+        const reviewButtonEl = document.getElementById('reviewButton');
+        const questionCounterEl = document.getElementById('questionCounter');
+        const progressBarEl = document.getElementById('progressBar');
+
+        function loadQuestion() {
+            if (currentQuestionIndex < quizData.length) {
+                const currentQuestion = quizData[currentQuestionIndex];
+                questionTextEl.innerHTML = currentQuestion.question.replace(/\$(.*?)\$/g, (_, match) => `<em>${match}</em>`);
+                questionHintEl.textContent = "Hint: " + currentQuestion.hint;
+                optionsContainerEl.innerHTML = '';
+                
+                currentQuestion.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.classList.add('option-button');
+                    button.innerHTML = option.text.replace(/\$(.*?)\$/g, (_, match) => `<em>${match}</em>`);
+                    button.dataset.index = index;
+                    button.addEventListener('click', selectOption);
+                    optionsContainerEl.appendChild(button);
+                });
+
+                questionCounterEl.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+                progressBarEl.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
+                nextButtonEl.textContent = (currentQuestionIndex === quizData.length - 1) ? "Finish Quiz" : "Next Question";
+                nextButtonEl.disabled = true; 
+                document.querySelectorAll('.option-button.selected').forEach(btn => btn.classList.remove('selected'));
+
+            } else {
+                showResults();
+            }
+        }
+
+        function selectOption(event) {
+            document.querySelectorAll('.option-button.selected').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            nextButtonEl.disabled = false;
+        }
+
+        nextButtonEl.addEventListener('click', () => {
+            const selectedOptionEl = document.querySelector('.option-button.selected');
+            if (!selectedOptionEl && currentQuestionIndex < quizData.length) { 
+                return;
+            }
+            
+            const selectedOptionIndex = selectedOptionEl ? parseInt(selectedOptionEl.dataset.index) : -1;
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            userAnswers[currentQuestionIndex] = selectedOptionIndex;
+
+            if (selectedOptionIndex !== -1 && currentQuestion.options[selectedOptionIndex].isCorrect) {
+                score++;
+            }
+
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        function showResults() {
+            quizAreaEl.classList.add('hidden');
+            resultAreaEl.classList.remove('hidden');
+            scoreTextEl.textContent = `Your score: ${score}/${quizData.length}`;
+        }
+
+        reviewButtonEl.addEventListener('click', () => {
+            resultAreaEl.classList.add('hidden');
+            reviewAreaEl.classList.remove('hidden');
+            reviewAreaEl.innerHTML = '<h2 class="text-2xl font-bold text-emerald-700 mb-6 text-center">Answer Review</h2>';
+
+            quizData.forEach((question, qIndex) => {
+                const reviewItem = document.createElement('div');
+                reviewItem.classList.add('review-item');
+
+                const questionTitle = document.createElement('h3');
+                questionTitle.classList.add('text-lg', 'font-semibold', 'mb-2');
+                questionTitle.innerHTML = `Question ${qIndex + 1}: ${question.question.replace(/\$(.*?)\$/g, (_, match) => `<em>${match}</em>`)}`;
+                reviewItem.appendChild(questionTitle);
+
+                question.options.forEach((option, oIndex) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.classList.add('option-button', 'mb-1', 'p-2'); 
+                    
+                    let prefix = '';
+                    if (userAnswers[qIndex] === oIndex) {
+                        prefix = option.isCorrect ? "✅ Your Answer (Correct): " : "❌ Your Answer (Incorrect): ";
+                        optionDiv.classList.add(option.isCorrect ? 'correct' : 'incorrect');
+                    } else if (option.isCorrect) {
+                        prefix = "⭐ Correct Answer: ";
+                        optionDiv.classList.add('correct');
+                    } else {
+                         optionDiv.classList.add('border-gray-300'); 
+                    }
+                    
+                    optionDiv.innerHTML = `<strong>${prefix}</strong> ${option.text.replace(/\$(.*?)\$/g, (_, match) => `<em>${match}</em>`)}`;
+                    
+                    const rationaleP = document.createElement('p');
+                    rationaleP.classList.add('rationale');
+                    rationaleP.textContent = `Rationale: ${option.rationale}`;
+                    optionDiv.appendChild(rationaleP);
+
+                    reviewItem.appendChild(optionDiv);
+                });
+                reviewAreaEl.appendChild(reviewItem);
+            });
+        });
+
+        loadQuestion();
+    </script>
+</body>
+</html>
