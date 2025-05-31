@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
+        /* All your existing CSS from the previous version (including ad placeholders) */
         :root {
             --primary-color: #0056b3;
             --secondary-color: #007bff;
@@ -21,9 +22,12 @@
             --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
             --font-primary: 'Poppins', sans-serif;
             --font-secondary: 'Roboto', sans-serif;
+            --ad-placeholder-bg: #e9ecef;
+            --ad-placeholder-border: #ced4da;
+            --ad-placeholder-text: #6c757d;
         }
 
-        body {
+        body { /* ... existing body styles ... */
             font-family: var(--font-secondary);
             margin: 0;
             background-color: var(--light-bg);
@@ -37,23 +41,52 @@
             box-sizing: border-box;
         }
 
-        .main-content {
+        .main-content { /* ... existing main-content styles ... */
             background-color: #fff;
             padding: 30px;
             border-radius: 12px;
             box-shadow: var(--card-shadow);
             width: 100%;
             max-width: 1100px;
-            margin-top: 20px; /* Added some top margin */
+            margin-top: 20px;
         }
-        .main-content h1 { /* Changed from h2 for the main title */
+        .main-content h1 { /* ... existing h1 styles ... */
             font-family: var(--font-primary);
             color: var(--primary-color);
             text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .ad-placeholder { /* ... existing ad-placeholder styles ... */
+            background-color: var(--ad-placeholder-bg);
+            border: 2px dashed var(--ad-placeholder-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--ad-placeholder-text);
+            font-family: var(--font-secondary);
+            box-sizing: border-box;
+            padding: 10px;
+            font-size: 0.9em;
+        }
+        .ad-banner-top { /* ... existing ad-banner-top styles ... */
+            width: 728px;
+            height: 90px;
+            max-width: 100%;
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+        .ad-medium-rectangle { /* ... existing ad-medium-rectangle styles ... */
+            width: 300px;
+            height: 250px;
+            margin-top: 30px;
             margin-bottom: 30px;
         }
 
-        .controls {
+        .controls { /* ... existing controls styles ... */
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
@@ -63,11 +96,11 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
         }
-        .control-group {
+         .control-group { /* ... existing control-group styles ... */
             display: flex;
             flex-direction: column;
         }
-        .controls label {
+        .controls label { /* ... existing label styles ... */
             font-weight: 500;
             margin-bottom: 8px;
             font-family: var(--font-primary);
@@ -75,7 +108,7 @@
             font-size: 0.95em;
         }
         .controls input[type="text"],
-        .controls select {
+        .controls select { /* ... existing input/select styles ... */
             padding: 12px 15px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -84,49 +117,48 @@
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .controls input[type="text"]:focus,
-        .controls select:focus {
+        .controls select:focus { /* ... existing focus styles ... */
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
             outline: none;
         }
 
-        .links-table {
+        .links-table { /* ... existing table styles ... */
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
         }
-        .links-table th, .links-table td {
+        .links-table th, .links-table td { /* ... existing th/td styles ... */
             border: 1px solid var(--border-color);
             padding: 15px;
             text-align: left;
             vertical-align: middle;
         }
-        .links-table th {
+        .links-table th { /* ... existing th styles ... */
             background-color: var(--primary-color);
             color: var(--light-text);
             font-family: var(--font-primary);
             font-weight: 600;
         }
-        .links-table th.sortable {
+        .links-table th.sortable { /* ... existing sortable th styles ... */
             cursor: pointer;
             position: relative;
         }
-        .links-table th.sortable .sort-icon {
+        .links-table th.sortable .sort-icon { /* ... existing sort-icon styles ... */
             margin-left: 8px;
             opacity: 0.7;
             transition: opacity 0.3s ease;
         }
-        .links-table th.sortable:hover .sort-icon {
+        .links-table th.sortable:hover .sort-icon { /* ... existing sort-icon hover styles ... */
             opacity: 1;
         }
-
-        .links-table tbody tr:nth-child(even) {
+        .links-table tbody tr:nth-child(even) { /* ... existing zebra-striping styles ... */
             background-color: #fcfcff;
         }
-        .links-table tbody tr:hover {
+        .links-table tbody tr:hover { /* ... existing row hover styles ... */
             background-color: var(--hover-bg);
         }
-        .links-table td a {
+        .links-table td a { /* ... existing link styles in table ... */
             color: var(--secondary-color);
             text-decoration: none;
             font-weight: 500;
@@ -134,31 +166,21 @@
             display: inline-flex;
             align-items: center;
         }
-        .links-table td a:hover {
+        .links-table td a:hover { /* ... existing link hover styles ... */
             color: var(--primary-color);
             text-decoration: underline;
         }
-        .links-table td .doc-icon {
+        .links-table td .doc-icon { /* ... existing doc-icon styles ... */
             margin-right: 8px;
             color: var(--primary-color);
             font-size: 1.1em;
         }
-
-        p.footer {
-            text-align: center;
-            margin-top: 50px;
-            font-size: 0.9em;
-            color: #6c757d;
-            width: 100%;
-        }
-
-        .table-responsive-wrapper {
+        .table-responsive-wrapper { /* ... existing table-responsive-wrapper styles ... */
             overflow-x: auto;
             border: 1px solid var(--border-color);
             border-radius: 8px;
         }
-
-        .no-results {
+        .no-results { /* ... existing no-results styles ... */
             text-align: center;
             padding: 40px 20px;
             font-style: italic;
@@ -166,18 +188,99 @@
             background-color: #f8f9fa;
             border-radius: 8px;
         }
-        .no-results i {
+        .no-results i { /* ... existing no-results icon styles ... */
             font-size: 2em;
             margin-bottom: 10px;
             display: block;
             color: var(--secondary-color);
         }
+         p.footer { /* ... existing footer styles ... */
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #6c757d;
+            width: 100%;
+        }
+
+        /* Styles for Add Content Form Section */
+        .add-content-section {
+            background-color: #fdfdff;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .add-content-section h2 {
+            font-family: var(--font-primary);
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #addContentForm .form-group {
+            margin-bottom: 15px;
+        }
+        #addContentForm label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-family: var(--font-primary);
+        }
+        #addContentForm input[type="text"],
+        #addContentForm input[type="url"],
+        #addContentForm input[type="date"],
+        #addContentForm select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: var(--font-secondary);
+        }
+        #addContentForm button {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: var(--font-primary);
+            transition: background-color 0.3s ease;
+        }
+        #addContentForm button:hover {
+            background-color: var(--primary-color);
+        }
+        #newJsonOutput {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #272822; /* Monokai-like background */
+            color: #f8f8f2; /* Light text for dark background */
+            border-radius: 4px;
+            white-space: pre-wrap; /* Handles long lines */
+            word-break: break-all;
+            font-family: monospace;
+            border: 1px solid #444;
+        }
+        #newJsonOutput strong {
+            color: #a6e22e; /* Greenish for keys */
+        }
+        #copyInstruction {
+            margin-top: 10px;
+            font-style: italic;
+            color: #555;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="main-content" id="mainContentArea">
         <h1>Available Documents & Links</h1>
+
+        <div class="ad-placeholder ad-banner-top">
+            <p>Ad Placeholder (e.g., 728x90)</p>
+        </div>
 
         <div class="controls">
             <div class="control-group">
@@ -210,55 +313,60 @@
                     </tr>
                 </thead>
                 <tbody id="linksTableBody">
-                    <tr>
-                        <td><a href="flue_curing_quiz.html"><span class="doc-icon fas fa-flask"></span>(QUIZ) A Comprehensive Analysis of Dehumidification Processes in the Flue-Curing of Tobacco Leaves</a></td>
-                        <td data-type="Quiz">Quiz</td>
-                        <td data-date="2025-05-31">May 31, 2025</td>
-                    </tr>
-                    <tr>
-                        <td><a href="flue_curing_research.html"><span class="doc-icon fas fa-flask"></span>(RESEARCH) A Comprehensive Analysis of Dehumidification Processes in the Flue-Curing of Tobacco Leaves</a></td>
-                        <td data-type="Research">Research</td>
-                        <td data-date="2025-05-31">May 31, 2025</td>
-                    </tr>
-                    <tr>
-                        <td><a href="flue_curing.html"><span class="doc-icon fas fa-file-invoice"></span>A Comprehensive Analysis of Dehumidification Processes in the Flue-Curing of Tobacco Leaves</a></td>
-                        <td data-type="Webpage">Webpage</td>
-                        <td data-date="2025-05-31">May 31, 2025</td>
-                    </tr>
-                    <tr>
-                        <td><a href="FESS_Unlimited_Electricity.html"><span class="doc-icon fas fa-bolt"></span>Flywheel Energy Generators: Principles, Advancements, and Future Potential</a></td>
-                        <td data-type="Webpage">Webpage</td>
-                        <td data-date="2025-05-31">May 31, 2025</td>
-                    </tr>
-                    <tr>
-                        <td><a href="BBM NA.html"><span class="doc-icon fas fa-landmark"></span>Benteng Bigas Meron Na!</a></td>
-                        <td data-type="Webpage">Webpage</td>
-                        <td data-date="2025-05-28">May 28, 2025</td>
-                    </tr>
-                    <tr>
-                        <td><a href="MCED_Blood_Test_Report.html"><span class="doc-icon fas fa-notes-medical"></span>Exploring Multi-Cancer Early Detection (MCED) Blood Tests</a></td>
-                        <td data-type="Report / Research">Report / Research</td>
-                        <td data-date="2025-05-28">May 28, 2025</td>
-                    </tr>
-                    <tr>
-                        <td><a href="MCED_Blood_Test_Infograph.html"><span class="doc-icon fas fa-chart-pie"></span>Exploring Multi-Cancer Early Detection (MCED) Blood Tests (INFOGRAPH)</a></td>
-                        <td data-type="Infographics">Infographics</td>
-                        <td data-date="2025-05-28">May 28, 2025</td>
-                    </tr>
-                </tbody>
+                    </tbody>
             </table>
             <div id="noResultsMessage" class="no-results" style="display: none;">
                 <i class="fas fa-folder-open"></i>
                 No documents found matching your criteria.
             </div>
         </div>
-    </div>
+
+        <div class="ad-placeholder ad-medium-rectangle">
+            <p>Ad Placeholder (e.g., 300x250)</p>
+        </div>
+
+        <section class="add-content-section">
+            <h2><i class="fas fa-plus-circle"></i> Add New Content Entry</h2>
+            <form id="addContentForm">
+                <div class="form-group">
+                    <label for="newTitle">Title:</label>
+                    <input type="text" id="newTitle" name="newTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="newHref">File Name (e.g., my-document.html):</label>
+                    <input type="text" id="newHref" name="newHref" required placeholder="example.html">
+                </div>
+                <div class="form-group">
+                    <label for="newType">Type:</label>
+                    <select id="newType" name="newType" required>
+                        <option value="">Select a Type</option>
+                        <option value="Research">Research</option>
+                        <option value="Webpage">Webpage</option>
+                        <option value="Infographics">Infographics</option>
+                        <option value="Report / Research">Report / Research</option>
+                        <option value="Quiz">Quiz</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="newDate">Date Created (YYYY-MM-DD):</label>
+                    <input type="date" id="newDate" name="newDate" required>
+                </div>
+                <button type="submit"><i class="fas fa-magic"></i> Generate JSON & Preview</button>
+            </form>
+            <div id="newJsonOutputContainer" style="display:none;">
+                <h3>Generated JSON Object:</h3>
+                <pre id="newJsonOutput"></pre>
+                <p id="copyInstruction">
+                    <strong>Action Required:</strong> Copy the JSON object above. Then, open your <code>data.json</code> file in your GitHub repository, add this new object to the array (usually at the end, before the closing <code>]</code>, making sure to add a comma <code>,</code> after the previous object if it's not the first one). Commit the changes to <code>data.json</code>.
+                </p>
+            </div>
+        </section>
+        </div>
 
     <p class="footer">Current Year: <span id="currentYear"></span> &copy; Document Hub. All Rights Reserved (if applicable). Generated by AI.</p>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Select DOM elements
             const searchInput = document.getElementById('searchInput');
             const typeFilter = document.getElementById('typeFilter');
             const yearFilter = document.getElementById('yearFilter');
@@ -266,66 +374,62 @@
             const dateSortHeader = document.getElementById('dateSortHeader');
             const sortIcon = dateSortHeader ? dateSortHeader.querySelector('.sort-icon') : null;
             const noResultsMessage = document.getElementById('noResultsMessage');
+            const addContentForm = document.getElementById('addContentForm');
+            const newJsonOutputContainer = document.getElementById('newJsonOutputContainer');
+            const newJsonOutput = document.getElementById('newJsonOutput');
 
-            let originalData = [];
-            let currentSortOrder = 'none'; // 'asc', 'desc', 'none'
+            let originalData = []; // This will hold data from data.json
+            let currentSortOrder = 'none';
 
             function getDocIcon(type) {
-                if (!type) return 'fas fa-file-alt'; // Default icon
+                if (!type) return 'fas fa-file-alt';
                 type = type.toLowerCase();
                 if (type.includes('research')) return 'fas fa-flask';
                 if (type.includes('report')) return 'fas fa-notes-medical';
                 if (type.includes('infograph')) return 'fas fa-chart-pie';
                 if (type.includes('quiz')) return 'fas fa-question-circle';
                 if (type.includes('webpage') || type.includes('article')) return 'fas fa-file-invoice';
-                return 'fas fa-file-alt'; // Default for other types
+                return 'fas fa-file-alt';
             }
 
-            function parseTable() {
-                const data = [];
-                 if (!tableBody) {
-                    console.error("Table body not found for parsing.");
-                    return data;
+            // Function to fetch and load data from data.json
+            async function loadData() {
+                try {
+                    const response = await fetch('data.json'); // Assumes data.json is in the same directory
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} while fetching data.json`);
+                    }
+                    const jsonData = await response.json();
+                    originalData = jsonData.map(item => ({
+                        ...item,
+                        // Ensure dateObject is created correctly for sorting
+                        dateObject: item.date ? new Date(item.date.includes('T') ? item.date : item.date + 'T00:00:00') : null,
+                        iconClass: getDocIcon(item.type)
+                    }));
+                    populateFilters();
+                    applyFiltersAndSort();
+                } catch (error) {
+                    console.error("Could not load data from data.json:", error);
+                    if(noResultsMessage) {
+                        noResultsMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error loading document data. Please check console. Ensure 'data.json' exists and is valid.`;
+                        noResultsMessage.style.display = 'block';
+                    }
+                    if(tableBody) tableBody.innerHTML = ''; // Clear table on error
                 }
-                const rows = tableBody.querySelectorAll('tr');
+            }
+
+            function populateFilters() {
                 const types = new Set();
                 const years = new Set();
 
-                rows.forEach(row => {
-                    if (row.cells.length < 3) { // Basic check for row structure
-                        console.warn("Skipping malformed row during parsing:", row);
-                        return;
-                    }
-
-                    const titleLink = row.cells[0].querySelector('a');
-                    // Safely get text content even if 'a' tag is missing or cell[0] is empty
-                    const titleText = titleLink ? titleLink.textContent.trim() : (row.cells[0].textContent || '').trim();
-                    const actualTitle = titleText.replace(/\([\w\s]+\)\s*/, '').trim(); // Removes things like (RESEARCH)
-
-                    const href = titleLink ? titleLink.href : '#';
-                    const type = row.cells[1].dataset.type || (row.cells[1].textContent || '').trim();
-                    const dateString = (row.cells[2].textContent || '').trim();
-                    const dateISO = row.cells[2].dataset.date;
-
-                    if (type) types.add(type);
-                    if (dateISO) {
-                        // Ensure dateISO is treated as local date by appending time if not present
-                        const d = new Date(dateISO.includes('T') ? dateISO : dateISO + 'T00:00:00');
-                        const year = d.getFullYear();
+                originalData.forEach(item => {
+                    if (item.type) types.add(item.type);
+                    if (item.dateObject) {
+                        const year = item.dateObject.getFullYear();
                         if (!isNaN(year)) years.add(year);
                     }
-                    
-                    data.push({
-                        title: actualTitle,
-                        href: href,
-                        type: type,
-                        dateString: dateString,
-                        dateObject: dateISO ? new Date(dateISO.includes('T') ? dateISO : dateISO + 'T00:00:00') : null,
-                        iconClass: getDocIcon(type)
-                    });
                 });
-                
-                // Populate type filter (only if not already populated and element exists)
+
                 if (typeFilter && typeFilter.options.length <= 1) {
                     types.forEach(type => {
                         const option = document.createElement('option');
@@ -335,7 +439,6 @@
                     });
                 }
 
-                // Populate year filter (only if not already populated and element exists)
                 if (yearFilter && yearFilter.options.length <= 1) {
                     Array.from(years).sort((a,b) => b - a).forEach(year => {
                         const option = document.createElement('option');
@@ -344,15 +447,16 @@
                         yearFilter.appendChild(option);
                     });
                 }
-                return data;
             }
-
+            
             function renderTable(dataToRender) {
+                // ... (renderTable function remains mostly the same as your last version)
+                // It should use item.title, item.href, item.type, item.dateString, item.iconClass
                 if (!tableBody) {
                      console.error("Table body not found for rendering.");
                      return;
                 }
-                tableBody.innerHTML = ''; // Clear existing rows
+                tableBody.innerHTML = ''; 
 
                 if (!noResultsMessage) {
                     console.error("No results message element not found.");
@@ -365,35 +469,32 @@
                     noResultsMessage.style.display = 'none';
                 }
 
-
                 dataToRender.forEach(item => {
                     const row = tableBody.insertRow();
                     const titleCell = row.insertCell();
+                    // Use item.title which should be clean from parseTable/loadData
                     titleCell.innerHTML = `<a href="${item.href}"><span class="doc-icon ${item.iconClass}"></span>${item.title}</a>`;
                     
                     const typeCell = row.insertCell();
                     typeCell.textContent = item.type;
-                    typeCell.dataset.type = item.type; // Store type in data attribute for consistency
+                    typeCell.dataset.type = item.type; 
 
                     const dateCell = row.insertCell();
-                    dateCell.textContent = item.dateString;
-                    if(item.dateObject) { // Ensure dateObject is valid before trying to get ISO string
-                        dateCell.dataset.date = item.dateObject.toISOString().split('T')[0];
+                    // Use item.dateString for display if available, otherwise format from dateObject
+                    dateCell.textContent = item.dateString || (item.dateObject ? item.dateObject.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A');
+                    if(item.dateObject) { 
+                        dateCell.dataset.date = item.dateObject.toISOString().split('T')[0]; // Keep YYYY-MM-DD for data attribute
                     }
                 });
             }
 
             function applyFiltersAndSort() {
-                if(originalData.length === 0 && tableBody && tableBody.querySelectorAll('tr').length > 0) {
-                     console.warn("applyFiltersAndSort called before originalData was populated. Attempting to parse now.");
-                     originalData = parseTable(); // Parse data if not already parsed
-                }
-                if(originalData.length === 0) return;
+                // ... (applyFiltersAndSort function remains mostly the same)
+                 if(originalData.length === 0) return; // Don't run if originalData is empty
 
 
                 let filteredData = [...originalData];
 
-                // Search filter
                 if (searchInput) {
                     const searchTerm = searchInput.value.toLowerCase();
                     if (searchTerm) {
@@ -401,7 +502,6 @@
                     }
                 }
 
-                // Type filter
                 if (typeFilter) {
                     const selectedType = typeFilter.value;
                     if (selectedType) {
@@ -409,15 +509,13 @@
                     }
                 }
 
-                // Year filter
                 if (yearFilter) {
                     const selectedYear = yearFilter.value;
-                    if (selectedYear && selectedYear !== "") { // Ensure selectedYear is not empty
+                    if (selectedYear && selectedYear !== "") { 
                         filteredData = filteredData.filter(item => item.dateObject && item.dateObject.getFullYear() === parseInt(selectedYear));
                     }
                 }
 
-                // Sorting
                 if (currentSortOrder === 'asc') {
                     filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? a.dateObject - b.dateObject : 0);
                 } else if (currentSortOrder === 'desc') {
@@ -428,7 +526,8 @@
             }
 
             function toggleDateSort() {
-                if (!sortIcon) {
+                // ... (toggleDateSort function remains the same)
+                 if (!sortIcon) {
                     console.error("Sort icon element not found.");
                     return;
                 }
@@ -442,21 +541,64 @@
                 applyFiltersAndSort();
             }
 
-            // Initialize
-            originalData = parseTable(); // Parse initial HTML table data
-            if (originalData.length > 0 || (tableBody && tableBody.querySelectorAll('tr').length === 0)) {
-                // Render if there's data, or if table is empty (to show "no results" or allow dynamic adding later)
-                renderTable(originalData);
+            // Handle Add Content Form Submission
+            if (addContentForm) {
+                addContentForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const title = document.getElementById('newTitle').value.trim();
+                    const href = document.getElementById('newHref').value.trim();
+                    const type = document.getElementById('newType').value;
+                    const date = document.getElementById('newDate').value; // YYYY-MM-DD from date input
+
+                    if (!title || !href || !type || !date) {
+                        alert("Please fill in all fields.");
+                        return;
+                    }
+
+                    // Create dateString for display
+                    const dateObjForDisplay = new Date(date + 'T00:00:00'); // Treat as local
+                    const dateString = dateObjForDisplay.toLocaleDateString(undefined, {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    });
+
+                    const newEntry = {
+                        title: title,
+                        href: href,
+                        type: type,
+                        date: date, // YYYY-MM-DD
+                        dateString: dateString, // Formatted string for display
+                        // dateObject and iconClass will be added when data is processed/loaded
+                    };
+
+                    // Display JSON for user to copy
+                    newJsonOutput.textContent = JSON.stringify(newEntry, null, 2);
+                    if(newJsonOutputContainer) newJsonOutputContainer.style.display = 'block';
+
+                    // Optional: Add to current table for immediate preview (won't persist on refresh)
+                    const previewEntry = {
+                        ...newEntry,
+                        dateObject: new Date(newEntry.date + 'T00:00:00'), // Create Date object for sorting/filtering
+                        iconClass: getDocIcon(newEntry.type)
+                    };
+                    originalData.push(previewEntry);
+                    // Re-populate filters if a new type or year was introduced (optional for preview)
+                    // populateFilters(); // Could call this, or just rely on next full load
+                    applyFiltersAndSort(); // Re-render table with the new entry
+
+                    addContentForm.reset(); // Reset form fields
+                });
             }
+            
 
+            // Initialize: Load data from JSON, then populate filters and render table
+            loadData();
 
-            // Event Listeners (check if elements exist before adding listeners)
+            // Event Listeners for table controls (if elements exist)
             if (searchInput) searchInput.addEventListener('input', applyFiltersAndSort);
             if (typeFilter) typeFilter.addEventListener('change', applyFiltersAndSort);
             if (yearFilter) yearFilter.addEventListener('change', applyFiltersAndSort);
             if (dateSortHeader) dateSortHeader.addEventListener('click', toggleDateSort);
 
-            // Footer current year
             const currentYearSpan = document.getElementById('currentYear');
             if (currentYearSpan) {
                 currentYearSpan.textContent = new Date().getFullYear();
