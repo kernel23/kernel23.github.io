@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Researcher Portal: Tobacco Flue-Curing Dehumidification Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Visualization & Content Choices: 
+        - Report Section 1 (Intro): Goal -> Inform/Orient. Viz/Presentation -> Text summaries, interactive timeline for curing stages. Interaction -> Click on stage for details. Justification -> Provides foundational context. Method -> JS for timeline.
+        - Report Section 2 (Technologies): Goal -> Compare/Analyze. Viz/Presentation -> Interactive selector for technologies, dynamic info cards (from Table 2.1 data), comparative bar chart for energy metrics. Interaction -> Buttons to switch tech, chart updates. Justification -> Facilitates direct comparison of technology specifications and performance, crucial for researchers. Method -> Chart.js, JS data objects.
+        - Report Section 3 (Quality Impact): Goal -> Analyze/Correlate. Viz/Presentation -> Text summaries, focused bar chart for TSNA comparison (Table 3.1 data), HTML representation of key findings from Table 3.1. Interaction -> Static display, clear presentation of comparative data. Justification -> Highlights critical quality outcomes linked to dehumidification strategies. Method -> Chart.js, JS data objects.
+        - Report Section 4 (Energy/Economics): Goal -> Compare/Evaluate. Viz/Presentation -> Bar charts for thermal efficiency and operational costs (data from report text/tables), text summaries. Interaction -> Static charts. Justification -> Clearly presents economic and efficiency trade-offs. Method -> Chart.js.
+        - Report Section 6 & 7 (Methodologies, Stats): Goal -> Inform/Reference. Viz/Presentation -> HTML tables for Table 6.1 and 7.1. Interaction -> Scrollable tables. Justification -> Provides researchers with quick access to methodological details and statistical approaches used in the field. Method -> HTML.
+        - Report Section 8 (Challenges/Future): Goal -> Inform/Contextualize. Viz/Presentation -> Text summaries. Justification -> Outlines current issues and future research paths.
+        - References: Goal -> Validate/Extend. Viz/Presentation -> Numbered list. Justification -> Essential for academic rigor.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #334155; /* slate-700 */
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Roboto Slab', serif;
+            color: #1e3a8a; /* blue-800 */
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #1d4ed8; /* blue-700 */
+            border-bottom-color: #1d4ed8; /* blue-700 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px; /* Base height */
+            max-height: 45vh; /* Max height relative to viewport */
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .chart-container {
+                height: 380px;
+            }
+        }
+        @media (min-width: 1024px) { /* lg breakpoint */
+            .chart-container {
+                height: 420px;
+            }
+        }
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .tech-button.active {
+            background-color: #1e40af; /* blue-700 */
+            color: white;
+        }
+        .content-section {
+            padding-top: 4rem; /* Adjust based on nav height */
+            margin-top: -4rem; /* Adjust based on nav height */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 lg:px-6 py-3">
+            <div class="flex flex-wrap justify-between items-center">
+                <a href="#" class="text-2xl font-bold text-blue-700">Flue-Curing Research Portal</a>
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-slate-600 hover:text-blue-700 hover:bg-slate-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+                <div id="main-nav" class="hidden md:flex md:items-center md:space-x-3 lg:space-x-5 text-sm">
+                    <a href="#introduction" class="nav-link py-2 px-1 border-b-2 border-transparent">Introduction</a>
+                    <a href="#technologies" class="nav-link py-2 px-1 border-b-2 border-transparent">Technologies</a>
+                    <a href="#quality" class="nav-link py-2 px-1 border-b-2 border-transparent">Quality Impact</a>
+                    <a href="#energy" class="nav-link py-2 px-1 border-b-2 border-transparent">Energy & Economics</a>
+                    <a href="#methodologies" class="nav-link py-2 px-1 border-b-2 border-transparent">Methodologies</a>
+                    <a href="#statistics" class="nav-link py-2 px-1 border-b-2 border-transparent">Statistical Analysis</a>
+                    <a href="#future" class="nav-link py-2 px-1 border-b-2 border-transparent">Challenges & Future</a>
+                    <a href="#references" class="nav-link py-2 px-1 border-b-2 border-transparent">References</a>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden mt-2 flex flex-col space-y-1">
+                 <a href="#introduction" class="nav-link block py-2 px-3 rounded-md hover:bg-slate-100">Introduction</a>
+                 <a href="#technologies" class="nav-link block py-2 px-3 rounded-md hover:bg-slate-100">Technologies</a>
+                 <a href="#quality" class="nav-link block py-2 px-3 rounded-md hover:bg-slate-100">Quality Impact</a>
+                 <a href="#energy" class="nav-link block py-2 px-3 rounded-md hover:bg-slate-100">Energy & Economics</a>
+                 <a href="#methodologies" class="nav-link block py-2 px-3 rounded-md hover:bg-slate-100">Methodologies</a>
+                 <a href="#statistics" class="nav-link block py-2 px-3 rounded-md hover:bg-slate-100">Statistical Analysis</a>
+                 <a href="#future" class="nav-link block py-2 px-3 rounded-md hover:bg-slate-100">Challenges & Future</a>
+                 <a href="#references" class="nav-link block py-2 px-3 rounded-md hover:bg-slate-100">References</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 lg:px-6 py-8">
+
+        <section id="introduction" class="content-section mb-16">
+            <h2 class="text-3xl font-semibold mb-6 text-center">1. Introduction to Dehumidification in Tobacco Flue-Curing</h2>
+            <p class="mb-4 text-lg leading-relaxed">The flue-curing of tobacco is a critical post-harvest process, transforming raw leaves into a consumable product through controlled drying and chemical conversions. Effective dehumidification is central to this, impacting preservation, sensory attributes (flavor, aroma), physical integrity, and chemical profile. [1, 2] This section introduces the necessity of moisture control, the historical evolution of practices, and the fundamental psychrometric and mass transfer principles governing the process.</p>
+            
+            <div class="mt-8 p-6 bg-white shadow-lg rounded-lg">
+                <h3 class="text-2xl font-semibold mb-4 text-center">1.3.1 The Three Stages of Flue-Curing</h3>
+                <p class="text-center text-slate-600 mb-6">Flue-curing is meticulously staged. Click each stage to view typical environmental targets and objectives.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="curing-stages-container">
+                    </div>
+                <div id="curing-stage-details" class="mt-6 p-4 bg-slate-50 rounded-md min-h-[100px] flex items-center justify-center">
+                    <p class="text-slate-500 italic">Select a stage above for details.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="technologies" class="content-section mb-16">
+            <h2 class="text-3xl font-semibold mb-6 text-center">2. Review of Dehumidification Technologies</h2>
+            <p class="mb-8 text-lg leading-relaxed text-center max-w-3xl mx-auto">Various dehumidification technologies are employed in flue-curing, from traditional methods to advanced systems. The choice significantly impacts energy use, control precision, and tobacco quality. This section allows for an interactive comparison of these technologies based on data from Table 2.1 of the source report.</p>
+            
+            <div class="flex flex-wrap justify-center gap-2 md:gap-3 mb-8" id="tech-buttons-container">
+                </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <div id="tech-details-container" class="lg:col-span-2 bg-white p-6 shadow-lg rounded-lg">
+                    <h3 id="selected-tech-name" class="text-2xl font-semibold mb-4">Select a Technology</h3>
+                    <div id="selected-tech-info">
+                        <p class="text-slate-500 italic">Details will appear here once a technology is selected.</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-3 bg-white p-6 shadow-lg rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-center">Comparative Energy Metrics</h3>
+                    <div class="chart-container">
+                        <canvas id="techCompareChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="quality" class="content-section mb-16">
+            <h2 class="text-3xl font-semibold mb-6 text-center">3. Impact on Cured Leaf Quality and Chemistry</h2>
+            <p class="mb-8 text-lg leading-relaxed text-center max-w-3xl mx-auto">Dehumidification strategies profoundly influence the physical appearance, chemical composition (sugars, nicotine, TSNAs), safety, sensory characteristics, and market value of cured tobacco. This section explores these impacts, drawing from Table 3.1 and related text.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 shadow-lg rounded-lg">
+                    <h3 class="text-xl font-semibold mb-3">TSNA Reduction Comparison</h3>
+                    <p class="text-sm text-slate-600 mb-3">Comparison of relative TSNA levels between HPCB and TCCB, highlighting HPCB's significant reduction capability.</p>
+                    <div class="chart-container" style="height: 280px; max-height: 35vh;">
+                        <canvas id="tsnaChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 shadow-lg rounded-lg">
+                    <h3 class="text-xl font-semibold mb-3">Key Quality Impacts (from Table 3.1)</h3>
+                    <div id="quality-impacts-summary" class="space-y-3 text-sm">
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="energy" class="content-section mb-16">
+            <h2 class="text-3xl font-semibold mb-6 text-center">4. Energy Efficiency and Economic Implications</h2>
+            <p class="mb-8 text-lg leading-relaxed text-center max-w-3xl mx-auto">Energy consumption is a major operational cost. This section compares technologies based on energy use and economic factors, such as operational costs and the concept of dehumidification ratio per unit of energy.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 shadow-lg rounded-lg">
+                    <h3 class="text-xl font-semibold mb-3 text-center">Thermal Efficiency Comparison</h3>
+                    <p class="text-sm text-slate-600 mb-3 text-center">HPCB vs. TCCB (Data from Sec 4.1)</p>
+                    <div class="chart-container" style="height: 300px; max-height: 40vh;">
+                        <canvas id="thermalEfficiencyChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 shadow-lg rounded-lg">
+                    <h3 class="text-xl font-semibold mb-3 text-center">Operational Cost Comparison</h3>
+                    <p class="text-sm text-slate-600 mb-3 text-center">HPCB vs. TCCB (CNY/kg) (Data from Sec 4.2)</p>
+                    <div class="chart-container" style="height: 300px; max-height: 40vh;">
+                        <canvas id="operationalCostChart"></canvas>
+                    </div>
+                </div>
+            </div>
+             <div class="mt-8 bg-white p-6 shadow-lg rounded-lg">
+                <h3 class="text-xl font-semibold mb-3">Dehumidification Ratio & DBT Strategy</h3>
+                <p class="text-slate-600 mb-2"><strong class="text-slate-700">Dehumidification Ratio per Unit of Energy:</strong> A key KPI quantifying moisture removed per unit of energy. Higher is better. Natural gas systems showed higher capacity (2.72) compared to biomass (1.76) or alcohol-based (2.25) in one study. [22]</p>
+                <p class="text-slate-600"><strong class="text-slate-700">Increased DBT Strategy:</strong> Increasing Dry-Bulb Temperature (e.g., to $72 \ ^{\circ}C$ in stem-drying) can reduce energy costs (USD 0.08-0.10/kg) by shortening curing time. The $72 \ ^{\circ}C$ DBT treatment showed lowest total energy consumption/kg and savings in coal (14.07%) and electricity (12.50%) in one instance. [10]</p>
+            </div>
+        </section>
+
+        <section id="methodologies" class="content-section mb-16">
+            <h2 class="text-3xl font-semibold mb-6 text-center">6. Methodologies in Flue-Curing Research</h2>
+            <p class="mb-6 text-lg leading-relaxed text-center max-w-3xl mx-auto">This section outlines the experimental designs, key variables, instrumentation, and data acquisition techniques commonly used in flue-curing dehumidification research, summarized from Table 6.1 of the source document.</p>
+            <div class="bg-white shadow-lg rounded-lg p-1 overflow-x-auto table-container">
+                <table class="min-w-full divide-y divide-slate-200 text-xs md:text-sm">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Study Ref.</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Objective</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Setup</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Manipulated Variables</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Measured Parameters</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Control</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Duration/Reps</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Instrumentation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="methodologies-table-body" class="bg-white divide-y divide-slate-200">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="statistics" class="content-section mb-16">
+            <h2 class="text-3xl font-semibold mb-6 text-center">7. Approaches to Statistical Analysis</h2>
+            <p class="mb-6 text-lg leading-relaxed text-center max-w-3xl mx-auto">Statistical analysis is crucial for interpreting data from dehumidification studies. This section covers descriptive/inferential statistics, advanced modeling like ML, and evaluation metrics, drawing from Table 7.1 of the source document.</p>
+            <div class="bg-white shadow-lg rounded-lg p-1 overflow-x-auto table-container">
+                <table class="min-w-full divide-y divide-slate-200 text-xs md:text-sm">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Method/Model</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Purpose/Application</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Input Variables</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Output/Metrics</th>
+                            <th class="px-3 py-2 text-left font-semibold text-slate-600">Example Refs.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statistics-table-body" class="bg-white divide-y divide-slate-200">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="future" class="content-section mb-16">
+            <h2 class="text-3xl font-semibold mb-6 text-center">8. Challenges, Innovations, and Future Directions</h2>
+            <p class="mb-6 text-lg leading-relaxed text-center max-w-3xl mx-auto">This section discusses practical implementation challenges for advanced systems, ongoing innovations in barn design and equipment, the role of microbial activity, and future research needs to optimize tobacco flue-curing.</p>
+            <div class="bg-white p-6 shadow-lg rounded-lg space-y-4">
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Practical Challenges</h3>
+                    <ul class="list-disc list-inside text-slate-600 space-y-1 pl-2">
+                        <li>Initial capital cost of advanced systems like HPCB. [6]</li>
+                        <li>Control complexity and need for skilled operators. [27]</li>
+                        <li>Site-specific adaptation and optimization. [13, 27]</li>
+                        <li>Integration with existing infrastructure.</li>
+                        <li>Reliability and cost of energy sources (e.g., electricity for HPCB). [22]</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Innovations</h3>
+                     <ul class="list-disc list-inside text-slate-600 space-y-1 pl-2">
+                        <li>Refinement of Heat Pump Technology (HPCB). [6, 23]</li>
+                        <li>Advanced Desiccant Systems (e.g., DCHE with dense coating). [14]</li>
+                        <li>Hybrid Dehumidification Systems (HP + Desiccant Wheel, HP-LDD). [8, 15, 16]</li>
+                        <li>Innovative Curing Barn Designs (e.g., CN201444911U for continuous gradient curing). [31]</li>
+                        <li>Patented operational methods for TSNA prevention (e.g., US8151804B2). [9, 20, 21]</li>
+                        <li>Intelligent Control Systems (Fuzzy logic, ANN, ML). [5, 27]</li>
+                        <li>Solar Energy Integration. [9]</li>
+                    </ul>
+                </div>
+                 <div>
+                    <h3 class="text-xl font-semibold mb-2">Role of Microbial Activity</h3>
+                    <p class="text-slate-600 mb-2">Microbial communities on tobacco leaves change dynamically during curing and are influenced by barn conditions. [24] Specific procedures can maintain microbial diversity, potentially impacting quality. [24] TSNA formation is linked to nitrate-reducing bacteria under anaerobic conditions. [7, 20] Research into exogenous beneficial microorganisms for fermentation is ongoing. [32]</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Future Research Needs</h3>
+                    <ul class="list-disc list-inside text-slate-600 space-y-1 pl-2">
+                        <li>Standardized Key Performance Indicators (KPIs) for energy/dehumidification.</li>
+                        <li>Optimized hybrid dehumidification systems for different curing stages.</li>
+                        <li>Advanced real-time sensing and AI-driven adaptive control systems.</li>
+                        <li>Deeper understanding of microbial roles in quality development.</li>
+                        <li>Comprehensive Life Cycle Assessments (LCAs) for new technologies.</li>
+                        <li>Cost-effective, scalable solutions for small-scale farmers.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="references" class="content-section">
+            <h2 class="text-3xl font-semibold mb-6 text-center">9. References</h2>
+            <p class="mb-6 text-lg leading-relaxed text-center max-w-3xl mx-auto">This section lists the references cited throughout the source document. Refer to the original document for full citation details.</p>
+            <div id="references-list" class="bg-white p-6 shadow-lg rounded-lg text-sm space-y-1 columns-1 md:columns-2 lg:columns-3">
+                </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-300 py-10 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Researcher Portal for Tobacco Flue-Curing Dehumidification Analysis.</p>
+            <p class="text-xs text-slate-400 mt-1">Content synthesized from "A Comprehensive Analysis of Dehumidification Processes in the Flue-Curing of Tobacco Leaves." For educational and research exploration purposes.</p>
+        </div>
+    </footer>
+
+<script>
+const APP_DATA = {
+    curingStages: [
+        { id: "yellowing", name: "1. Yellowing", details: "Objective: Chlorophyll degradation. Conditions: Moderate DBT (35-40°C), high RH (WBT 1-1.5°C below DBT). Surface moisture removed first. [1, 7, 20]" },
+        { id: "fixing", name: "2. Leaf Drying (Color Fixing)", details: "Objective: Dry lamina, fix color. Conditions: Gradually ↑DBT (40-57°C), ↓RH. Increased ventilation. [1, 7, 20]" },
+        { id: "stemdrying", name: "3. Stem Drying", details: "Objective: Dry midribs. Conditions: Highest DBT (up to 71-75°C). Ventilation may be reduced. [1, 7, 10]" }
+    ],
+    technologies: [
+        { 
+            id: "tccb", name: "Conventional (TCCB)", 
+            principle: "Air heated (often coal), passed through tobacco, moist air vented. [6]",
+            advantages: "Low initial equipment cost. [6]",
+            disadvantages: "Low energy efficiency (~42%), high heat loss, poor uniformity, potential emissions. [6]",
+            metrics: { "Thermal Efficiency (%)": 42, "COP": 0 }, 
+            qualityImpact: "Variable, risk of uneven curing, higher TSNAs with poor control. [6]"
+        },
+        { 
+            id: "compressor", name: "Compressor Condensation",
+            principle: "Air cooled below dew point by refrigerant cycle to condense moisture. [11, 12]",
+            advantages: "Effective in warm, humid conditions; readily available. [11]",
+            disadvantages: "Less efficient at low temps/RH; may need reheating. [11]",
+            metrics: { "Thermal Efficiency (%)": null, "COP": 1.5 },
+            qualityImpact: "Can improve drying control over basic ventilation."
+        },
+        { 
+            id: "hpcb", name: "Heat Pump (HPCB)",
+            principle: "Refrigerant cycle cools air for condensation; recovered heat reheats dry air (closed loop). [6, 13]",
+            advantages: "High energy efficiency (~66.5%), energy recovery, improved uniformity, reduced aroma loss. [6, 13]",
+            disadvantages: "Higher initial cost; performance can depend on ambient conditions. [6]",
+            metrics: { "Thermal Efficiency (%)": 66.5, "COP": 3.7 },
+            qualityImpact: "Significant TSNA reduction, comparable/better USDA grades, improved color/chemical balance. [6, 13]"
+        },
+        {
+            id: "desiccant_wheel", name: "Solid Desiccant Wheel",
+            principle: "Rotating wheel with desiccant adsorbs moisture, regenerated by heated air. [8, 11, 14]",
+            advantages: "Can achieve very low RH, effective at lower temps, continuous. [11]",
+            disadvantages: "Regeneration requires energy; potential desiccant carryover. [8]",
+            metrics: { "Thermal Efficiency (%)": null, "COP": null }, /* R² > 0.98 for combined HP-desiccant models [8] */
+            qualityImpact: "Potential for precise humidity control. [8, 11, 14]"
+        },
+        {
+            id: "dche", name: "Desiccant Coated Heat Exchanger (DCHE)",
+            principle: "Desiccant on heat exchanger fins adsorbs moisture; regenerated by hot fluid/air. [14]",
+            advantages: "Improved COP with dense coating, good for low humidity. [14]",
+            disadvantages: "Requires regeneration energy; performance depends on desiccant type/coating. [14]",
+            metrics: { "Thermal Efficiency (%)": null, "COP": null }, /* COPth 2-2.4x better with dense coating [14] */
+            qualityImpact: "Mentioned for tobacco application, precise humidity control. [14]"
+        },
+        {
+            id: "liquid_desiccant", name: "Liquid Desiccant (e.g., HP-LDD)",
+            principle: "Hygroscopic liquid absorbs moisture; solution regenerated. HP-LDD uses heat pump. [14, 15, 16]",
+            advantages: "Can handle large latent loads; HP-LDD offers higher COP. [15, 16]",
+            disadvantages: "Potential desiccant carryover/corrosion; regeneration energy needed. [15, 16]",
+            metrics: { "Thermal Efficiency (%)": null, "COP": null }, /* HP-LDD COP improvements cited [15, 16] */
+            qualityImpact: "Precise humidity control. [14, 15, 16]"
+        },
+        {
+            id: "solar", name: "Solar-Assisted",
+            principle: "Solar thermal for direct heating or PV for powering systems. [9]",
+            advantages: "Reduced fossil fuel reliance, lower operational energy costs. [9]",
+            disadvantages: "Dependent on solar availability, may need backup, land area. [9]",
+            metrics: { "Thermal Efficiency (%)": null, "COP": 0 }, /* Can save 0.42kg coal/kg dry tobacco [9] */
+            qualityImpact: "Facilitates standard curing with reduced conventional energy. [9]"
+        }
+    ],
+    qualityImpacts: [
+        { param: "Increased DBT in SDS (72°C vs 68°C)", physical: "Improved appearance, reduced green, thinner/looser structure.", chemical: "Max. total & reducing sugar; ↓ total N & nicotine; ↑ petroleum ether.", market: "Improved aroma/sensory score; ↑ top-class tobacco & price. [10]" },
+        { param: "Increased DBT in SDS (75°C vs 72°C)", physical: "Quality improvement trend decreased.", chemical: "↓ total & reducing sugar vs 72°C; min. total N & nicotine.", market: "Sensory scores lower than 72°C. [10]" },
+        { param: "HPCB vs. TCCB", physical: "'Orange-yellow' (HPCB) vs 'orange-lemon' (TCCB); looser structure (HPCB).", chemical: "Better chemical balance (HPCB); **Significant TSNA reduction**.", market: "Comparable/better USDA grade. [6, 13]" },
+        { param: "Enhanced Airflow for TSNA control", physical: "Aims for golden yellow leaf.", chemical: "**Aims for undetectable TSNA levels**.", market: "Quality suitable for various products. [20, 21]" }
+    ],
+    methodologiesTable: [
+        { ref: "Moore et al. [13]", objective: "Investigate heat-pump dehumidification.", setup: "Heat-pump barn vs. conventional (propane).", manipulated: "Dehumidification application (lamina/stem drying).", measured: "Temp, humidity, energy, TSNAs, USDA grade, color, stem drying.", control: "Conventional barn (propane).", duration: "Multiple cures, 3 seasons.", instrumentation: "Heat-pump-dehumidifier, propane furnace." },
+        { ref: "Li et al. [6]", objective: "Compare HPCB vs. TCCB.", setup: "HPCB vs. TCCB.", manipulated: "Curing barn type. Standardized T/RH schedule.", measured: "Barn T/RH (22 points), dehumid. capacity, energy, tobacco quality, costs.", control: "TCCB.", duration: "Single run (July 2021).", instrumentation: "Temp. sensors (DS18B20), electric meter, humidity system." },
+        { ref: "Ju et al. [10]", objective: "Effect of ↑DBT in SDS on upper leaf quality & energy.", setup: "BCB with varied max. DBT in SDS.", manipulated: "Max. DBT in SDS (68, 72, 75°C).", measured: "Energy, grade, chemical comp., physical chars., sensory.", control: "Max. DBT 68°C in SDS (CK).", duration: "2019-2021, 2 locs, 3 reps/treat/loc.", instrumentation: "Oven, grinder, NIRS, GC-MS, const. T/RH box." }
+    ],
+    statisticsTable: [
+        { method: "ANOVA", purpose: "Comparing means (chem. content, energy, sensory) across treatments.", input: "Curing treatment, DBT levels, barn type.", output: "F-statistic, p-value.", refs: "[10]" },
+        { method: "Linear/Multivariable Regression", purpose: "Modeling relationships (curing params vs. outcomes). Predicting variables.", input: "Temp, humidity, airflow, stage duration.", output: "Coefficients, R², p-values.", refs: "[30] (general), [10] (stepwise)" },
+        { method: "PLSR", purpose: "Predicting chemical components from sensor data (color, spectra), handles collinearity.", input: "Color values (L*, a*, b*), spectral data.", output: "R², RMSE, RPD.", refs: "[29]" },
+        { method: "Ridge Regression (RR)", purpose: "Predicting chemical components, handles multicollinearity.", input: "Color values, spectral data.", output: "R², RMSE, RPD.", refs: "[29]" },
+        { method: "SVM", purpose: "Classification (leaf grade) or regression (predicting chemical components).", input: "Sensor data (color, image), chemical data.", output: "Accuracy, R², RMSE, RPD.", refs: "[18, 29]" },
+        { method: "Random Forest (RF)", purpose: "Predicting chemical components or classifying leaf status; robust, non-linear.", input: "Color values, sensor data, environmental params.", output: "R², RMSE, RPD, variable importance.", refs: "[29]" },
+        { method: "Fuzzy Logic / ANN / ANFIS", purpose: "Modeling complex, non-linear curing dynamics for control/prediction.", input: "Sensor inputs (T, H, image, smell), setpoints.", output: "Control performance, prediction accuracy (R², RMSE).", refs: "[5, 27]" }
+    ],
+    references: [
+        "[1] Source for general flue-curing principles, moisture importance.",
+        "[2] Source for transformation process.",
+        "[3] Source for high water content, spoilage, barn evolution.",
+        "[4] CORESTA reference for moisture impact on properties, oven volatiles definition.",
+        "[5] Source for advanced curing facilities, automated controls, DS18B20, fuzzy logic.",
+        "[6] Key comparative study: HPCB vs TCCB (efficiency, costs, quality, TSNAs, temp uniformity).",
+        "[7] Source for psychrometrics, curing stages, ventilation, TSNA formation link to anaerobic conditions.",
+        "[8] Source for mass transfer, Fick's law, desiccant wheels, HP-desiccant models.",
+        "[9] Source for solar-assisted systems, moisture models, TSNA patent US8151804B2.",
+        "[10] Key study: Effect of DBT in Stem-Drying Stage (energy, quality, economics, NIRS, GC-MS).",
+        "[11] Source for condensation/desiccant principles, agricultural applications, membrane/ionic systems.",
+        "[12] Source for condensation dehumidifiers, HPCB principles, microclimates.",
+        "[13] Key study: Moore et al. on HPCB integration, TSNA reduction, energy use.",
+        "[14] Source for solid desiccants, DCHE, dense coating, COPth, liquid desiccants.",
+        "[15] Source for liquid desiccants, HP-LDD systems.",
+        "[16] Source for HP-LDD research.",
+        "[17] Source for desiccant use in tobacco storage.",
+        "[18] Source for USDA grading standards, SVM application.",
+        "[19] Source for USDA grading details.",
+        "[20] Source for TSNA formation mechanisms, patent US8151804B2 details.",
+        "[21] Further details on patent US8151804B2.",
+        "[22] Study on clean energy sources, unit costs, dehumidification capacity/energy.",
+        "[23] Source for technical parameters of modern heat pump dryers.",
+        "[24] Study on 'dry-ball/wet-ball degradation' procedure, microbial diversity impact.",
+        "[25] Source for ventilation in air-curing, airflow principles.",
+        "[26] Source for tobacco arrangement in barn, microclimate issues.",
+        "[27] Source for automated control systems, sensor use, ANN/ANFIS applications.",
+        "[28] Source for physical property measurement instruments.",
+        "[29] Key study: ML for predicting chemical components from color (PLSR, RR, SVM, RF), RPD metrics.",
+        "[30] Example of multivariable linear regression (general tobacco context).",
+        "[31] Patent CN201444911U for novel barn design (continuous gradient curing)."
+    ]
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    let techCompareChartInstance, tsnaChartInstance, thermalEfficiencyChartInstance, operationalCostChartInstance;
+    let activeTechButton = null;
+
+    function initMobileMenu() {
+        const menuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = mobileMenu.querySelectorAll('a');
+
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    }
+    
+    function populateCuringStages() {
+        const container = document.getElementById('curing-stages-container');
+        const detailsContainer = document.getElementById('curing-stage-details');
+        APP_DATA.curingStages.forEach(stage => {
+            const card = document.createElement('div');
+            card.className = 'p-4 bg-white border border-slate-200 rounded-md shadow hover:shadow-lg transition-shadow cursor-pointer';
+            card.innerHTML = `<h4 class="text-lg font-semibold text-blue-700 mb-1">${stage.name}</h4><p class="text-xs text-slate-500">${stage.details.split('.')[0]}.</p>`;
+            card.addEventListener('click', () => {
+                detailsContainer.innerHTML = `<p class="text-slate-700">${stage.details}</p>`;
+                container.querySelectorAll('.bg-blue-50').forEach(c => c.classList.remove('bg-blue-50', 'border-blue-500'));
+                card.classList.add('bg-blue-50', 'border-blue-500');
+            });
+            container.appendChild(card);
+        });
+    }
+
+    function populateTechButtons() {
+        const container = document.getElementById('tech-buttons-container');
+        APP_DATA.technologies.forEach(tech => {
+            const button = document.createElement('button');
+            button.className = 'tech-button py-2 px-4 text-sm rounded-full font-medium bg-slate-200 hover:bg-blue-600 hover:text-white transition-colors';
+            button.textContent = tech.name;
+            button.dataset.techId = tech.id;
+            button.addEventListener('click', () => {
+                if (activeTechButton) {
+                    activeTechButton.classList.remove('active');
+                }
+                button.classList.add('active');
+                activeTechButton = button;
+                displayTechDetails(tech.id);
+                updateTechCompareChart(tech.id);
+            });
+            container.appendChild(button);
+        });
+    }
+
+    function displayTechDetails(techId) {
+        const tech = APP_DATA.technologies.find(t => t.id === techId);
+        document.getElementById('selected-tech-name').textContent = tech.name;
+        const infoContainer = document.getElementById('selected-tech-info');
+        infoContainer.innerHTML = `
+            <p class="mb-2"><strong class="text-slate-600">Principle:</strong> ${tech.principle}</p>
+            <p class="mb-2"><strong class="text-slate-600">Advantages:</strong> ${tech.advantages}</p>
+            <p class="mb-2"><strong class="text-slate-600">Disadvantages:</strong> ${tech.disadvantages}</p>
+            <p class="mb-2"><strong class="text-slate-600">Quality Impact:</strong> ${tech.qualityImpact}</p>
+            ${tech.metrics["Thermal Efficiency (%)"] ? `<p class="mb-1"><strong class="text-slate-500">Thermal Eff.:</strong> ${tech.metrics["Thermal Efficiency (%)"]}%</p>` : ''}
+            ${tech.metrics["COP"] ? `<p><strong class="text-slate-500">COP:</strong> ${tech.metrics["COP"]}</p>` : ''}
+        `;
+    }
+
+    function createTechCompareChart() {
+        const ctx = document.getElementById('techCompareChart').getContext('2d');
+        const chartData = {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Thermal Efficiency (%)',
+                    data: [],
+                    backgroundColor: 'rgba(59, 130, 246, 0.7)', // blue-500
+                    borderColor: 'rgba(37, 99, 235, 1)', // blue-700
+                    borderWidth: 1,
+                    yAxisID: 'yEff',
+                },
+                {
+                    label: 'COP',
+                    data: [],
+                    backgroundColor: 'rgba(249, 115, 22, 0.7)', // orange-500
+                    borderColor: 'rgba(234, 88, 12, 1)', // orange-700
+                    borderWidth: 1,
+                    yAxisID: 'yCop',
+                }
+            ]
+        };
+        techCompareChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: {size: 10} } },
+                    yEff: { type: 'linear', position: 'left', title: { display: true, text: 'Thermal Efficiency (%)' }, suggestedMax: 100, beginAtZero: true },
+                    yCop: { type: 'linear', position: 'right', title: { display: true, text: 'COP' }, suggestedMax: 5, beginAtZero: true, grid: { drawOnChartArea: false } }
+                },
+                plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } }
+            }
+        });
+        updateTechCompareChart(null); // Initial population
+    }
+    
+    function updateTechCompareChart(selectedTechId) {
+        const labels = APP_DATA.technologies.map(t => t.name.replace(/\s*\([^)]*\)/g, '')); // Shorter names
+        const efficiencyData = APP_DATA.technologies.map(t => t.metrics["Thermal Efficiency (%)"]);
+        const copData = APP_DATA.technologies.map(t => t.metrics["COP"]);
+
+        techCompareChartInstance.data.labels = labels;
+        techCompareChartInstance.data.datasets[0].data = efficiencyData;
+        techCompareChartInstance.data.datasets[1].data = copData;
+
+        techCompareChartInstance.data.datasets[0].backgroundColor = APP_DATA.technologies.map(t => t.id === selectedTechId ? 'rgba(37, 99, 235, 1)' : 'rgba(59, 130, 246, 0.5)');
+        techCompareChartInstance.data.datasets[1].backgroundColor = APP_DATA.technologies.map(t => t.id === selectedTechId ? 'rgba(234, 88, 12, 1)' : 'rgba(249, 115, 22, 0.5)');
+        
+        techCompareChartInstance.update();
+    }
+
+    function createTsnaChart() {
+        const ctx = document.getElementById('tsnaChart').getContext('2d');
+        const hpcbTsna = APP_DATA.technologies.find(t=>t.id==='hpcb').metrics["TSNA Level"] || 10; // Example value if not in data
+        const tccbTsna = APP_DATA.technologies.find(t=>t.id==='tccb').metrics["TSNA Level"] || 85; // Example value
+        
+        tsnaChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['HPCB', 'TCCB'],
+                datasets: [{
+                    label: 'Relative TSNA Level (Lower is better)',
+                    data: [hpcbTsna, tccbTsna],
+                    backgroundColor: ['rgba(22, 163, 74, 0.7)', 'rgba(239, 68, 68, 0.7)'], // green, red
+                    borderColor: ['rgba(21, 128, 61, 1)', 'rgba(220, 38, 38, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                scales: { x: { beginAtZero: true, title: {display: true, text: 'Relative TSNA Level'} } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function populateQualityImpactsSummary() {
+        const container = document.getElementById('quality-impacts-summary');
+        APP_DATA.qualityImpacts.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'p-2 border-b border-slate-100';
+            div.innerHTML = `
+                <p class="font-semibold text-blue-700">${item.param}</p>
+                <p><strong class="text-slate-500">Physical:</strong> ${item.physical}</p>
+                <p><strong class="text-slate-500">Chemical:</strong> ${item.chemical}</p>
+                <p><strong class="text-slate-500">Market:</strong> ${item.market}</p>
+            `;
+            container.appendChild(div);
+        });
+    }
+    
+    function createEconomicCharts() {
+        const thermalCtx = document.getElementById('thermalEfficiencyChart').getContext('2d');
+        const costCtx = document.getElementById('operationalCostChart').getContext('2d');
+
+        const hpcbData = APP_DATA.technologies.find(t => t.id === 'hpcb');
+        const tccbData = APP_DATA.technologies.find(t => t.id === 'tccb');
+
+        thermalEfficiencyChartInstance = new Chart(thermalCtx, {
+            type: 'bar',
+            data: {
+                labels: ['HPCB', 'TCCB'],
+                datasets: [{
+                    label: 'Thermal Efficiency (%)',
+                    data: [hpcbData.metrics['Thermal Efficiency (%)'], tccbData.metrics['Thermal Efficiency (%)']],
+                    backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(100, 116, 139, 0.7)'], // blue, slate
+                    borderColor: ['rgba(37, 99, 235, 1)', 'rgba(71, 85, 105, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, suggestedMax: 70 } }, plugins: { legend: { display: false } } }
+        });
+
+        operationalCostChartInstance = new Chart(costCtx, {
+            type: 'bar',
+            data: {
+                labels: ['HPCB', 'TCCB'],
+                datasets: [{
+                    label: 'Operational Cost (CNY/kg)',
+                    data: [1.34, 2.67], // From Sec 4.2
+                    backgroundColor: ['rgba(22, 163, 74, 0.7)', 'rgba(239, 68, 68, 0.7)'], // green, red
+                    borderColor: ['rgba(21, 128, 61, 1)', 'rgba(220, 38, 38, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, suggestedMax: 3 } }, plugins: { legend: { display: false } } }
+        });
+    }
+
+    function populateTable(tableBodyId, dataArray) {
+        const tbody = document.getElementById(tableBodyId);
+        tbody.innerHTML = ''; // Clear existing rows
+        dataArray.forEach(rowData => {
+            const tr = document.createElement('tr');
+            Object.values(rowData).forEach(cellData => {
+                const td = document.createElement('td');
+                td.className = 'px-3 py-2 whitespace-normal break-words';
+                td.textContent = cellData;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+    
+    function populateReferences() {
+        const container = document.getElementById('references-list');
+        APP_DATA.references.forEach(ref => {
+            const p = document.createElement('p');
+            p.textContent = ref;
+            container.appendChild(p);
+        });
+    }
+
+    function initNavHighlighting() {
+        const sections = document.querySelectorAll('.content-section');
+        const navLinks = document.querySelectorAll('#main-nav a, #mobile-menu a');
+        const offset = document.querySelector('header').offsetHeight + 20;
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - offset;
+                if (pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active', 'font-semibold', 'text-blue-700');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active', 'font-semibold', 'text-blue-700');
+                }
+            });
+        });
+    }
+
+    initMobileMenu();
+    populateCuringStages();
+    populateTechButtons();
+    createTechCompareChart();
+    createTsnaChart();
+    populateQualityImpactsSummary();
+    createEconomicCharts();
+    populateTable('methodologies-table-body', APP_DATA.methodologiesTable);
+    populateTable('statistics-table-body', APP_DATA.statisticsTable);
+    populateReferences();
+    initNavHighlighting();
+
+    // Trigger display for the first technology button if available
+    const firstTechButton = document.querySelector('#tech-buttons-container button');
+    if (firstTechButton) {
+        firstTechButton.click();
+    }
+});
+</script>
+</body>
+</html>
