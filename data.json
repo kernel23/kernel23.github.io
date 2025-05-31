@@ -1,5 +1,12 @@
 [
     {
+        "title": "Tobacco Fertilization Quiz",
+        "href": "nitrate_potassium_quiz.html",
+        "type": "Quiz",
+        "date": "2025-05-31",
+        "dateString": "May 31, 2025"
+    },
+    {
         "title": "(RESEARCH) A Comprehensive Analysis of Dehumidification Processes in the Flue-Curing of Tobacco Leaves",
         "href": "flue_curing_research.html",
         "type": "Research",
