@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
-        /* All your existing CSS from the previous version (including ad placeholders) */
         :root {
             --primary-color: #0056b3;
             --secondary-color: #007bff;
@@ -22,12 +21,11 @@
             --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
             --font-primary: 'Poppins', sans-serif;
             --font-secondary: 'Roboto', sans-serif;
-            --ad-placeholder-bg: #e9ecef;
-            --ad-placeholder-border: #ced4da;
-            --ad-placeholder-text: #6c757d;
+            /* Removed ad placeholder CSS variables */
+            --danger-color: #dc3545;
         }
 
-        body { /* ... existing body styles ... */
+        body {
             font-family: var(--font-secondary);
             margin: 0;
             background-color: var(--light-bg);
@@ -41,7 +39,7 @@
             box-sizing: border-box;
         }
 
-        .main-content { /* ... existing main-content styles ... */
+        .main-content {
             background-color: #fff;
             padding: 30px;
             border-radius: 12px;
@@ -50,43 +48,16 @@
             max-width: 1100px;
             margin-top: 20px;
         }
-        .main-content h1 { /* ... existing h1 styles ... */
+        .main-content h1 {
             font-family: var(--font-primary);
             color: var(--primary-color);
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px; /* Reverted or adjusted margin */
         }
 
-        .ad-placeholder { /* ... existing ad-placeholder styles ... */
-            background-color: var(--ad-placeholder-bg);
-            border: 2px dashed var(--ad-placeholder-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            margin-left: auto;
-            margin-right: auto;
-            color: var(--ad-placeholder-text);
-            font-family: var(--font-secondary);
-            box-sizing: border-box;
-            padding: 10px;
-            font-size: 0.9em;
-        }
-        .ad-banner-top { /* ... existing ad-banner-top styles ... */
-            width: 728px;
-            height: 90px;
-            max-width: 100%;
-            margin-top: 10px;
-            margin-bottom: 30px;
-        }
-        .ad-medium-rectangle { /* ... existing ad-medium-rectangle styles ... */
-            width: 300px;
-            height: 250px;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
+        /* Removed Ad Placeholder Styles */
 
-        .controls { /* ... existing controls styles ... */
+        .controls {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
@@ -96,11 +67,11 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
         }
-         .control-group { /* ... existing control-group styles ... */
+        .control-group {
             display: flex;
             flex-direction: column;
         }
-        .controls label { /* ... existing label styles ... */
+        .controls label {
             font-weight: 500;
             margin-bottom: 8px;
             font-family: var(--font-primary);
@@ -108,7 +79,7 @@
             font-size: 0.95em;
         }
         .controls input[type="text"],
-        .controls select { /* ... existing input/select styles ... */
+        .controls select {
             padding: 12px 15px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -117,48 +88,48 @@
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .controls input[type="text"]:focus,
-        .controls select:focus { /* ... existing focus styles ... */
+        .controls select:focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
             outline: none;
         }
 
-        .links-table { /* ... existing table styles ... */
+        .links-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
         }
-        .links-table th, .links-table td { /* ... existing th/td styles ... */
+        .links-table th, .links-table td {
             border: 1px solid var(--border-color);
             padding: 15px;
             text-align: left;
             vertical-align: middle;
         }
-        .links-table th { /* ... existing th styles ... */
+        .links-table th {
             background-color: var(--primary-color);
             color: var(--light-text);
             font-family: var(--font-primary);
             font-weight: 600;
         }
-        .links-table th.sortable { /* ... existing sortable th styles ... */
+        .links-table th.sortable {
             cursor: pointer;
             position: relative;
         }
-        .links-table th.sortable .sort-icon { /* ... existing sort-icon styles ... */
+        .links-table th.sortable .sort-icon {
             margin-left: 8px;
             opacity: 0.7;
             transition: opacity 0.3s ease;
         }
-        .links-table th.sortable:hover .sort-icon { /* ... existing sort-icon hover styles ... */
+        .links-table th.sortable:hover .sort-icon {
             opacity: 1;
         }
-        .links-table tbody tr:nth-child(even) { /* ... existing zebra-striping styles ... */
+        .links-table tbody tr:nth-child(even) {
             background-color: #fcfcff;
         }
-        .links-table tbody tr:hover { /* ... existing row hover styles ... */
+        .links-table tbody tr:hover {
             background-color: var(--hover-bg);
         }
-        .links-table td a { /* ... existing link styles in table ... */
+        .links-table td a {
             color: var(--secondary-color);
             text-decoration: none;
             font-weight: 500;
@@ -166,21 +137,21 @@
             display: inline-flex;
             align-items: center;
         }
-        .links-table td a:hover { /* ... existing link hover styles ... */
+        .links-table td a:hover {
             color: var(--primary-color);
             text-decoration: underline;
         }
-        .links-table td .doc-icon { /* ... existing doc-icon styles ... */
+        .links-table td .doc-icon {
             margin-right: 8px;
             color: var(--primary-color);
             font-size: 1.1em;
         }
-        .table-responsive-wrapper { /* ... existing table-responsive-wrapper styles ... */
+        .table-responsive-wrapper {
             overflow-x: auto;
             border: 1px solid var(--border-color);
             border-radius: 8px;
         }
-        .no-results { /* ... existing no-results styles ... */
+        .no-results {
             text-align: center;
             padding: 40px 20px;
             font-style: italic;
@@ -188,48 +159,50 @@
             background-color: #f8f9fa;
             border-radius: 8px;
         }
-        .no-results i { /* ... existing no-results icon styles ... */
+        .no-results i {
             font-size: 2em;
             margin-bottom: 10px;
             display: block;
             color: var(--secondary-color);
         }
-         p.footer { /* ... existing footer styles ... */
+         p.footer {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 40px; /* Adjusted margin, if needed */
             font-size: 0.9em;
             color: #6c757d;
             width: 100%;
         }
 
-        /* Styles for Add Content Form Section */
-        .add-content-section {
-            background-color: #fdfdff;
+        /* Styles for Admin/Login Section */
+        .admin-section {
+            background-color: #fff;
             padding: 25px;
-            margin-top: 30px;
+            margin-top: 40px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
+            box-shadow: var(--card-shadow);
         }
-        .add-content-section h2 {
+         .admin-section h2 {
             font-family: var(--font-primary);
             color: var(--primary-color);
             margin-top: 0;
             margin-bottom: 20px;
             text-align: center;
         }
-        #addContentForm .form-group {
+        .form-group {
             margin-bottom: 15px;
         }
-        #addContentForm label {
+        .form-group label {
             display: block;
             font-weight: 500;
             margin-bottom: 5px;
             font-family: var(--font-primary);
         }
-        #addContentForm input[type="text"],
-        #addContentForm input[type="url"],
-        #addContentForm input[type="date"],
-        #addContentForm select {
+        .form-group input[type="text"],
+        .form-group input[type="url"],
+        .form-group input[type="date"],
+        .form-group input[type="password"],
+        .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border-color);
@@ -237,7 +210,7 @@
             box-sizing: border-box;
             font-family: var(--font-secondary);
         }
-        #addContentForm button {
+        .admin-section button, #addContentForm button {
             background-color: var(--secondary-color);
             color: white;
             padding: 12px 20px;
@@ -247,28 +220,48 @@
             font-size: 1em;
             font-family: var(--font-primary);
             transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
-        #addContentForm button:hover {
+        .admin-section button:hover, #addContentForm button:hover {
             background-color: var(--primary-color);
         }
+        .admin-section button#logoutButton {
+            background-color: var(--danger-color);
+            margin-top: 10px;
+        }
+        .admin-section button#logoutButton:hover {
+            background-color: #c82333;
+        }
+
+
+        #loginErrorMessage {
+            color: var(--danger-color);
+            margin-top: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
         #newJsonOutput {
             margin-top: 20px;
             padding: 15px;
-            background-color: #272822; /* Monokai-like background */
-            color: #f8f8f2; /* Light text for dark background */
+            background-color: #272822;
+            color: #f8f8f2;
             border-radius: 4px;
-            white-space: pre-wrap; /* Handles long lines */
+            white-space: pre-wrap;
             word-break: break-all;
             font-family: monospace;
             border: 1px solid #444;
-        }
-        #newJsonOutput strong {
-            color: #a6e22e; /* Greenish for keys */
         }
         #copyInstruction {
             margin-top: 10px;
             font-style: italic;
             color: #555;
+        }
+
+        .hidden {
+            display: none !important;
         }
 
     </style>
@@ -277,10 +270,6 @@
 
     <div class="main-content" id="mainContentArea">
         <h1>Available Documents & Links</h1>
-
-        <div class="ad-placeholder ad-banner-top">
-            <p>Ad Placeholder (e.g., 728x90)</p>
-        </div>
 
         <div class="controls">
             <div class="control-group">
@@ -315,58 +304,84 @@
                 <tbody id="linksTableBody">
                     </tbody>
             </table>
-            <div id="noResultsMessage" class="no-results" style="display: none;">
-                <i class="fas fa-folder-open"></i>
+            <div id="noResultsMessage" class="no-results hidden"> <i class="fas fa-folder-open"></i>
                 No documents found matching your criteria.
             </div>
         </div>
 
-        <div class="ad-placeholder ad-medium-rectangle">
-            <p>Ad Placeholder (e.g., 300x250)</p>
-        </div>
+        <section class="admin-section">
+            <div id="loginSection">
+                <h2><i class="fas fa-lock"></i> Admin Login</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit"><i class="fas fa-sign-in-alt"></i> Login</button>
+                    <p id="loginErrorMessage" class="hidden"></p>
+                </form>
+            </div>
 
-        <section class="add-content-section">
-            <h2><i class="fas fa-plus-circle"></i> Add New Content Entry</h2>
-            <form id="addContentForm">
-                <div class="form-group">
-                    <label for="newTitle">Title:</label>
-                    <input type="text" id="newTitle" name="newTitle" required>
-                </div>
-                <div class="form-group">
-                    <label for="newHref">File Name (e.g., my-document.html):</label>
-                    <input type="text" id="newHref" name="newHref" required placeholder="example.html">
-                </div>
-                <div class="form-group">
-                    <label for="newType">Type:</label>
-                    <select id="newType" name="newType" required>
-                        <option value="">Select a Type</option>
-                        <option value="Research">Research</option>
-                        <option value="Webpage">Webpage</option>
-                        <option value="Infographics">Infographics</option>
-                        <option value="Report / Research">Report / Research</option>
-                        <option value="Quiz">Quiz</option>
+            <div id="addContentContainer" class="add-content-section hidden">
+                <h2><i class="fas fa-plus-circle"></i> Add New Content Entry</h2>
+                <button id="logoutButton" type="button"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <form id="addContentForm">
+                    <div class="form-group">
+                        <label for="newTitle">Title:</label>
+                        <input type="text" id="newTitle" name="newTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newHref">File Name (e.g., my-document.html):</label>
+                        <input type="text" id="newHref" name="newHref" required placeholder="example.html">
+                    </div>
+                    <div class="form-group">
+                        <label for="newType">Type:</label>
+                        <select id="newType" name="newType" required>
+                            <option value="">Select a Type</option>
+                            <option value="Research">Research</option>
+                            <option value="Webpage">Webpage</option>
+                            <option value="Infographics">Infographics</option>
+                            <option value="Report / Research">Report / Research</option>
+                            <option value="Quiz">Quiz</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newDate">Date Created (YYYY-MM-DD):</label>
+                        <input type="date" id="newDate" name="newDate" required>
+                    </div>
+                    <button type="submit"><i class="fas fa-magic"></i> Generate JSON & Preview</button>
+                </form>
+                <div id="newJsonOutputContainer" class="hidden">
+                    <h3>Generated JSON Object:</h3>
+                    <pre id="newJsonOutput"></pre>
+                    <p id="copyInstruction">
+                        <strong>Action Required:</strong> Copy the JSON object above. Then, open your <code>data.json</code> file in your GitHub repository, add this new object to the array (usually at the end, before the closing <code>]</code>, making sure to add a comma <code>,</code> after the previous object if it's not the first one). Commit the changes to <code>data.json</code>.
+                    </p>
                 </div>
-                <div class="form-group">
-                    <label for="newDate">Date Created (YYYY-MM-DD):</label>
-                    <input type="date" id="newDate" name="newDate" required>
-                </div>
-                <button type="submit"><i class="fas fa-magic"></i> Generate JSON & Preview</button>
-            </form>
-            <div id="newJsonOutputContainer" style="display:none;">
-                <h3>Generated JSON Object:</h3>
-                <pre id="newJsonOutput"></pre>
-                <p id="copyInstruction">
-                    <strong>Action Required:</strong> Copy the JSON object above. Then, open your <code>data.json</code> file in your GitHub repository, add this new object to the array (usually at the end, before the closing <code>]</code>, making sure to add a comma <code>,</code> after the previous object if it's not the first one). Commit the changes to <code>data.json</code>.
-                </p>
             </div>
         </section>
-        </div>
+
+    </div>
 
     <p class="footer">Current Year: <span id="currentYear"></span> &copy; Document Hub. All Rights Reserved (if applicable). Generated by AI.</p>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Hardcoded credentials (visible in client-side code - NOT SECURE)
+            const CORRECT_USERNAME = "kernel23";
+            const CORRECT_PASSWORD = "232795";
+
+            // DOM Elements for login and content sections
+            const loginSection = document.getElementById('loginSection');
+            const loginForm = document.getElementById('loginForm');
+            const loginErrorMessage = document.getElementById('loginErrorMessage');
+            const addContentContainer = document.getElementById('addContentContainer');
+            const logoutButton = document.getElementById('logoutButton');
+
             const searchInput = document.getElementById('searchInput');
             const typeFilter = document.getElementById('typeFilter');
             const yearFilter = document.getElementById('yearFilter');
@@ -378,10 +393,42 @@
             const newJsonOutputContainer = document.getElementById('newJsonOutputContainer');
             const newJsonOutput = document.getElementById('newJsonOutput');
 
-            let originalData = []; // This will hold data from data.json
+            let originalData = [];
             let currentSortOrder = 'none';
+            let isLoggedIn = false; 
 
-            function getDocIcon(type) {
+            function handleLogin(event) {
+                event.preventDefault();
+                const usernameInput = document.getElementById('username').value;
+                const passwordInput = document.getElementById('password').value;
+
+                if (usernameInput === CORRECT_USERNAME && passwordInput === CORRECT_PASSWORD) {
+                    isLoggedIn = true;
+                    loginSection.classList.add('hidden');
+                    addContentContainer.classList.remove('hidden');
+                    loginErrorMessage.classList.add('hidden');
+                } else {
+                    loginErrorMessage.textContent = "Invalid username or password.";
+                    loginErrorMessage.classList.remove('hidden');
+                }
+            }
+
+            function handleLogout() {
+                isLoggedIn = false;
+                loginSection.classList.remove('hidden');
+                addContentContainer.classList.add('hidden');
+                newJsonOutputContainer.classList.add('hidden'); 
+                if(loginForm) loginForm.reset(); 
+            }
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+            if (logoutButton) {
+                logoutButton.addEventListener('click', handleLogout);
+            }
+
+            function getDocIcon(type) { 
                 if (!type) return 'fas fa-file-alt';
                 type = type.toLowerCase();
                 if (type.includes('research')) return 'fas fa-flask';
@@ -392,17 +439,15 @@
                 return 'fas fa-file-alt';
             }
 
-            // Function to fetch and load data from data.json
-            async function loadData() {
+            async function loadData() { 
                 try {
-                    const response = await fetch('data.json'); // Assumes data.json is in the same directory
+                    const response = await fetch('data.json');
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status} while fetching data.json`);
                     }
                     const jsonData = await response.json();
                     originalData = jsonData.map(item => ({
                         ...item,
-                        // Ensure dateObject is created correctly for sorting
                         dateObject: item.date ? new Date(item.date.includes('T') ? item.date : item.date + 'T00:00:00') : null,
                         iconClass: getDocIcon(item.type)
                     }));
@@ -411,17 +456,16 @@
                 } catch (error) {
                     console.error("Could not load data from data.json:", error);
                     if(noResultsMessage) {
-                        noResultsMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error loading document data. Please check console. Ensure 'data.json' exists and is valid.`;
-                        noResultsMessage.style.display = 'block';
+                        noResultsMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error loading document data. Ensure 'data.json' exists and is valid.`;
+                        noResultsMessage.classList.remove('hidden');
                     }
-                    if(tableBody) tableBody.innerHTML = ''; // Clear table on error
+                    if(tableBody) tableBody.innerHTML = '';
                 }
             }
 
-            function populateFilters() {
+            function populateFilters() { 
                 const types = new Set();
                 const years = new Set();
-
                 originalData.forEach(item => {
                     if (item.type) types.add(item.type);
                     if (item.dateObject) {
@@ -429,180 +473,121 @@
                         if (!isNaN(year)) years.add(year);
                     }
                 });
-
                 if (typeFilter && typeFilter.options.length <= 1) {
                     types.forEach(type => {
                         const option = document.createElement('option');
-                        option.value = type;
-                        option.textContent = type;
-                        typeFilter.appendChild(option);
+                        option.value = type; option.textContent = type; typeFilter.appendChild(option);
                     });
                 }
-
                 if (yearFilter && yearFilter.options.length <= 1) {
                     Array.from(years).sort((a,b) => b - a).forEach(year => {
                         const option = document.createElement('option');
-                        option.value = year;
-                        option.textContent = year;
-                        yearFilter.appendChild(option);
+                        option.value = year; option.textContent = year; yearFilter.appendChild(option);
                     });
                 }
             }
             
-            function renderTable(dataToRender) {
-                // ... (renderTable function remains mostly the same as your last version)
-                // It should use item.title, item.href, item.type, item.dateString, item.iconClass
-                if (!tableBody) {
-                     console.error("Table body not found for rendering.");
-                     return;
+            function renderTable(dataToRender) { 
+                if (!tableBody) return;
+                tableBody.innerHTML = '';
+                if (!noResultsMessage) return;
+                if (dataToRender.length === 0) {
+                    noResultsMessage.innerHTML = '<i class="fas fa-folder-open"></i> No documents found matching your criteria.';
+                    noResultsMessage.classList.remove('hidden');
+                    return;
                 }
-                tableBody.innerHTML = ''; 
-
-                if (!noResultsMessage) {
-                    console.error("No results message element not found.");
-                } else {
-                    if (dataToRender.length === 0) {
-                        noResultsMessage.innerHTML = '<i class="fas fa-folder-open"></i> No documents found matching your criteria.';
-                        noResultsMessage.style.display = 'block';
-                        return;
-                    }
-                    noResultsMessage.style.display = 'none';
-                }
-
+                noResultsMessage.classList.add('hidden');
                 dataToRender.forEach(item => {
                     const row = tableBody.insertRow();
                     const titleCell = row.insertCell();
-                    // Use item.title which should be clean from parseTable/loadData
                     titleCell.innerHTML = `<a href="${item.href}"><span class="doc-icon ${item.iconClass}"></span>${item.title}</a>`;
-                    
                     const typeCell = row.insertCell();
-                    typeCell.textContent = item.type;
-                    typeCell.dataset.type = item.type; 
-
+                    typeCell.textContent = item.type; typeCell.dataset.type = item.type;
                     const dateCell = row.insertCell();
-                    // Use item.dateString for display if available, otherwise format from dateObject
                     dateCell.textContent = item.dateString || (item.dateObject ? item.dateObject.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A');
-                    if(item.dateObject) { 
-                        dateCell.dataset.date = item.dateObject.toISOString().split('T')[0]; // Keep YYYY-MM-DD for data attribute
-                    }
+                    if(item.dateObject) dateCell.dataset.date = item.dateObject.toISOString().split('T')[0];
                 });
             }
 
-            function applyFiltersAndSort() {
-                // ... (applyFiltersAndSort function remains mostly the same)
-                 if(originalData.length === 0) return; // Don't run if originalData is empty
-
-
-                let filteredData = [...originalData];
-
-                if (searchInput) {
-                    const searchTerm = searchInput.value.toLowerCase();
-                    if (searchTerm) {
-                        filteredData = filteredData.filter(item => item.title.toLowerCase().includes(searchTerm));
-                    }
+            function applyFiltersAndSort() { 
+                if(originalData.length === 0 && tableBody && tableBody.querySelectorAll('tr').length > 0) {
+                     originalData = parseTable(); 
                 }
-
-                if (typeFilter) {
-                    const selectedType = typeFilter.value;
-                    if (selectedType) {
-                        filteredData = filteredData.filter(item => item.type === selectedType);
+                if(originalData.length === 0 && isLoggedIn === false && !tableBody.querySelectorAll('tr').length) {
+                     // If no data loaded and not logged in to add any, don't attempt to filter/render an empty set unless it's explicitly empty
+                    if(noResultsMessage && !document.querySelector('#linksTableBody tr')) { // Check if table is truly empty
+                        noResultsMessage.innerHTML = '<i class="fas fa-info-circle"></i> No data available.';
+                        noResultsMessage.classList.remove('hidden');
                     }
-                }
-
-                if (yearFilter) {
-                    const selectedYear = yearFilter.value;
-                    if (selectedYear && selectedYear !== "") { 
-                        filteredData = filteredData.filter(item => item.dateObject && item.dateObject.getFullYear() === parseInt(selectedYear));
-                    }
-                }
-
-                if (currentSortOrder === 'asc') {
-                    filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? a.dateObject - b.dateObject : 0);
-                } else if (currentSortOrder === 'desc') {
-                    filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? b.dateObject - a.dateObject : 0);
+                    return;
                 }
                 
+                let filteredData = [...originalData];
+                if (searchInput) {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    if (searchTerm) filteredData = filteredData.filter(item => item.title.toLowerCase().includes(searchTerm));
+                }
+                if (typeFilter) {
+                    const selectedType = typeFilter.value;
+                    if (selectedType) filteredData = filteredData.filter(item => item.type === selectedType);
+                }
+                if (yearFilter) {
+                    const selectedYear = yearFilter.value;
+                    if (selectedYear && selectedYear !== "") filteredData = filteredData.filter(item => item.dateObject && item.dateObject.getFullYear() === parseInt(selectedYear));
+                }
+                if (currentSortOrder === 'asc') filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? a.dateObject - b.dateObject : 0);
+                else if (currentSortOrder === 'desc') filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? b.dateObject - a.dateObject : 0);
                 renderTable(filteredData);
             }
 
-            function toggleDateSort() {
-                // ... (toggleDateSort function remains the same)
-                 if (!sortIcon) {
-                    console.error("Sort icon element not found.");
-                    return;
-                }
+            function toggleDateSort() { 
+                if (!sortIcon) return;
                 if (currentSortOrder === 'none' || currentSortOrder === 'desc') {
-                    currentSortOrder = 'asc';
-                    sortIcon.className = 'sort-icon fas fa-sort-up';
+                    currentSortOrder = 'asc'; sortIcon.className = 'sort-icon fas fa-sort-up';
                 } else {
-                    currentSortOrder = 'desc';
-                    sortIcon.className = 'sort-icon fas fa-sort-down';
+                    currentSortOrder = 'desc'; sortIcon.className = 'sort-icon fas fa-sort-down';
                 }
                 applyFiltersAndSort();
             }
 
-            // Handle Add Content Form Submission
             if (addContentForm) {
                 addContentForm.addEventListener('submit', function(event) {
                     event.preventDefault();
+                    if (!isLoggedIn) {
+                        alert("Please login to add content.");
+                        return;
+                    }
                     const title = document.getElementById('newTitle').value.trim();
                     const href = document.getElementById('newHref').value.trim();
                     const type = document.getElementById('newType').value;
-                    const date = document.getElementById('newDate').value; // YYYY-MM-DD from date input
+                    const date = document.getElementById('newDate').value;
 
                     if (!title || !href || !type || !date) {
-                        alert("Please fill in all fields.");
-                        return;
+                        alert("Please fill in all fields."); return;
                     }
+                    const dateObjForDisplay = new Date(date + 'T00:00:00');
+                    const dateString = dateObjForDisplay.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+                    const newEntry = { title: title, href: href, type: type, date: date, dateString: dateString };
 
-                    // Create dateString for display
-                    const dateObjForDisplay = new Date(date + 'T00:00:00'); // Treat as local
-                    const dateString = dateObjForDisplay.toLocaleDateString(undefined, {
-                        year: 'numeric', month: 'long', day: 'numeric'
-                    });
-
-                    const newEntry = {
-                        title: title,
-                        href: href,
-                        type: type,
-                        date: date, // YYYY-MM-DD
-                        dateString: dateString, // Formatted string for display
-                        // dateObject and iconClass will be added when data is processed/loaded
-                    };
-
-                    // Display JSON for user to copy
                     newJsonOutput.textContent = JSON.stringify(newEntry, null, 2);
-                    if(newJsonOutputContainer) newJsonOutputContainer.style.display = 'block';
+                    if(newJsonOutputContainer) newJsonOutputContainer.classList.remove('hidden');
 
-                    // Optional: Add to current table for immediate preview (won't persist on refresh)
-                    const previewEntry = {
-                        ...newEntry,
-                        dateObject: new Date(newEntry.date + 'T00:00:00'), // Create Date object for sorting/filtering
-                        iconClass: getDocIcon(newEntry.type)
-                    };
+                    const previewEntry = { ...newEntry, dateObject: new Date(newEntry.date + 'T00:00:00'), iconClass: getDocIcon(newEntry.type) };
                     originalData.push(previewEntry);
-                    // Re-populate filters if a new type or year was introduced (optional for preview)
-                    // populateFilters(); // Could call this, or just rely on next full load
-                    applyFiltersAndSort(); // Re-render table with the new entry
-
-                    addContentForm.reset(); // Reset form fields
+                    applyFiltersAndSort();
+                    addContentForm.reset();
                 });
             }
             
-
-            // Initialize: Load data from JSON, then populate filters and render table
             loadData();
 
-            // Event Listeners for table controls (if elements exist)
             if (searchInput) searchInput.addEventListener('input', applyFiltersAndSort);
             if (typeFilter) typeFilter.addEventListener('change', applyFiltersAndSort);
             if (yearFilter) yearFilter.addEventListener('change', applyFiltersAndSort);
             if (dateSortHeader) dateSortHeader.addEventListener('click', toggleDateSort);
 
             const currentYearSpan = document.getElementById('currentYear');
-            if (currentYearSpan) {
-                currentYearSpan.textContent = new Date().getFullYear();
-            }
+            if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
         });
     </script>
 </body>
