@@ -3,169 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprehensive Research of the Following Topics</title>
+    <title>Advanced Document Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="515145265365-3roa1gd10ej9qcqqa3mvfutvq8e7p27d.apps.googleusercontent.com">
+
     <style>
+        :root {
+            --primary-color: #0056b3; /* Original blue, slightly darker */
+            --secondary-color: #007bff; /* Lighter blue for accents */
+            --light-bg: #f8f9fa;
+            --dark-text: #343a40;
+            --light-text: #f8f9fa;
+            --border-color: #dee2e6;
+            --hover-bg: #e9ecef;
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --font-primary: 'Poppins', sans-serif;
+            --font-secondary: 'Roboto', sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: var(--font-secondary);
             margin: 0;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
             padding: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-            line-height: 1.6;
+            box-sizing: border-box;
         }
 
-        .container {
-            max-width: 950px; /* Increased max-width for controls and table */
-            margin: 20px auto;
-            padding: 20px;
+        .auth-container {
+            text-align: center;
+            padding: 40px 20px;
             background-color: #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 500px;
+        }
+        .auth-container h1 {
+            font-family: var(--font-primary);
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        #googleSignInButton, #signOutButton {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-primary);
+        }
+        #googleSignInButton:hover, #signOutButton:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        #userProfile {
+            margin-top: 20px;
+            font-family: var(--font-secondary);
+        }
+        #userProfile img {
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+            border: 2px solid var(--border-color);
         }
 
-        h1 {
-            color: #0056b3;
+        .main-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 1100px; /* Wider for better table layout */
+        }
+        .main-content h2 {
+            font-family: var(--font-primary);
+            color: var(--primary-color);
             text-align: center;
             margin-bottom: 30px;
         }
 
         .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #fdfdff; /* Slightly off-white */
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .control-group {
             display: flex;
-            flex-wrap: wrap; /* Allow controls to wrap on smaller screens */
-            gap: 15px; /* Spacing between control elements */
-            margin-bottom: 25px;
-            padding: 15px;
-            background-color: #e9ecef;
-            border-radius: 6px;
+            flex-direction: column;
         }
-
         .controls label {
-            font-weight: bold;
-            margin-right: 5px;
-            align-self: center;
+            font-weight: 500; /* Poppins medium */
+            margin-bottom: 8px;
+            font-family: var(--font-primary);
+            color: var(--primary-color);
+            font-size: 0.95em;
         }
-
         .controls input[type="text"],
         .controls select {
-            padding: 8px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             font-size: 1em;
-            flex-grow: 1; /* Allow input/select to grow */
+            font-family: var(--font-secondary);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .controls input[type="text"]:focus,
+        .controls select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+            outline: none;
         }
 
-        .controls input[type="text"] {
-            min-width: 200px; /* Minimum width for search bar */
-        }
-
-        /* Table Styles */
         .links-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
         }
-
         .links-table th, .links-table td {
-            border: 1px solid #ddd;
-            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            padding: 15px;
             text-align: left;
-            vertical-align: middle; /* Align content vertically */
+            vertical-align: middle;
         }
-
         .links-table th {
-            background-color: #0056b3;
-            color: #fff;
-            font-weight: bold;
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            font-family: var(--font-primary);
+            font-weight: 600; /* Poppins semi-bold */
         }
-
         .links-table th.sortable {
-            cursor: pointer; /* Indicate header is clickable */
-            position: relative; /* For positioning sort arrows */
+            cursor: pointer;
+            position: relative;
         }
-
-        .links-table th.sortable::after { /* Basic arrow, changes with sort direction */
-            content: '';
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            margin-top: -7px; /* Center arrow */
-            border: 5px solid transparent;
+        .links-table th.sortable .sort-icon {
+            margin-left: 8px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
         }
-        .links-table th.sortable.asc::after {
-            content: ' ▲'; /* Up arrow for ascending */
-            font-size: 0.8em;
-            position: absolute;
-            right: 5px;
-            color: #fff;
+        .links-table th.sortable:hover .sort-icon {
+            opacity: 1;
         }
-        .links-table th.sortable.desc::after {
-            content: ' ▼'; /* Down arrow for descending */
-            font-size: 0.8em;
-            position: absolute;
-            right: 5px;
-            color: #fff;
-        }
-
 
         .links-table tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #fcfcff; /* Very light blueish tint for even rows */
         }
-
         .links-table tbody tr:hover {
-            background-color: #f1f1f1;
+            background-color: var(--hover-bg);
         }
-
         .links-table td a {
-            color: #007bff;
+            color: var(--secondary-color);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 500; /* Roboto medium */
             transition: color 0.3s ease;
+            display: inline-flex; /* For aligning icon with text */
+            align-items: center;
         }
-
         .links-table td a:hover {
-            color: #0056b3;
+            color: var(--primary-color);
             text-decoration: underline;
+        }
+        .links-table td .doc-icon {
+            margin-right: 8px;
+            color: var(--primary-color);
+            font-size: 1.1em;
         }
 
         p.footer {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 50px;
             font-size: 0.9em;
-            color: #666;
+            color: #6c757d; /* Bootstrap muted color */
+            width: 100%;
         }
 
         .table-responsive-wrapper {
             overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
         }
 
         .no-results {
             text-align: center;
-            padding: 20px;
+            padding: 40px 20px;
             font-style: italic;
-            color: #777;
+            color: #6c757d;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .no-results i {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+            color: var(--secondary-color);
+        }
+
+        /* Initially hide content that requires login */
+        .main-content, #signOutButton {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Available Documents & Links</h1>
+
+    <div class="auth-container">
+        <h1>Document Hub Access</h1>
+        <div id="googleSignInButton">
+            <i class="fab fa-google"></i> Sign in with Google
+        </div>
+        <div id="userProfile">
+            </div>
+        <button id="signOutButton">
+            <i class="fas fa-sign-out-alt"></i> Sign Out
+        </button>
+    </div>
+
+    <div class="main-content" id="mainContentArea">
+        <h2>Available Documents & Links</h2>
 
         <div class="controls">
-            <div>
-                <label for="searchInput">Search Title:</label>
+            <div class="control-group">
+                <label for="searchInput"><i class="fas fa-search"></i> Search Title:</label>
                 <input type="text" id="searchInput" placeholder="Enter keywords...">
             </div>
-            <div>
-                <label for="typeFilter">Filter by Type:</label>
+            <div class="control-group">
+                <label for="typeFilter"><i class="fas fa-filter"></i> Filter by Type:</label>
                 <select id="typeFilter">
                     <option value="">All Types</option>
-                    </select>
+                </select>
             </div>
-            <div>
-                <label for="yearFilter">Filter by Year:</label>
+            <div class="control-group">
+                <label for="yearFilter"><i class="fas fa-calendar-alt"></i> Filter by Year:</label>
                 <select id="yearFilter">
                     <option value="">All Years</option>
-                    </select>
+                </select>
             </div>
         </div>
 
@@ -173,59 +265,150 @@
             <table class="links-table">
                 <thead>
                     <tr>
-                        <th>Title</th>
-                        <th>Type</th>
-                        <th id="dateSortHeader" class="sortable">Date Created</th> </tr>
+                        <th><i class="fas fa-file-alt"></i> Title</th>
+                        <th><i class="fas fa-tag"></i> Type</th>
+                        <th id="dateSortHeader" class="sortable">
+                            <i class="fas fa-calendar-day"></i> Date Created <span class="sort-icon fas fa-sort"></span>
+                        </th>
+                    </tr>
                 </thead>
                 <tbody id="linksTableBody">
                     <tr>
-                        <td><a href="flue_curing_research.html">(RESEARCH) A Comprehensive Analysis of Dehumidification Processes in the Flue-Curing of Tobacco Leaves</a></td>
+                        <td><a href="flue_curing_research.html"><span class="doc-icon fas fa-flask"></span>(RESEARCH) A Comprehensive Analysis...</a></td>
                         <td data-type="Research">Research</td>
                         <td data-date="2025-05-31">May 31, 2025</td>
                     </tr>
                     <tr>
-                        <td><a href="flue_curing.html">A Comprehensive Analysis of Dehumidification Processes in the Flue-Curing of Tobacco Leaves</a></td>
+                        <td><a href="flue_curing.html"><span class="doc-icon fas fa-file-invoice"></span>A Comprehensive Analysis...</a></td>
                         <td data-type="Webpage">Webpage</td>
                         <td data-date="2025-05-31">May 31, 2025</td>
                     </tr>
                     <tr>
-                        <td><a href="FESS_Unlimited_Electricity.html">Flywheel Energy Generators: Principles, Advancements, and Future Potential</a></td>
+                        <td><a href="FESS_Unlimited_Electricity.html"><span class="doc-icon fas fa-bolt"></span>Flywheel Energy Generators...</a></td>
                         <td data-type="Webpage">Webpage</td>
                         <td data-date="2025-05-31">May 31, 2025</td>
                     </tr>
                     <tr>
-                        <td><a href="BBM NA.html">Benteng Bigas Meron Na!</a></td>
+                        <td><a href="BBM NA.html"><span class="doc-icon fas fa-landmark"></span>Benteng Bigas Meron Na!</a></td>
                         <td data-type="Webpage">Webpage</td>
                         <td data-date="2025-05-28">May 28, 2025</td>
                     </tr>
                     <tr>
-                        <td><a href="MCED_Blood_Test_Report.html">Exploring Multi-Cancer Early Detection (MCED) Blood Tests</a></td>
+                        <td><a href="MCED_Blood_Test_Report.html"><span class="doc-icon fas fa-notes-medical"></span>Exploring MCED Blood Tests</a></td>
                         <td data-type="Report / Research">Report / Research</td>
                         <td data-date="2025-05-28">May 28, 2025</td>
                     </tr>
                     <tr>
-                        <td><a href="MCED_Blood_Test_Infograph.html">Exploring Multi-Cancer Early Detection (MCED) Blood Tests (INFOGRAPH)</a></td>
+                        <td><a href="MCED_Blood_Test_Infograph.html"><span class="doc-icon fas fa-chart-pie"></span>Exploring MCED Blood Tests (INFOGRAPH)</a></td>
                         <td data-type="Infographics">Infographics</td>
                         <td data-date="2025-05-28">May 28, 2025</td>
                     </tr>
-                    </tbody>
+                </tbody>
             </table>
-            <div id="noResultsMessage" class="no-results" style="display: none;">No documents found matching your criteria.</div>
+            <div id="noResultsMessage" class="no-results" style="display: none;">
+                <i class="fas fa-folder-open"></i>
+                No documents found matching your criteria.
+            </div>
         </div>
-
-        <p class="footer">Copyright 2025 - Generated by AI</p>
     </div>
 
+    <p class="footer">Current Year: <span id="currentYear"></span> &copy; Document Hub. All Rights Reserved (if applicable). Generated by AI.</p>
+
     <script>
+        // !!!!! IMPORTANT !!!!!
+        // REPLACE 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com' in the <meta> tag in <head>
+        // with your actual Google Client ID.
+
         document.addEventListener('DOMContentLoaded', function() {
+            const mainContentArea = document.getElementById('mainContentArea');
+            const googleSignInButton = document.getElementById('googleSignInButton');
+            const signOutButton = document.getElementById('signOutButton');
+            const userProfileDiv = document.getElementById('userProfile');
+            const authContainer = document.querySelector('.auth-container');
+
             const searchInput = document.getElementById('searchInput');
             const typeFilter = document.getElementById('typeFilter');
             const yearFilter = document.getElementById('yearFilter');
             const tableBody = document.getElementById('linksTableBody');
             const dateSortHeader = document.getElementById('dateSortHeader');
+            const sortIcon = dateSortHeader.querySelector('.sort-icon');
             const noResultsMessage = document.getElementById('noResultsMessage');
             let originalData = [];
             let currentSortOrder = 'none'; // 'asc', 'desc', 'none'
+            let googleAuthInstance; // To store GoogleAuth instance
+
+            // --- Google Sign-In Logic ---
+            function startApp() {
+                gapi.load('auth2', function() {
+                    googleAuthInstance = gapi.auth2.init({
+                        client_id: document.querySelector('meta[name="google-signin-client_id"]').content
+                    });
+                    // Listen for sign-in state changes.
+                    googleAuthInstance.isSignedIn.listen(updateSigninStatus);
+                    // Handle the initial sign-in state.
+                    updateSigninStatus(googleAuthInstance.isSignedIn.get());
+
+                    // Attach sign-in handler
+                    googleSignInButton.addEventListener('click', () => {
+                        googleAuthInstance.signIn();
+                    });
+                    signOutButton.addEventListener('click', () => {
+                        googleAuthInstance.signOut();
+                    });
+                });
+            }
+
+            function updateSigninStatus(isSignedIn) {
+                if (isSignedIn) {
+                    mainContentArea.style.display = 'block';
+                    signOutButton.style.display = 'inline-flex';
+                    googleSignInButton.style.display = 'none';
+                    authContainer.style.marginBottom = '10px'; // Reduce margin after login
+                    const profile = googleAuthInstance.currentUser.get().getBasicProfile();
+                    userProfileDiv.innerHTML = `
+                        <img src="${profile.getImageUrl()}" alt="User Profile Image">
+                        <p>Welcome, <strong>${profile.getName()}</strong>!</p>
+                        <p><small>${profile.getEmail()}</small></p>
+                    `;
+                    // Initialize table features only after sign-in
+                    if (originalData.length === 0) { // Avoid re-initializing if already done
+                        initializeTableFeatures();
+                    }
+                } else {
+                    mainContentArea.style.display = 'none';
+                    signOutButton.style.display = 'none';
+                    googleSignInButton.style.display = 'inline-flex';
+                    userProfileDiv.innerHTML = '<p>Please sign in to access documents.</p>';
+                    authContainer.style.marginBottom = '30px';
+                }
+            }
+
+            function initializeTableFeatures() {
+                originalData = parseTable();
+                if (originalData.length > 0) { // Only render if data exists
+                     applyFiltersAndSort(); // Initial render
+                } else {
+                    tableBody.innerHTML = ''; // Clear table if no initial data
+                    noResultsMessage.innerHTML = '<i class="fas fa-info-circle"></i> No data loaded into the table.';
+                    noResultsMessage.style.display = 'block';
+                }
+
+                // Event Listeners for table controls
+                searchInput.addEventListener('input', applyFiltersAndSort);
+                typeFilter.addEventListener('change', applyFiltersAndSort);
+                yearFilter.addEventListener('change', applyFiltersAndSort);
+                dateSortHeader.addEventListener('click', toggleDateSort);
+            }
+            
+            function getDocIcon(type) {
+                type = type.toLowerCase();
+                if (type.includes('research')) return 'fas fa-flask';
+                if (type.includes('report')) return 'fas fa-notes-medical';
+                if (type.includes('infograph')) return 'fas fa-chart-pie';
+                if (type.includes('quiz')) return 'fas fa-question-circle';
+                if (type.includes('webpage') || type.includes('article')) return 'fas fa-file-invoice';
+                return 'fas fa-file-alt'; // Default
+            }
 
             function parseTable() {
                 const rows = tableBody.querySelectorAll('tr');
@@ -235,48 +418,58 @@
 
                 rows.forEach(row => {
                     const titleLink = row.cells[0].querySelector('a');
-                    const title = titleLink ? titleLink.textContent.trim() : '';
-                    const href = titleLink ? titleLink.href : '';
-                    const type = row.cells[1].textContent.trim();
+                    const titleText = titleLink ? titleLink.textContent.trim() : row.cells[0].textContent.trim();
+                    // Remove existing icon text if it was part of the title in HTML
+                    const actualTitle = titleText.replace(/\([\w\s]+\)\s*/, '').trim();
+
+
+                    const href = titleLink ? titleLink.href : '#';
+                    const type = row.cells[1].dataset.type || row.cells[1].textContent.trim();
                     const dateString = row.cells[2].textContent.trim();
-                    const dateISO = row.cells[2].dataset.date; // Expecting YYYY-MM-DD
+                    const dateISO = row.cells[2].dataset.date;
 
                     if (type) types.add(type);
                     if (dateISO) {
-                        const year = new Date(dateISO).getFullYear();
+                        const year = new Date(dateISO + 'T00:00:00').getFullYear(); // Ensure parsing as local date
                         if (!isNaN(year)) years.add(year);
                     }
-
+                    
                     data.push({
-                        title: title,
+                        title: actualTitle,
                         href: href,
                         type: type,
                         dateString: dateString,
-                        dateObject: dateISO ? new Date(dateISO) : null
+                        dateObject: dateISO ? new Date(dateISO + 'T00:00:00') : null, // Ensure parsing as local date
+                        iconClass: getDocIcon(type)
                     });
                 });
                 
-                // Populate type filter
-                types.forEach(type => {
-                    const option = document.createElement('option');
-                    option.value = type;
-                    option.textContent = type;
-                    typeFilter.appendChild(option);
-                });
+                // Populate type filter (only if not already populated)
+                if (typeFilter.options.length <= 1) {
+                    types.forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type;
+                        option.textContent = type;
+                        typeFilter.appendChild(option);
+                    });
+                }
 
-                // Populate year filter
-                Array.from(years).sort((a,b) => b - a).forEach(year => { // Sort years descending
-                    const option = document.createElement('option');
-                    option.value = year;
-                    option.textContent = year;
-                    yearFilter.appendChild(option);
-                });
+                // Populate year filter (only if not already populated)
+                if (yearFilter.options.length <= 1) {
+                    Array.from(years).sort((a,b) => b - a).forEach(year => {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        yearFilter.appendChild(option);
+                    });
+                }
                 return data;
             }
 
             function renderTable(dataToRender) {
-                tableBody.innerHTML = ''; // Clear existing rows
+                tableBody.innerHTML = '';
                 if (dataToRender.length === 0) {
+                    noResultsMessage.innerHTML = '<i class="fas fa-folder-open"></i> No documents found matching your criteria.';
                     noResultsMessage.style.display = 'block';
                     return;
                 }
@@ -284,70 +477,64 @@
 
                 dataToRender.forEach(item => {
                     const row = tableBody.insertRow();
-                    row.insertCell().innerHTML = `<a href="${item.href}">${item.title}</a>`;
+                    const titleCell = row.insertCell();
+                    titleCell.innerHTML = `<a href="${item.href}"><span class="doc-icon ${item.iconClass}"></span>${item.title}</a>`;
+                    
                     const typeCell = row.insertCell();
                     typeCell.textContent = item.type;
-                    typeCell.dataset.type = item.type; // For consistency if needed later
+                    typeCell.dataset.type = item.type;
 
                     const dateCell = row.insertCell();
                     dateCell.textContent = item.dateString;
                     dateCell.dataset.date = item.dateObject ? item.dateObject.toISOString().split('T')[0] : '';
-
                 });
             }
 
             function applyFiltersAndSort() {
-                let filteredData = [...originalData]; // Start with a copy of the original data
+                if(originalData.length === 0) return; // Don't process if no data
+                let filteredData = [...originalData];
 
-                // Search filter
                 const searchTerm = searchInput.value.toLowerCase();
                 if (searchTerm) {
                     filteredData = filteredData.filter(item => item.title.toLowerCase().includes(searchTerm));
                 }
 
-                // Type filter
                 const selectedType = typeFilter.value;
                 if (selectedType) {
                     filteredData = filteredData.filter(item => item.type === selectedType);
                 }
 
-                // Year filter
                 const selectedYear = yearFilter.value;
-                if (selectedYear) {
+                if (selectedYear && selectedYear !== "") {
                     filteredData = filteredData.filter(item => item.dateObject && item.dateObject.getFullYear() === parseInt(selectedYear));
                 }
 
-                // Sorting
                 if (currentSortOrder === 'asc') {
                     filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? a.dateObject - b.dateObject : 0);
                 } else if (currentSortOrder === 'desc') {
                     filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? b.dateObject - a.dateObject : 0);
                 }
-                // If 'none', original (or rather, last filtered) order is maintained
-
                 renderTable(filteredData);
             }
 
-            // Initialize
-            originalData = parseTable();
-            renderTable(originalData); // Initial render
-
-            // Event Listeners
-            searchInput.addEventListener('input', applyFiltersAndSort);
-            typeFilter.addEventListener('change', applyFiltersAndSort);
-            yearFilter.addEventListener('change', applyFiltersAndSort);
-
-            dateSortHeader.addEventListener('click', () => {
-                dateSortHeader.classList.remove('asc', 'desc'); // Clear previous sort classes
+            function toggleDateSort() {
                 if (currentSortOrder === 'none' || currentSortOrder === 'desc') {
                     currentSortOrder = 'asc';
-                    dateSortHeader.classList.add('asc');
+                    sortIcon.className = 'sort-icon fas fa-sort-up';
                 } else {
                     currentSortOrder = 'desc';
-                    dateSortHeader.classList.add('desc');
+                    sortIcon.className = 'sort-icon fas fa-sort-down';
                 }
+                // Remove other sort icons if you had more sortable columns
+                // For now, just update this one
                 applyFiltersAndSort();
-            });
+            }
+
+            // Footer current year
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // --- Start Google Sign-In ---
+            startApp();
         });
     </script>
 </body>
