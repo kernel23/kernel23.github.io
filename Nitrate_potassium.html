@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Analysis: Tobacco Fertilization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 40vh; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .tab-button { transition: all 0.3s ease; }
+        .tab-button.active { background-color: #1e40af; color: white; }
+        .tab-button:not(.active):hover { background-color: #dbeafe; }
+        .filter-button { transition: all 0.3s ease; }
+        .filter-button.active { background-color: #166534; color: white; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .filter-button:not(.active):hover { background-color: #dcfce7; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-stone-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">Optimizing Tobacco Fertilization</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">An interactive guide to the effects of Nitrogen and Potassium on tobacco growth, quality, and sustainability.</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center gap-2 mb-8 bg-white p-2 rounded-lg shadow-md">
+            <button id="btn-overview" class="tab-button active text-sm md:text-base font-medium py-2 px-4 rounded-md" data-tab="overview">Overview</button>
+            <button id="btn-nitrogen" class="tab-button text-sm md:text-base font-medium py-2 px-4 rounded-md" data-tab="nitrogen">Nitrogen Deep Dive</button>
+            <button id="btn-potassium" class="tab-button text-sm md:text-base font-medium py-2 px-4 rounded-md" data-tab="potassium">Potassium & Quality</button>
+            <button id="btn-interaction" class="tab-button text-sm md:text-base font-medium py-2 px-4 rounded-md" data-tab="interaction">N:K Interaction</button>
+            <button id="btn-environment" class="tab-button text-sm md:text-base font-medium py-2 px-4 rounded-md" data-tab="environment">Environmental Impact</button>
+        </nav>
+
+        <main id="main-content">
+            <section id="overview" class="content-section active fade-in bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-blue-800 mb-4">The Art of Balance: N & K in Tobacco</h2>
+                <p class="mb-6 text-gray-700">This section provides a high-level summary of the distinct yet complementary roles of Nitrogen (N) and Potassium (K) in tobacco cultivation. While both are essential, they govern different aspects of the plant's life and final leaf quality. Understanding their primary functions is the first step toward a precision fertilization strategy that balances high yield with the premium quality characteristics demanded by the market.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="border border-green-200 bg-green-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-green-800 mb-3 flex items-center">
+                            <span class="text-2xl mr-3">🌱</span> Nitrogen (N): The Growth Engine
+                        </h3>
+                        <p class="mb-4">Nitrogen is the primary driver of vegetative growth, directly impacting plant size and biomass.</p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Role:</strong> Forms proteins and chlorophyll, crucial for photosynthesis.</li>
+                            <li><strong>Impacts:</strong> Plant height, leaf size, and overall cured leaf yield.</li>
+                            <li><strong>Key Molecule:</strong> A fundamental component of <strong class="text-green-900">nicotine</strong>, directly influencing its concentration.</li>
+                            <li><strong>Challenge:</strong> The right form and timing are critical. Too much N, especially late in the season, or the wrong form (excess ammonium) can severely degrade leaf quality.</li>
+                        </ul>
+                    </div>
+                    <div class="border border-amber-200 bg-amber-50 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-amber-800 mb-3 flex items-center">
+                            <span class="text-2xl mr-3">🔥</span> Potassium (K): The Quality Regulator
+                        </h3>
+                        <p class="mb-4">Potassium is the single most important nutrient for determining the quality of cured tobacco leaf, especially its combustion properties.</p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><strong>Role:</strong> Activates enzymes, aids sugar transport, and enhances stress resilience.</li>
+                            <li><strong>Impacts:</strong> Fire-holding capacity, burn rate, ash color, and leaf texture.</li>
+                            <li><strong>Key Consideration:</strong> The source matters immensely. Fertilizers high in chloride (like Muriate of Potash) are highly <strong class="text-red-700">detrimental</strong> to burn quality.</li>
+                            <li><strong>Challenge:</strong> Balancing K with other nutrients (like N and Mg) to achieve desirable burn characteristics without compromising yield.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="nitrogen" class="content-section fade-in bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-blue-800 mb-2">Nitrogen Deep Dive: Form Matters</h2>
+                <p class="mb-4 text-gray-700">Tobacco's response to nitrogen is highly dependent on the chemical form in which it's supplied. While tobacco generally prefers nitrate-N, a balanced approach can optimize growth and efficiency. This section allows you to compare the effects of different nitrogen forms on key performance indicators. Select a nitrogen form to see how it performs across various metrics.</p>
+                <div class="flex flex-wrap justify-center gap-2 mb-6">
+                    <button class="filter-button active py-2 px-4 rounded-md text-sm font-medium border border-gray-300" data-n-form="balanced">Balanced (NO₃⁻/NH₄⁺)</button>
+                    <button class="filter-button py-2 px-4 rounded-md text-sm font-medium border border-gray-300" data-n-form="nitrate">Nitrate Dominant (NO₃⁻)</button>
+                    <button class="filter-button py-2 px-4 rounded-md text-sm font-medium border border-gray-300" data-n-form="ammonium">Ammonium Dominant (NH₄⁺)</button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="chart-container">
+                        <canvas id="nitrogenChart"></canvas>
+                    </div>
+                    <div id="nitrogen-info" class="p-4 bg-gray-50 rounded-lg border">
+                    </div>
+                </div>
+            </section>
+
+            <section id="potassium" class="content-section fade-in bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-blue-800 mb-2">Potassium & Quality: The Chloride Effect</h2>
+                 <p class="mb-4 text-gray-700">For tobacco, the source of potassium is often more critical than the amount, primarily due to the "co-ions" that come with it. Chloride (Cl⁻), found in the most common K fertilizer (Muriate of Potash), is severely detrimental to burn quality. This chart visualizes the dramatic impact of different K sources on fire-holding capacity, a key measure of quality. Interact with the chart to learn more about each source.</p>
+                <div class="grid lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-2">
+                        <div class="chart-container" style="height:400px; max-height: 50vh;">
+                             <canvas id="potassiumChart"></canvas>
+                        </div>
+                    </div>
+                    <div id="potassium-info" class="p-4 bg-gray-50 rounded-lg border h-full flex flex-col justify-center">
+                        <h3 id="k-info-title" class="text-lg font-semibold text-gray-800 mb-2">Hover over a bar for details</h3>
+                        <p id="k-info-ions" class="text-sm font-medium text-gray-500 mb-2"></p>
+                        <p id="k-info-desc" class="text-gray-700"></p>
+                        <div id="k-info-ash" class="mt-4 flex items-center"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="interaction" class="content-section fade-in bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-blue-800 mb-2">N:K Interaction: The Balancing Act</h2>
+                <p class="mb-4 text-gray-700">Neither Nitrogen nor Potassium works in isolation. The ratio between them (N:K) is a critical factor that determines both yield and quality. An excess of nitrogen might boost yield but harm quality, while a proper N:K balance can optimize both. This section visualizes how different N:K ratios can affect overall performance, demonstrating the synergistic relationship between these two vital nutrients. Note that a higher "Quality Score" reflects better burn, texture, and chemical balance.</p>
+                 <div class="chart-container mx-auto">
+                    <canvas id="interactionChart"></canvas>
+                </div>
+                 <p id="interaction-info" class="mt-4 text-center text-gray-600 max-w-2xl mx-auto"></p>
+            </section>
+
+            <section id="environment" class="content-section fade-in bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-blue-800 mb-2">Environmental & Soil Impact</h2>
+                <p class="mb-6 text-gray-700">Fertilizer choices have consequences beyond the plant, affecting soil health and the wider environment. Nitrogen fertilizers pose risks of water contamination and greenhouse gas emissions, while some potassium sources can increase soil salinity. This section provides a comparative overview of the primary environmental and soil health risks associated with different fertilizer types, guiding more sustainable management practices.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="p-4 border rounded-lg bg-blue-50 border-blue-200">
+                        <h3 class="font-bold text-lg text-blue-900 mb-2">Nitrate-Based N</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start"><span class="mr-2 text-red-500 text-xl">💧</span> <div><strong>High Risk: Nitrate Leaching.</strong> Highly soluble and mobile, can contaminate groundwater.</div></li>
+                            <li class="flex items-start"><span class="mr-2 text-orange-500 text-xl">💨</span> <div><strong>Moderate Risk: N₂O Emissions.</strong> Can be produced via denitrification in wet soils.</div></li>
+                        </ul>
+                    </div>
+                    <div class="p-4 border rounded-lg bg-green-50 border-green-200">
+                        <h3 class="font-bold text-lg text-green-900 mb-2">Ammonium-Based N</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start"><span class="mr-2 text-yellow-500 text-xl">⚠️</span> <div><strong>High Risk: Soil Acidification.</strong> Nitrification process releases H+ ions, lowering soil pH.</div></li>
+                            <li class="flex items-start"><span class="mr-2 text-orange-500 text-xl">💨</span> <div><strong>High Risk: N₂O Emissions.</strong> Acts as a substrate for both nitrification and denitrification.</div></li>
+                        </ul>
+                    </div>
+                    <div class="p-4 border rounded-lg bg-red-50 border-red-200">
+                        <h3 class="font-bold text-lg text-red-900 mb-2">Muriate of Potash (KCl)</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start"><span class="mr-2 text-red-500 text-xl">🧂</span> <div><strong>High Risk: Chloride Accumulation.</strong> Damages burn quality and can be toxic to plants.</div></li>
+                            <li class="flex items-start"><span class="mr-2 text-orange-500 text-xl">🌡️</span> <div><strong>Moderate Risk: Soil Salinity.</strong> High salt index can induce osmotic stress.</div></li>
+                        </ul>
+                    </div>
+                     <div class="p-4 border rounded-lg bg-purple-50 border-purple-200">
+                        <h3 class="font-bold text-lg text-purple-900 mb-2">Sulfate of Potash (SOP)</h3>
+                        <ul class="space-y-1">
+                            <li class="flex items-start"><span class="mr-2 text-green-500 text-xl">✅</span> <div><strong>Low Risk: Chloride & Salinity.</strong> A much safer alternative for quality and soil health.</div></li>
+                             <li class="flex items-start"><span class="mr-2 text-yellow-500 text-xl">Sulfur Note:</span><div>Provides beneficial sulfur, but excess accumulation can be a minor concern in some soils.</div></li>
+                        </ul>
+                    </div>
+                     <div class="p-4 border rounded-lg bg-gray-100 border-gray-300">
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">Organic Sources (PFA, Stems)</h3>
+                        <ul class="space-y-1">
+                            <li class="flex items-start"><span class="mr-2 text-green-500 text-xl">🌿</span> <div><strong>Positive Impact: Soil Health.</strong> Improves organic matter, microbial life, and nutrient availability.</div></li>
+                            <li class="flex items-start"><span class="mr-2 text-green-500 text-xl">🌍</span><div><strong>Low Environmental Risk.</strong> Nutrients are released slowly, reducing leaching losses.</div></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-button');
+            const sections = document.querySelectorAll('.content-section');
+            const nitrogenFilters = document.querySelectorAll('.filter-button[data-n-form]');
+
+            const nitrogenData = {
+                labels: ['Yield', 'Growth Rate', 'Leaf Quality Score', 'Root Development', 'N-Use Efficiency'],
+                datasets: [
+                    {
+                        label: 'Nitrate Dominant (NO₃⁻)',
+                        data: [80, 85, 80, 75, 70],
+                        borderColor: 'rgba(59, 130, 246, 0.8)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    },
+                    {
+                        label: 'Ammonium Dominant (NH₄⁺)',
+                        data: [60, 50, 40, 55, 60],
+                        borderColor: 'rgba(239, 68, 68, 0.8)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                    },
+                    {
+                        label: 'Balanced (NO₃⁻/NH₄⁺)',
+                        data: [90, 95, 85, 90, 85],
+                        borderColor: 'rgba(34, 197, 94, 0.8)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                        pointBackgroundColor: 'rgba(34, 197, 94, 1)',
+                    }
+                ]
+            };
+            const nitrogenInfo = {
+                nitrate: {
+                    title: 'Nitrate Dominant (NO₃⁻)',
+                    desc: 'Generally preferred by tobacco, promoting good growth and quality. However, it is highly mobile in soil and poses a risk of leaching if not managed carefully. Excessive late-season application can harm cured leaf quality.'
+                },
+                ammonium: {
+                    title: 'Ammonium Dominant (NH₄⁺)',
+                    desc: 'Poses a high risk of ammonium toxicity, leading to stunted growth, chlorosis (yellowing), and poor leaf quality. This is especially true if potassium (K) levels are low. Can also acidify the soil.'
+                },
+                balanced: {
+                    title: 'Balanced (NO₃⁻/NH₄⁺)',
+                    desc: 'Often the optimal approach. A balanced supply can enhance root morphology, improve overall N-use efficiency, and lead to the highest yields and quality scores by leveraging the benefits of both forms while mitigating their individual risks.'
+                }
+            };
+            
+            const potassiumData = {
+                labels: ['Potassium Carbonate (K₂CO₃)', 'Sulfate of Potash (SOP)', 'Potassium Nitrate (KNO₃)', 'Tobacco Stems (Organic)', 'Sulfate of Potash-Magnesia', 'Muriate of Potash (KCl)'],
+                datasets: [{
+                    label: 'Fire-Holding Capacity (Quality Score)',
+                    data: [95, 85, 80, 78, 75, 15],
+                    backgroundColor: [
+                        'rgba(22, 163, 74, 0.7)',
+                        'rgba(34, 197, 94, 0.7)',
+                        'rgba(74, 222, 128, 0.7)',
+                        'rgba(134, 239, 172, 0.7)',
+                        'rgba(249, 115, 22, 0.7)',
+                        'rgba(239, 68, 68, 0.7)'
+                    ],
+                    borderColor: [
+                         '#166534',
+                         '#15803d',
+                         '#16a34a',
+                         '#22c55e',
+                         '#d97706',
+                         '#b91c1c'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const potassiumInfo = {
+                'Potassium Carbonate (K₂CO₃)': {
+                    ions: 'Provides: K⁺, CO₃²⁻',
+                    desc: 'Excellent for burn quality. Consistently reported to significantly improve fire-holding capacity.',
+                    ash: '⚪ Good Ash'
+                },
+                'Sulfate of Potash (SOP)': {
+                    ions: 'Provides: K⁺, SO₄²⁻',
+                    desc: 'The preferred source for quality. Contains negligible chloride, providing good burn characteristics. Also supplies beneficial sulfur.',
+                    ash: '⚪ Good Ash'
+                },
+                'Potassium Nitrate (KNO₃)': {
+                    ions: 'Provides: K⁺, NO₃⁻',
+                    desc: 'Promotes good fire-holding but can cause sparkling and a dark ash if used excessively. Supplies both N and K.',
+                    ash: '⚫ Darker Ash Risk'
+                },
+                 'Tobacco Stems (Organic)': {
+                    ions: 'Provides: K⁺, N, P, Mg, Organic Matter',
+                    desc: 'A holistic source that can supply all required K and improve soil health. Produces good quality comparable to mineral sources.',
+                    ash: '⚪ Good Ash'
+                },
+                'Sulfate of Potash-Magnesia': {
+                    ions: 'Provides: K⁺, Mg²⁺, SO₄²⁻',
+                    desc: 'Supplies magnesium, which promotes a whiter ash, a desirable trait. Good overall quality effect.',
+                    ash: '⚪ Excellent White Ash'
+                },
+                'Muriate of Potash (KCl)': {
+                    ions: 'Provides: K⁺, Cl⁻ (High Amount)',
+                    desc: 'HIGHLY DETRIMENTAL. The high chloride content severely impairs burn quality, often making the leaf incombustible.',
+                    ash: '⚫ Poor Ash, Poor Burn'
+                }
+            };
+            
+            const interactionData = {
+                labels: ['N-Heavy (e.g., 2:1)', 'Balanced (1:1)', 'K-Heavy (e.g., 1:2)'],
+                datasets: [
+                    {
+                        label: 'Cured Leaf Yield',
+                        data: [90, 85, 70],
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: '#1e40af',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Leaf Quality Score',
+                        data: [60, 95, 88],
+                        backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                        borderColor: '#166534',
+                        borderWidth: 1
+                    }
+                ]
+            };
+
+            const interactionInfo = {
+                'N-Heavy (e.g., 2:1)': 'An N-heavy approach can maximize biomass and yield but often comes at the cost of quality. The excess nitrogen can lead to high nitrates, low sugars, and poor leaf characteristics.',
+                'Balanced (1:1)': 'A balanced ratio typically represents the "sweet spot", producing high yields of excellent quality leaves. It ensures K is available to mitigate N-related stress and promote good burn and chemical properties.',
+                'K-Heavy (e.g., 1:2)': 'Prioritizing potassium ensures top-tier quality, especially for burn characteristics. However, if nitrogen becomes the limiting factor, overall plant growth and yield may be reduced.'
+            };
+
+            let nitrogenChart, potassiumChart, interactionChart;
+
+            function createNitrogenChart() {
+                const ctx = document.getElementById('nitrogenChart').getContext('2d');
+                nitrogenChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: nitrogenData.labels,
+                        datasets: [nitrogenData.datasets[2]]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100,
+                                pointLabels: { font: { size: 11 } },
+                                grid: { color: 'rgba(0,0,0,0.05)'},
+                                angleLines: { color: 'rgba(0,0,0,0.05)'}
+                            }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+                updateNitrogenInfo('balanced');
+            }
+
+            function createPotassiumChart() {
+                const ctx = document.getElementById('potassiumChart').getContext('2d');
+                potassiumChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: potassiumData,
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { 
+                                beginAtZero: true,
+                                title: { display: true, text: 'Fire-Holding Capacity (Quality Score)'} 
+                            },
+                             y: { grid: { display: false } }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { enabled: false },
+                            title: { display: false }
+                        },
+                        onHover: (event, chartElement) => {
+                           if(chartElement.length) {
+                               const index = chartElement[0].index;
+                               const label = potassiumChart.data.labels[index];
+                               updatePotassiumInfo(label);
+                           }
+                        }
+                    }
+                });
+            }
+            
+            function createInteractionChart() {
+                const ctx = document.getElementById('interactionChart').getContext('2d');
+                interactionChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: interactionData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, max: 100, title: { display: true, text: 'Relative Score' } },
+                            x: { grid: { display: false } }
+                        },
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            title: { display: true, text: 'Effect of N:K Ratio on Yield vs. Quality' }
+                        },
+                         onClick: (event, elements) => {
+                            if (elements.length > 0) {
+                                const label = interactionChart.data.labels[elements[0].index];
+                                updateInteractionInfo(label);
+                            }
+                        }
+                    }
+                });
+                 updateInteractionInfo('Balanced (1:1)');
+            }
+
+            function updateNitrogenInfo(form) {
+                const info = nitrogenInfo[form];
+                const infoDiv = document.getElementById('nitrogen-info');
+                infoDiv.innerHTML = `<h3 class="text-lg font-semibold text-gray-800 mb-2">${info.title}</h3><p class="text-gray-700">${info.desc}</p>`;
+            }
+            
+            function updatePotassiumInfo(label) {
+                const info = potassiumInfo[label];
+                const titleEl = document.getElementById('k-info-title');
+                const ionsEl = document.getElementById('k-info-ions');
+                const descEl = document.getElementById('k-info-desc');
+                const ashEl = document.getElementById('k-info-ash');
+
+                titleEl.textContent = label;
+                ionsEl.textContent = info.ions;
+                descEl.textContent = info.desc;
+                ashEl.innerHTML = `<span class="text-xl mr-2">${info.ash.startsWith('⚪') ? '⚪' : '⚫'}</span> <span class="${info.ash.startsWith('⚪') ? 'text-green-700' : 'text-red-700'} font-medium">${info.ash.substring(2)}</span>`;
+            }
+            
+            function updateInteractionInfo(label) {
+                document.getElementById('interaction-info').textContent = interactionInfo[label];
+            }
+
+
+            function showTab(tabId) {
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+                
+                tabs.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+
+                if (tabId === 'nitrogen' && !nitrogenChart) createNitrogenChart();
+                if (tabId === 'potassium' && !potassiumChart) createPotassiumChart();
+                if (tabId === 'interaction' && !interactionChart) createInteractionChart();
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    showTab(tab.dataset.tab);
+                });
+            });
+
+            nitrogenFilters.forEach(button => {
+                button.addEventListener('click', () => {
+                    const form = button.dataset.nForm;
+                    
+                    nitrogenFilters.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    let datasetIndex;
+                    if (form === 'nitrate') datasetIndex = 0;
+                    else if (form === 'ammonium') datasetIndex = 1;
+                    else datasetIndex = 2;
+                    
+                    nitrogenChart.data.datasets = [nitrogenData.datasets[datasetIndex]];
+                    nitrogenChart.update();
+                    updateNitrogenInfo(form);
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
