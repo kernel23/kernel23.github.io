@@ -8,8 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecJvqREP_layout9DsHMIcjA_9LqwYciBuPYBi8dQb3SK5iTTgmML_dSssONKyGpcZrmZoyCVgoLCS6FfkQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style>
+        /* All your existing CSS from the previous version */
         :root {
             --primary-color: #0056b3;
             --secondary-color: #007bff;
@@ -21,11 +23,10 @@
             --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
             --font-primary: 'Poppins', sans-serif;
             --font-secondary: 'Roboto', sans-serif;
-            /* Removed ad placeholder CSS variables */
             --danger-color: #dc3545;
         }
 
-        body {
+        body { /* ... */
             font-family: var(--font-secondary);
             margin: 0;
             background-color: var(--light-bg);
@@ -38,8 +39,7 @@
             padding: 20px;
             box-sizing: border-box;
         }
-
-        .main-content {
+        .main-content { /* ... */
             background-color: #fff;
             padding: 30px;
             border-radius: 12px;
@@ -48,16 +48,13 @@
             max-width: 1100px;
             margin-top: 20px;
         }
-        .main-content h1 {
+        .main-content h1 { /* ... */
             font-family: var(--font-primary);
             color: var(--primary-color);
             text-align: center;
-            margin-bottom: 30px; /* Reverted or adjusted margin */
+            margin-bottom: 30px;
         }
-
-        /* Removed Ad Placeholder Styles */
-
-        .controls {
+        .controls { /* ... */
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
@@ -67,19 +64,18 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
         }
-        .control-group {
-            display: flex;
+         .control-group { /* ... */
+             display: flex;
             flex-direction: column;
-        }
-        .controls label {
+         }
+        .controls label { /* ... */
             font-weight: 500;
             margin-bottom: 8px;
             font-family: var(--font-primary);
             color: var(--primary-color);
             font-size: 0.95em;
         }
-        .controls input[type="text"],
-        .controls select {
+        .controls input[type="text"], .controls select { /* ... */
             padding: 12px 15px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -87,49 +83,47 @@
             font-family: var(--font-secondary);
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        .controls input[type="text"]:focus,
-        .controls select:focus {
+        .controls input[type="text"]:focus, .controls select:focus { /* ... */
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
             outline: none;
         }
-
-        .links-table {
+        .links-table { /* ... */
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
         }
-        .links-table th, .links-table td {
+        .links-table th, .links-table td { /* ... */
             border: 1px solid var(--border-color);
-            padding: 15px;
+            padding: 12px 15px; /* Adjusted padding slightly */
             text-align: left;
             vertical-align: middle;
         }
-        .links-table th {
+        .links-table th { /* ... */
             background-color: var(--primary-color);
             color: var(--light-text);
             font-family: var(--font-primary);
             font-weight: 600;
         }
-        .links-table th.sortable {
+        .links-table th.sortable { /* ... */
             cursor: pointer;
             position: relative;
         }
-        .links-table th.sortable .sort-icon {
+        .links-table th.sortable .sort-icon { /* ... */
             margin-left: 8px;
             opacity: 0.7;
             transition: opacity 0.3s ease;
         }
-        .links-table th.sortable:hover .sort-icon {
+        .links-table th.sortable:hover .sort-icon { /* ... */
             opacity: 1;
         }
-        .links-table tbody tr:nth-child(even) {
+        .links-table tbody tr:nth-child(even) { /* ... */
             background-color: #fcfcff;
         }
-        .links-table tbody tr:hover {
+        .links-table tbody tr:hover { /* ... */
             background-color: var(--hover-bg);
         }
-        .links-table td a {
+        .links-table td a { /* ... */
             color: var(--secondary-color);
             text-decoration: none;
             font-weight: 500;
@@ -137,21 +131,39 @@
             display: inline-flex;
             align-items: center;
         }
-        .links-table td a:hover {
+        .links-table td a:hover { /* ... */
             color: var(--primary-color);
             text-decoration: underline;
         }
-        .links-table td .doc-icon {
+        .links-table td .doc-icon { /* ... */
             margin-right: 8px;
             color: var(--primary-color);
             font-size: 1.1em;
         }
-        .table-responsive-wrapper {
-            overflow-x: auto;
+        .qr-button {
+            background-color: transparent;
+            border: 1px solid var(--secondary-color);
+            color: var(--secondary-color);
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        .qr-button:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        .qr-button i {
+            margin-right: 5px;
+        }
+
+        .table-responsive-wrapper { /* ... */
+             overflow-x: auto;
             border: 1px solid var(--border-color);
             border-radius: 8px;
         }
-        .no-results {
+        .no-results { /* ... */
             text-align: center;
             padding: 40px 20px;
             font-style: italic;
@@ -159,22 +171,20 @@
             background-color: #f8f9fa;
             border-radius: 8px;
         }
-        .no-results i {
+        .no-results i { /* ... */
             font-size: 2em;
             margin-bottom: 10px;
             display: block;
             color: var(--secondary-color);
         }
-         p.footer {
+        p.footer { /* ... */
             text-align: center;
-            margin-top: 40px; /* Adjusted margin, if needed */
+            margin-top: 40px;
             font-size: 0.9em;
             color: #6c757d;
             width: 100%;
         }
-
-        /* Styles for Admin/Login Section */
-        .admin-section {
+        .admin-section { /* ... */
             background-color: #fff;
             padding: 25px;
             margin-top: 40px;
@@ -182,27 +192,23 @@
             border-radius: 8px;
             box-shadow: var(--card-shadow);
         }
-         .admin-section h2 {
+        .admin-section h2 { /* ... */
             font-family: var(--font-primary);
             color: var(--primary-color);
             margin-top: 0;
             margin-bottom: 20px;
             text-align: center;
         }
-        .form-group {
+        .form-group { /* ... */
             margin-bottom: 15px;
         }
-        .form-group label {
+        .form-group label { /* ... */
             display: block;
             font-weight: 500;
             margin-bottom: 5px;
             font-family: var(--font-primary);
         }
-        .form-group input[type="text"],
-        .form-group input[type="url"],
-        .form-group input[type="date"],
-        .form-group input[type="password"],
-        .form-group select {
+        .form-group input[type="text"], .form-group input[type="url"], .form-group input[type="date"], .form-group input[type="password"], .form-group select { /* ... */
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border-color);
@@ -210,7 +216,7 @@
             box-sizing: border-box;
             font-family: var(--font-secondary);
         }
-        .admin-section button, #addContentForm button {
+        .admin-section button, #addContentForm button { /* ... */
             background-color: var(--secondary-color);
             color: white;
             padding: 12px 20px;
@@ -224,26 +230,23 @@
             align-items: center;
             gap: 8px;
         }
-        .admin-section button:hover, #addContentForm button:hover {
+        .admin-section button:hover, #addContentForm button:hover { /* ... */
             background-color: var(--primary-color);
         }
-        .admin-section button#logoutButton {
+        .admin-section button#logoutButton { /* ... */
             background-color: var(--danger-color);
             margin-top: 10px;
         }
-        .admin-section button#logoutButton:hover {
+        .admin-section button#logoutButton:hover { /* ... */
             background-color: #c82333;
         }
-
-
-        #loginErrorMessage {
+        #loginErrorMessage { /* ... */
             color: var(--danger-color);
             margin-top: 10px;
             text-align: center;
             font-weight: bold;
         }
-
-        #newJsonOutput {
+        #newJsonOutput { /* ... */
             margin-top: 20px;
             padding: 15px;
             background-color: #272822;
@@ -254,14 +257,76 @@
             font-family: monospace;
             border: 1px solid #444;
         }
-        #copyInstruction {
+        #copyInstruction { /* ... */
             margin-top: 10px;
             font-style: italic;
             color: #555;
         }
-
-        .hidden {
+        .hidden { /* ... */
             display: none !important;
+        }
+
+        /* QR Code Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            display: flex; /* Used to center content */
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 350px; /* Adjust as needed for QR code size */
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+            position: relative; /* For positioning the close button */
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute; /* Position relative to modal-content */
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #333; /* Darker on hover/focus */
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #qrcodeImage {
+            margin: 20px auto; /* Center the QR code div */
+            width: 256px; /* Match QR code library output if fixed */
+            height: 256px;
+        }
+        #qrcodeImage img { /* If qrcode.js generates an img */
+            display: block;
+            margin: 0 auto;
+        }
+        #qrLinkText {
+            font-size: 0.9em;
+            color: #555;
+            word-break: break-all; /* Break long URLs */
+            margin-top: 15px;
+        }
+        .modal-content h3 {
+            font-family: var(--font-primary);
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 15px;
         }
 
     </style>
@@ -272,7 +337,7 @@
         <h1>Available Documents & Links</h1>
 
         <div class="controls">
-            <div class="control-group">
+             <div class="control-group">
                 <label for="searchInput"><i class="fas fa-search"></i> Search Title:</label>
                 <input type="text" id="searchInput" placeholder="Enter keywords...">
             </div>
@@ -299,12 +364,13 @@
                         <th id="dateSortHeader" class="sortable">
                             <i class="fas fa-calendar-day"></i> Date Created <span class="sort-icon fas fa-sort"></span>
                         </th>
-                    </tr>
+                        <th><i class="fas fa-qrcode"></i> QR Code</th> </tr>
                 </thead>
                 <tbody id="linksTableBody">
                     </tbody>
             </table>
-            <div id="noResultsMessage" class="no-results hidden"> <i class="fas fa-folder-open"></i>
+            <div id="noResultsMessage" class="no-results hidden">
+                <i class="fas fa-folder-open"></i>
                 No documents found matching your criteria.
             </div>
         </div>
@@ -367,21 +433,28 @@
 
     </div>
 
+    <div id="qrModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button" id="closeQrModal">&times;</span>
+            <h3>Scan QR Code</h3>
+            <div id="qrcodeImageContainer"></div> <p id="qrLinkText"></p>
+        </div>
+    </div>
+
     <p class="footer">Current Year: <span id="currentYear"></span> &copy; Document Hub. All Rights Reserved (if applicable). Generated by AI.</p>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Hardcoded credentials (visible in client-side code - NOT SECURE)
+            // Credentials and Login DOM elements (as before)
             const CORRECT_USERNAME = "kernel23";
             const CORRECT_PASSWORD = "232795";
-
-            // DOM Elements for login and content sections
             const loginSection = document.getElementById('loginSection');
             const loginForm = document.getElementById('loginForm');
             const loginErrorMessage = document.getElementById('loginErrorMessage');
             const addContentContainer = document.getElementById('addContentContainer');
             const logoutButton = document.getElementById('logoutButton');
 
+            // Table and Content DOM elements (as before)
             const searchInput = document.getElementById('searchInput');
             const typeFilter = document.getElementById('typeFilter');
             const yearFilter = document.getElementById('yearFilter');
@@ -393,44 +466,40 @@
             const newJsonOutputContainer = document.getElementById('newJsonOutputContainer');
             const newJsonOutput = document.getElementById('newJsonOutput');
 
+            // QR Code Modal DOM Elements
+            const qrModal = document.getElementById('qrModal');
+            const closeQrModalButton = document.getElementById('closeQrModal');
+            const qrcodeImageContainer = document.getElementById('qrcodeImageContainer');
+            const qrLinkText = document.getElementById('qrLinkText');
+            let qrCodeInstance = null; // To hold the QRCode object
+
             let originalData = [];
             let currentSortOrder = 'none';
-            let isLoggedIn = false; 
+            let isLoggedIn = false;
 
-            function handleLogin(event) {
+            function handleLogin(event) { /* ... same as before ... */
                 event.preventDefault();
                 const usernameInput = document.getElementById('username').value;
                 const passwordInput = document.getElementById('password').value;
-
                 if (usernameInput === CORRECT_USERNAME && passwordInput === CORRECT_PASSWORD) {
-                    isLoggedIn = true;
-                    loginSection.classList.add('hidden');
-                    addContentContainer.classList.remove('hidden');
-                    loginErrorMessage.classList.add('hidden');
+                    isLoggedIn = true; loginSection.classList.add('hidden');
+                    addContentContainer.classList.remove('hidden'); loginErrorMessage.classList.add('hidden');
                 } else {
                     loginErrorMessage.textContent = "Invalid username or password.";
                     loginErrorMessage.classList.remove('hidden');
                 }
             }
-
-            function handleLogout() {
-                isLoggedIn = false;
-                loginSection.classList.remove('hidden');
-                addContentContainer.classList.add('hidden');
-                newJsonOutputContainer.classList.add('hidden'); 
-                if(loginForm) loginForm.reset(); 
+            function handleLogout() { /* ... same as before ... */
+                 isLoggedIn = false; loginSection.classList.remove('hidden');
+                 addContentContainer.classList.add('hidden');
+                 newJsonOutputContainer.classList.add('hidden');
+                 if(loginForm) loginForm.reset();
             }
+            if (loginForm) loginForm.addEventListener('submit', handleLogin);
+            if (logoutButton) logoutButton.addEventListener('click', handleLogout);
 
-            if (loginForm) {
-                loginForm.addEventListener('submit', handleLogin);
-            }
-            if (logoutButton) {
-                logoutButton.addEventListener('click', handleLogout);
-            }
-
-            function getDocIcon(type) { 
-                if (!type) return 'fas fa-file-alt';
-                type = type.toLowerCase();
+            function getDocIcon(type) { /* ... same as before ... */
+                if (!type) return 'fas fa-file-alt'; type = type.toLowerCase();
                 if (type.includes('research')) return 'fas fa-flask';
                 if (type.includes('report')) return 'fas fa-notes-medical';
                 if (type.includes('infograph')) return 'fas fa-chart-pie';
@@ -438,21 +507,26 @@
                 if (type.includes('webpage') || type.includes('article')) return 'fas fa-file-invoice';
                 return 'fas fa-file-alt';
             }
-
-            async function loadData() { 
-                try {
+            async function loadData() { /* ... same as before, ensure full URL for QR if href is relative ... */
+                 try {
                     const response = await fetch('data.json');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status} while fetching data.json`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const jsonData = await response.json();
-                    originalData = jsonData.map(item => ({
-                        ...item,
-                        dateObject: item.date ? new Date(item.date.includes('T') ? item.date : item.date + 'T00:00:00') : null,
-                        iconClass: getDocIcon(item.type)
-                    }));
-                    populateFilters();
-                    applyFiltersAndSort();
+                    originalData = jsonData.map(item => {
+                        // Ensure href is a full URL for QR code generation if it's relative
+                        let fullHref = item.href;
+                        if (!item.href.startsWith('http://') && !item.href.startsWith('https://')) {
+                            // Assuming files are relative to the current page's location
+                            fullHref = new URL(item.href, window.location.href).href;
+                        }
+                        return {
+                            ...item,
+                            fullHref: fullHref, // Store the full URL
+                            dateObject: item.date ? new Date(item.date.includes('T') ? item.date : item.date + 'T00:00:00') : null,
+                            iconClass: getDocIcon(item.type)
+                        };
+                    });
+                    populateFilters(); applyFiltersAndSort();
                 } catch (error) {
                     console.error("Could not load data from data.json:", error);
                     if(noResultsMessage) {
@@ -462,120 +536,159 @@
                     if(tableBody) tableBody.innerHTML = '';
                 }
             }
-
-            function populateFilters() { 
-                const types = new Set();
-                const years = new Set();
+            function populateFilters() { /* ... same as before ... */
+                const types = new Set(); const years = new Set();
                 originalData.forEach(item => {
                     if (item.type) types.add(item.type);
-                    if (item.dateObject) {
-                        const year = item.dateObject.getFullYear();
-                        if (!isNaN(year)) years.add(year);
-                    }
+                    if (item.dateObject) { const year = item.dateObject.getFullYear(); if (!isNaN(year)) years.add(year); }
                 });
-                if (typeFilter && typeFilter.options.length <= 1) {
-                    types.forEach(type => {
-                        const option = document.createElement('option');
-                        option.value = type; option.textContent = type; typeFilter.appendChild(option);
-                    });
-                }
-                if (yearFilter && yearFilter.options.length <= 1) {
-                    Array.from(years).sort((a,b) => b - a).forEach(year => {
-                        const option = document.createElement('option');
-                        option.value = year; option.textContent = year; yearFilter.appendChild(option);
-                    });
-                }
+                if (typeFilter && typeFilter.options.length <= 1) types.forEach(type => { const opt = document.createElement('option'); opt.value = type; opt.textContent = type; typeFilter.appendChild(opt); });
+                if (yearFilter && yearFilter.options.length <= 1) Array.from(years).sort((a,b) => b - a).forEach(year => { const opt = document.createElement('option'); opt.value = year; opt.textContent = year; yearFilter.appendChild(opt); });
             }
             
-            function renderTable(dataToRender) { 
+            function renderTable(dataToRender) {
                 if (!tableBody) return;
                 tableBody.innerHTML = '';
                 if (!noResultsMessage) return;
+
                 if (dataToRender.length === 0) {
                     noResultsMessage.innerHTML = '<i class="fas fa-folder-open"></i> No documents found matching your criteria.';
                     noResultsMessage.classList.remove('hidden');
                     return;
                 }
                 noResultsMessage.classList.add('hidden');
+
                 dataToRender.forEach(item => {
                     const row = tableBody.insertRow();
+                    
+                    // Title Cell
                     const titleCell = row.insertCell();
-                    titleCell.innerHTML = `<a href="${item.href}"><span class="doc-icon ${item.iconClass}"></span>${item.title}</a>`;
+                    titleCell.innerHTML = `<a href="${item.href}" target="_blank" rel="noopener noreferrer"><span class="doc-icon ${item.iconClass}"></span>${item.title}</a>`;
+                    
+                    // Type Cell
                     const typeCell = row.insertCell();
-                    typeCell.textContent = item.type; typeCell.dataset.type = item.type;
+                    typeCell.textContent = item.type;
+                    typeCell.dataset.type = item.type;
+                    
+                    // Date Cell
                     const dateCell = row.insertCell();
                     dateCell.textContent = item.dateString || (item.dateObject ? item.dateObject.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A');
                     if(item.dateObject) dateCell.dataset.date = item.dateObject.toISOString().split('T')[0];
+
+                    // QR Code Cell
+                    const qrCell = row.insertCell();
+                    const qrButton = document.createElement('button');
+                    qrButton.classList.add('qr-button');
+                    qrButton.innerHTML = `<i class="fas fa-qrcode"></i> QR`;
+                    qrButton.dataset.url = item.fullHref; // Use the full URL for QR code
+                    qrButton.dataset.title = item.title; // For modal title or context
+                    qrCell.appendChild(qrButton);
                 });
             }
 
-            function applyFiltersAndSort() { 
-                if(originalData.length === 0 && tableBody && tableBody.querySelectorAll('tr').length > 0) {
-                     originalData = parseTable(); 
-                }
-                if(originalData.length === 0 && isLoggedIn === false && !tableBody.querySelectorAll('tr').length) {
-                     // If no data loaded and not logged in to add any, don't attempt to filter/render an empty set unless it's explicitly empty
-                    if(noResultsMessage && !document.querySelector('#linksTableBody tr')) { // Check if table is truly empty
+            function applyFiltersAndSort() { /* ... same as before ... */
+                if(originalData.length === 0 && isLoggedIn === false && (!tableBody || !tableBody.querySelectorAll('tr').length) ) {
+                    if(noResultsMessage && (!tableBody || !document.querySelector('#linksTableBody tr'))) {
                         noResultsMessage.innerHTML = '<i class="fas fa-info-circle"></i> No data available.';
                         noResultsMessage.classList.remove('hidden');
-                    }
-                    return;
+                    } return;
                 }
-                
                 let filteredData = [...originalData];
-                if (searchInput) {
-                    const searchTerm = searchInput.value.toLowerCase();
-                    if (searchTerm) filteredData = filteredData.filter(item => item.title.toLowerCase().includes(searchTerm));
-                }
-                if (typeFilter) {
-                    const selectedType = typeFilter.value;
-                    if (selectedType) filteredData = filteredData.filter(item => item.type === selectedType);
-                }
-                if (yearFilter) {
-                    const selectedYear = yearFilter.value;
-                    if (selectedYear && selectedYear !== "") filteredData = filteredData.filter(item => item.dateObject && item.dateObject.getFullYear() === parseInt(selectedYear));
-                }
+                if (searchInput) { const searchTerm = searchInput.value.toLowerCase(); if (searchTerm) filteredData = filteredData.filter(item => item.title.toLowerCase().includes(searchTerm));}
+                if (typeFilter) { const selectedType = typeFilter.value; if (selectedType) filteredData = filteredData.filter(item => item.type === selectedType); }
+                if (yearFilter) { const selectedYear = yearFilter.value; if (selectedYear && selectedYear !== "") filteredData = filteredData.filter(item => item.dateObject && item.dateObject.getFullYear() === parseInt(selectedYear));}
                 if (currentSortOrder === 'asc') filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? a.dateObject - b.dateObject : 0);
                 else if (currentSortOrder === 'desc') filteredData.sort((a, b) => (a.dateObject && b.dateObject) ? b.dateObject - a.dateObject : 0);
                 renderTable(filteredData);
             }
-
-            function toggleDateSort() { 
-                if (!sortIcon) return;
-                if (currentSortOrder === 'none' || currentSortOrder === 'desc') {
-                    currentSortOrder = 'asc'; sortIcon.className = 'sort-icon fas fa-sort-up';
-                } else {
-                    currentSortOrder = 'desc'; sortIcon.className = 'sort-icon fas fa-sort-down';
-                }
+            function toggleDateSort() { /* ... same as before ... */
+                 if (!sortIcon) return;
+                if (currentSortOrder === 'none' || currentSortOrder === 'desc') { currentSortOrder = 'asc'; sortIcon.className = 'sort-icon fas fa-sort-up';}
+                else { currentSortOrder = 'desc'; sortIcon.className = 'sort-icon fas fa-sort-down';}
                 applyFiltersAndSort();
             }
 
-            if (addContentForm) {
-                addContentForm.addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    if (!isLoggedIn) {
-                        alert("Please login to add content.");
+            // --- QR Code Modal Logic ---
+            function showQrCodeModal(url, title) {
+                if (!qrModal || !qrcodeImageContainer || !qrLinkText) return;
+
+                qrcodeImageContainer.innerHTML = ''; // Clear previous QR code
+                try {
+                    // Ensure QRCode is available (it should be, as script is included in head)
+                    if (typeof QRCode === 'undefined') {
+                        console.error("QRCode library is not loaded!");
+                        alert("QR Code library not loaded. Please check your internet connection or script inclusion.");
                         return;
                     }
+                    qrCodeInstance = new QRCode(qrcodeImageContainer, {
+                        text: url,
+                        width: 256,
+                        height: 256,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+                } catch (e) {
+                    console.error("Error generating QR Code:", e);
+                    qrcodeImageContainer.textContent = "Error generating QR code.";
+                }
+
+                qrLinkText.textContent = `Link: ${url}`;
+                qrModal.classList.remove('hidden');
+            }
+
+            function hideQrCodeModal() {
+                if (qrModal) qrModal.classList.add('hidden');
+                if (qrcodeImageContainer) qrcodeImageContainer.innerHTML = ''; // Clear QR code when hiding
+                qrCodeInstance = null; // Clear instance
+            }
+
+            if (closeQrModalButton) closeQrModalButton.addEventListener('click', hideQrCodeModal);
+            if (qrModal) {
+                qrModal.addEventListener('click', function(event) {
+                    // Close if clicked on the modal backdrop (outside modal-content)
+                    if (event.target === qrModal) {
+                        hideQrCodeModal();
+                    }
+                });
+            }
+
+            // Event delegation for QR buttons
+            if (tableBody) {
+                tableBody.addEventListener('click', function(event) {
+                    const button = event.target.closest('.qr-button');
+                    if (button) {
+                        const url = button.dataset.url;
+                        const title = button.dataset.title;
+                        if (url) {
+                            showQrCodeModal(url, title);
+                        }
+                    }
+                });
+            }
+
+
+            // Add Content Form Submission (as before)
+            if (addContentForm) {
+                addContentForm.addEventListener('submit', function(event) { /* ... same as before ... */
+                    event.preventDefault(); if (!isLoggedIn) { alert("Please login to add content."); return; }
                     const title = document.getElementById('newTitle').value.trim();
                     const href = document.getElementById('newHref').value.trim();
                     const type = document.getElementById('newType').value;
                     const date = document.getElementById('newDate').value;
-
-                    if (!title || !href || !type || !date) {
-                        alert("Please fill in all fields."); return;
-                    }
+                    if (!title || !href || !type || !date) { alert("Please fill in all fields."); return; }
                     const dateObjForDisplay = new Date(date + 'T00:00:00');
                     const dateString = dateObjForDisplay.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
                     const newEntry = { title: title, href: href, type: type, date: date, dateString: dateString };
-
                     newJsonOutput.textContent = JSON.stringify(newEntry, null, 2);
                     if(newJsonOutputContainer) newJsonOutputContainer.classList.remove('hidden');
-
-                    const previewEntry = { ...newEntry, dateObject: new Date(newEntry.date + 'T00:00:00'), iconClass: getDocIcon(newEntry.type) };
-                    originalData.push(previewEntry);
-                    applyFiltersAndSort();
-                    addContentForm.reset();
+                    // Construct fullHref for preview as well
+                    let fullHrefPreview = href;
+                    if (!href.startsWith('http://') && !href.startsWith('https://')) {
+                        fullHrefPreview = new URL(href, window.location.href).href;
+                    }
+                    const previewEntry = { ...newEntry, fullHref: fullHrefPreview, dateObject: new Date(newEntry.date + 'T00:00:00'), iconClass: getDocIcon(newEntry.type) };
+                    originalData.push(previewEntry); applyFiltersAndSort(); addContentForm.reset();
                 });
             }
             
