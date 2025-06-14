@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Arc of Indebtedness: An Interactive Exploration of Philippine External Debt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals -->
+    <!-- Application Structure Plan: The SPA uses a hybrid dashboard and thematic structure. A central, interactive timeline allows users to select a presidential administration, which dynamically updates a set of key metric cards, detailed narrative sections, and highlights on persistent overview charts (Total Debt & Debt-to-GDP). This design was chosen to provide both a chronological exploration path and immediate historical context for any selected data point. It empowers the user to compare eras easily and digest complex information in manageable chunks. A final thematic section synthesizes overarching trends, moving beyond chronology to provide deeper analytical insights as presented in the source report. -->
+    <!-- Visualization & Content Choices: 1. Overall Debt Trend: Report Table 1 -> Goal: Show change -> Viz: Line Chart (Chart.js) -> Interaction: Hover tooltips, highlight selected era -> Justification: Clearly visualizes the 60-year debt trajectory and periods of sharp increase. 2. Debt-to-GDP Trend: Report Table 2 -> Goal: Show relative burden -> Viz: Bar Chart (Chart.js) -> Interaction: Hover tooltips, highlight selected era -> Justification: Effectively compares the debt burden relative to economic output across different time periods. 3. Admin-Specific Details: Report Narrative -> Goal: Inform/Compare -> Viz: Info Cards, Text Blocks, Icon-based lists (HTML/Tailwind) -> Interaction: Updated by timeline click -> Justification: Presents detailed information in a scannable, digestible format, avoiding text overload. 4. Case Studies: Report Narrative (e.g., BNPP) -> Goal: Deep dive on demand -> Viz: Modal overlay (JS) -> Interaction: Click 'Learn More' button -> Justification: Provides depth without cluttering the primary user interface. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 45vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 380px;
+            }
+        }
+        .timeline-btn {
+            transition: all 0.3s ease;
+        }
+        .timeline-btn.active {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <div id="app" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+        <header class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900">The Arc of Indebtedness</h1>
+            <p class="mt-3 text-lg sm:text-xl text-slate-600">An Interactive Exploration of Philippine External Debt (1965-Present)</p>
+        </header>
+
+        <main>
+            <section id="timeline-nav" class="mb-8">
+                 <div class="intro-text bg-white p-6 rounded-xl shadow-md border border-slate-200 mb-8">
+                    <p class="text-center text-slate-600">Over the last six decades, the Philippines' journey with external debt has shaped its economy, politics, and future. This interactive report dissects the story administration by administration, revealing the policies, projects, and crises that defined the nation's path of indebtedness. <strong class="text-slate-800">Click on a president's name below to begin exploring their era.</strong></p>
+                </div>
+                <div id="timeline-container" class="flex flex-wrap justify-center gap-2 sm:gap-3">
+                </div>
+            </section>
+            
+            <section id="dashboard" class="space-y-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-4 sm:p-6 rounded-xl shadow-md border border-slate-200">
+                        <h3 class="font-bold text-xl text-slate-800 mb-4 text-center">External Debt Trend (in Billion USD)</h3>
+                        <div class="chart-container">
+                            <canvas id="debtTrendChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 sm:p-6 rounded-xl shadow-md border border-slate-200">
+                         <h3 class="font-bold text-xl text-slate-800 mb-4 text-center">External Debt to GDP Ratio (%)</h3>
+                        <div class="chart-container">
+                            <canvas id="debtGdpChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-details" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-slate-200">
+                    <div class="text-center mb-6">
+                        <h2 id="admin-name" class="text-2xl sm:text-3xl font-bold text-blue-600"></h2>
+                        <p id="admin-term" class="text-md text-slate-500"></p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 text-center">
+                        <div class="bg-slate-50 p-4 rounded-lg border">
+                            <p class="text-sm text-slate-500">Debt at Start</p>
+                            <p id="debt-start" class="text-2xl font-bold text-slate-800"></p>
+                        </div>
+                         <div class="bg-slate-50 p-4 rounded-lg border">
+                            <p class="text-sm text-slate-500">Debt at End</p>
+                            <p id="debt-end" class="text-2xl font-bold text-slate-800"></p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border">
+                            <p class="text-sm text-slate-500">Net Change</p>
+                            <p id="debt-change" class="text-2xl font-bold"></p>
+                        </div>
+                         <div class="bg-slate-50 p-4 rounded-lg border">
+                            <p class="text-sm text-slate-500">Change (%)</p>
+                            <p id="debt-change-percent" class="text-2xl font-bold"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                        <div class="lg:col-span-3">
+                            <h3 class="font-bold text-xl text-slate-800 mb-3 border-b-2 border-slate-200 pb-2">Era Overview</h3>
+                            <p id="admin-summary" class="text-slate-600 leading-relaxed"></p>
+                        </div>
+                        <div class="lg:col-span-2">
+                             <h3 class="font-bold text-xl text-slate-800 mb-3 border-b-2 border-slate-200 pb-2">Debt Utilization</h3>
+                             <div id="debt-utilization" class="space-y-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+             <section id="synthesis-section" class="mt-12">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-slate-900">Overarching Themes</h2>
+                    <p class="mt-2 text-slate-600">Beyond individual presidencies, several key themes explain the long-term story of Philippine debt. Click to learn more.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="theme-card bg-white p-6 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow cursor-pointer" data-theme="marcos_legacy">
+                        <h3 class="font-bold text-lg text-slate-800">📜 The Marcos Sr. Legacy</h3>
+                        <p class="text-sm text-slate-500 mt-1">How one era's policies created a decades-long debt trap.</p>
+                    </div>
+                     <div class="theme-card bg-white p-6 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow cursor-pointer" data-theme="infra_driver">
+                        <h3 class="font-bold text-lg text-slate-800">🏗️ Infrastructure as Driver</h3>
+                        <p class="text-sm text-slate-500 mt-1">The perennial justification for borrowing across different eras.</p>
+                    </div>
+                     <div class="theme-card bg-white p-6 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow cursor-pointer" data-theme="governance">
+                        <h3 class="font-bold text-lg text-slate-800">🏛️ Governance & Confidence</h3>
+                        <p class="text-sm text-slate-500 mt-1">The link between political stability, corruption, and borrowing costs.</p>
+                    </div>
+                     <div class="theme-card bg-white p-6 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow cursor-pointer" data-theme="shocks">
+                        <h3 class="font-bold text-lg text-slate-800">⚡ External Shocks</h3>
+                        <p class="text-sm text-slate-500 mt-1">How global events magnified internal policy weaknesses.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 pt-8 border-t border-slate-200">
+            <p class="text-sm text-slate-500">Interactive application developed based on the report "The Arc of Indebtedness".</p>
+        </footer>
+
+    </div>
+
+    <div id="modal-container" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg shadow-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto transform scale-95">
+             <div class="flex justify-between items-start">
+                <h2 id="modal-title" class="text-2xl font-bold text-slate-900 mb-4"></h2>
+                <button id="close-modal" class="text-slate-500 hover:text-slate-800 text-2xl">&times;</button>
+            </div>
+            <div id="modal-body" class="text-slate-600 leading-relaxed"></div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const administrationsData = [
+                {
+                    id: 'marcos_sr',
+                    name: 'Ferdinand E. Marcos Sr.',
+                    term: '1965-1986',
+                    debt_start: 0.6,
+                    debt_end: 28.20,
+                    summary: "This era marks the single most destructive period in Philippine public finance. Starting with a modest debt, the administration engaged in massive, debt-fueled infrastructure spending (the 'Edifice Complex') and institutionalized corruption through 'behest loans' to cronies. The declaration of Martial Law removed borrowing limits, leading to an exponential debt increase. The period ended in an economic collapse and a debt moratorium, leaving a legacy of odious debts and a legal framework (P.D. 1177) that prioritized debt payments above all else.",
+                    utilization: [
+                        { icon: '🏗️', text: 'The "Edifice Complex": Grandiose construction projects like the CCP Complex and luxury hotels.' },
+                        { icon: '🤝', text: 'Cronyism & Behest Loans: Funneling funds to associates in key industries like sugar and coconuts.' },
+                        { icon: '💸', text: 'Corruption & Capital Flight: An estimated $5-10 billion plundered and stashed overseas.' }
+                    ],
+                    case_study: {
+                        title: 'Case Study: The Bataan Nuclear Power Plant',
+                        content: "The BNPP is the most notorious monument to the era's corruption. Its cost ballooned from ~$700M to over $2.2B due to kickbacks brokered by cronies. Built on an earthquake fault, it never generated any electricity, yet the Filipino people were burdened with its repayment, which totaled $22 billion and was only fully paid in 2007. It is the quintessential example of an odious debt that enriched a corrupt elite while providing no benefit to the public."
+                    }
+                },
+                {
+                    id: 'aquino_c',
+                    name: 'Corazon C. Aquino',
+                    term: '1986-1992',
+                    debt_start: 28.20,
+                    debt_end: 33.22,
+                    summary: "Inheriting a crippled economy, the Aquino administration made the controversial 'honor all debts' policy to regain international creditworthiness, despite calls to repudiate fraudulent Marcos-era loans. This decision locked the country into massive debt service payments, consuming up to 44% of the national budget in some years and 'crowding out' funding for social services. New loans were channeled towards economic stabilization, democratic reforms like the Local Government Code, and the first Build-Operate-Transfer (BOT) law.",
+                    utilization: [
+                        { icon: '🏦', text: 'Debt Servicing: A huge portion of the budget went to paying inherited loans.' },
+                        { icon: '⚖️', text: 'Economic & Democratic Reforms: Funding for the Local Government Code and the BOT Law framework.' },
+                        { icon: '🤝', text: 'Foreign Aid & Social Programs: Multilateral aid for projects in agriculture, health, and education.' }
+                    ]
+                },
+                {
+                    id: 'ramos',
+                    name: 'Fidel V. Ramos',
+                    term: '1992-1998',
+                    debt_start: 33.22,
+                    debt_end: 53.59,
+                    summary: "The Ramos administration pursued 'Philippines 2000,' a bold agenda of economic liberalization, deregulation, and privatization to transform the country into a 'tiger cub' economy. This attracted significant foreign investment and led to an economic boom. However, this growth model, heavily reliant on volatile 'hot money,' proved vulnerable. The 1997 Asian Financial Crisis caused a sharp currency depreciation and economic slowdown, reversing fiscal gains and causing the external debt to surge once again.",
+                    utilization: [
+                        { icon: '📈', text: 'Liberalization & Privatization: Opening up key sectors like telecom and banking to attract foreign capital.' },
+                        { icon: '✈️', text: '"Development Diplomacy": Promoting the Philippines abroad to secure trade and investment.' },
+                        { icon: '🆘', text: 'Crisis Response: Managing the economic fallout from the 1997 Asian Financial Crisis.' }
+                    ],
+                     case_study: {
+                        title: 'The 1997 Asian Financial Crisis',
+                        content: "Beginning in Thailand, the crisis spread across Asia, exposing the vulnerabilities of the Philippines' growth model. Heavy reliance on short-term foreign capital led to massive capital flight when panic set in. The peso plummeted from P26 to P42 against the dollar, causing corporate debts to swell and the stock and property markets to collapse. The crisis halted the 'tiger cub' dream and plunged the economy back into recession, demonstrating the risks of global integration without strong domestic institutions."
+                    }
+                },
+                {
+                    id: 'estrada',
+                    name: 'Joseph Estrada',
+                    term: '1998-2001',
+                    debt_start: 53.59,
+                    debt_end: 58.39,
+                    summary: "Estrada's short-lived presidency continued the market-oriented reforms of his predecessor, passing laws to liberalize retail trade and banking. However, his administration was quickly derailed by political turmoil and major corruption allegations. The ensuing crisis of confidence led to capital flight, a devalued peso, and a halt in foreign investment. He was ousted by the EDSA II Revolution, leaving behind a deteriorating fiscal position and a large budget deficit.",
+                    utilization: [
+                        { icon: '🏛️', text: 'Continuation of Reforms: Passed the Retail Trade Liberalization Act and New General Banking Act.' },
+                        { icon: '📉', text: 'Managing Political Crisis: The government\'s fiscal position deteriorated due to instability.' }
+                    ]
+                },
+                {
+                    id: 'arroyo',
+                    name: 'Gloria Macapagal Arroyo',
+                    term: '2001-2010',
+                    debt_start: 58.39,
+                    debt_end: 65.34,
+                    summary: "Arroyo's decade-long presidency was defined by a focus on fiscal consolidation. Facing a fiscal crisis, her administration pushed through the unpopular but effective Expanded Value-Added Tax (E-VAT) Law, which stabilized government revenues. Despite this, her administration was the biggest borrower up to that point, using funds for infrastructure and social programs. The era was also marred by high-profile corruption scandals linked to foreign-funded projects, most notably the NBN-ZTE deal.",
+                    utilization: [
+                        { icon: '⚖️', text: 'Fiscal Consolidation: The E-VAT law was a key measure to stabilize national finances.' },
+                        { icon: '🏗️', text: 'Infrastructure & Development: Pursued projects with financing from partners like Japan and a rising China.' },
+                        { icon: ' Scandal', text: 'Corruption Allegations: Plagued by scandals like the overpriced NBN-ZTE broadband project.' }
+                    ]
+                },
+                {
+                    id: 'aquino_iii',
+                    name: 'Benigno S. Aquino III',
+                    term: '2010-2016',
+                    debt_start: 65.34,
+                    debt_end: 74.84,
+                    summary: "Running on a 'Good Governance' platform, the Aquino III administration prioritized fiscal prudence and anti-corruption efforts. This approach restored international confidence, leading to the Philippines' first-ever investment-grade credit ratings, which significantly lowered borrowing costs. The flagship Public-Private Partnership (PPP) program was launched to finance infrastructure, and the improved fiscal space allowed for a massive expansion of social investments, most notably the 4Ps conditional cash transfer program.",
+                    utilization: [
+                        { icon: '✨', text: 'Good Governance Initiatives: Improved tax collection and transparent budgeting to reduce leakage.' },
+                        { icon: '🤝', text: 'Public-Private Partnerships (PPP): Leveraging private capital for major infrastructure projects.' },
+                        { icon: '👨‍👩‍👧‍👦', text: 'Social Investment: Massive expansion of the 4Ps anti-poverty program.' }
+                    ]
+                },
+                {
+                    id: 'duterte',
+                    name: 'Rodrigo Duterte',
+                    term: '2016-2022',
+                    debt_start: 74.84,
+                    debt_end: 111.23,
+                    summary: "Duterte's presidency marked a return to an expansionary fiscal policy driven by the ambitious 'Build, Build, Build' infrastructure program. This strategy involved a deliberate increase in borrowing, a 'pivot to China' for development finance, and tax reform. The plan was completely upended by the COVID-19 pandemic, which forced unprecedented emergency borrowing of over $25 billion to fund healthcare, social aid, and vaccine procurement. This caused the national debt to explode, leaving his successor with a heavily constrained fiscal space.",
+                    utilization: [
+                        { icon: '🏗️', text: '"Build, Build, Build" Program: An ambitious, debt-financed infrastructure push.' },
+                        { icon: '🇨🇳', text: '"Pivot to China": Seeking billions in ODA from Beijing, though Japan remained the top lender.' },
+                        { icon: '🦠', text: 'COVID-19 Pandemic Response: Massive emergency borrowing for healthcare and social aid.' }
+                    ]
+                },
+                {
+                    id: 'marcos_jr',
+                    name: 'Ferdinand Marcos Jr.',
+                    term: '2022-Present',
+                    debt_start: 111.23,
+                    debt_end: 146.74,
+                    summary: "Inheriting a record-high pandemic debt, the Marcos Jr. administration has continued a high-borrowing trajectory. The infrastructure drive continues under the 'Build Better More' banner, heavily reliant on foreign loans from partners like the World Bank and South Korea. A key, controversial initiative is the Maharlika Investment Fund, promoted as an alternative financing source but criticized as fiscally irresponsible given the country's high debt. The strategy echoes the debt-driven model of his father's early years, raising concerns about a potential repeat of past fiscal imprudence.",
+                    utilization: [
+                        { icon: '🏗️', text: '"Build Better More" Program: Continuation of the infrastructure-centric development model.' },
+                        { icon: '🏦', text: 'Diversified ODA: Securing loans from the World Bank, South Korea, and others.' },
+                        { icon: '💰', text: 'Maharlika Investment Fund: Creation of a controversial sovereign wealth fund.' }
+                    ]
+                }
+            ];
+            
+            const debtToGdpData = [
+                { year: 1970, ratio: 33.2, admin_id: 'marcos_sr' },
+                { year: 1980, ratio: 49.0, admin_id: 'marcos_sr' },
+                { year: 1986, ratio: 92.9, admin_id: 'aquino_c' },
+                { year: 1997, ratio: 59.9, admin_id: 'ramos' },
+                { year: 2001, ratio: 73.9, admin_id: 'arroyo' },
+                { year: 2009, ratio: 36.3, admin_id: 'arroyo' },
+                { year: 2016, ratio: 24.5, admin_id: 'aquino_iii' },
+                { year: 2019, ratio: 22.2, admin_id: 'duterte' },
+                { year: 2022, ratio: 27.5, admin_id: 'marcos_jr' },
+                { year: 2024, ratio: 29.8, admin_id: 'marcos_jr' }
+            ];
+
+            const themeData = {
+                marcos_legacy: {
+                    title: 'The Enduring Shadow of Marcos Sr.',
+                    content: "The policies of Ferdinand Marcos Sr. created a state of path dependency for all successors. His Presidential Decree 1177, mandating automatic appropriation for debt service, legally prioritized foreign creditors over domestic needs. When Corazon Aquino chose to 'honor all debts,' she was operating within this constraint, locking the nation into a cycle of high debt payments that starved essential services of funds. This structural issue forced subsequent administrations to borrow even more to cover fiscal gaps, a problem that persists to this day."
+                },
+                infra_driver: {
+                    title: 'Infrastructure as a Perennial Driver',
+                    content: "A consistent theme across administrations is using large-scale infrastructure as the primary justification for foreign borrowing. This provides tangible evidence of 'progress' but carries significant risks. From Marcos Sr.'s 'Edifice Complex' to Ramos's privatized projects, Duterte's 'Build, Build, Build,' and Marcos Jr.'s 'Build Better More,' the model is a constant. History shows this strategy is vulnerable to corruption (Marcos Sr.), external shocks (1997 Crisis), and unforeseen crises that erase fiscal buffers (COVID-19)."
+                },
+                governance: {
+                    title: 'Governance and Creditor Confidence',
+                    content: "The trajectory of Philippine debt is inextricably linked to the international perception of its governance. Good governance lowers borrowing costs, while corruption and political instability have the opposite effect. The 'good governance dividend' under Benigno Aquino III led to investment-grade ratings and cheaper loans, creating fiscal space for social spending. Conversely, the political crisis under Joseph Estrada led to a loss of investor confidence and loan deferments, exacerbating the economic downturn. This shows that for a debt-reliant country, the quality of governance is a core economic fundamental."
+                },
+                shocks: {
+                    title: 'External Shocks vs. Internal Policies',
+                    content: "Major debt escalations have often been triggered by external shocks, but their severity was determined by internal policy weaknesses. <br><br> • <b>1983 Debt Crisis:</b> Triggered by global interest rate hikes, but caused by decades of unsustainable domestic corruption and spending. <br> • <b>1997 Asian Crisis:</b> Triggered by regional contagion, but the Philippines was vulnerable due to its reliance on volatile 'hot money'. <br> • <b>2020 COVID-19 Pandemic:</b> A purely external shock, but its fiscal impact was magnified by an aggressive spending policy that left no buffer."
+                }
+            };
+            
+            let debtTrendChart, debtGdpChart;
+            const timelineContainer = document.getElementById('timeline-container');
+
+            function formatNumber(num) {
+                return '$' + num.toFixed(2) + 'B';
+            }
+
+            function updateDashboard(adminId) {
+                const admin = administrationsData.find(a => a.id === adminId);
+                if (!admin) return;
+
+                document.getElementById('admin-name').textContent = admin.name;
+                document.getElementById('admin-term').textContent = `(${admin.term})`;
+                document.getElementById('debt-start').textContent = formatNumber(admin.debt_start);
+                document.getElementById('debt-end').textContent = formatNumber(admin.debt_end);
+                
+                const change = admin.debt_end - admin.debt_start;
+                const changePercent = (change / admin.debt_start) * 100;
+
+                const debtChangeEl = document.getElementById('debt-change');
+                debtChangeEl.textContent = `${change > 0 ? '+' : ''}${formatNumber(change)}`;
+                debtChangeEl.className = `text-2xl font-bold ${change > 0 ? 'text-red-500' : 'text-green-500'}`;
+                
+                const debtChangePercentEl = document.getElementById('debt-change-percent');
+                debtChangePercentEl.textContent = `${changePercent > 0 ? '+' : ''}${changePercent.toFixed(1)}%`;
+                debtChangePercentEl.className = `text-2xl font-bold ${changePercent > 100 ? 'text-red-600' : changePercent > 0 ? 'text-red-500' : 'text-green-500'}`;
+
+                document.getElementById('admin-summary').textContent = admin.summary;
+
+                const utilizationContainer = document.getElementById('debt-utilization');
+                utilizationContainer.innerHTML = '';
+                admin.utilization.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'flex items-start bg-slate-50 p-3 rounded-lg border';
+                    el.innerHTML = `<span class="text-xl mr-3">${item.icon}</span><p class="text-slate-600">${item.text}</p>`;
+                    utilizationContainer.appendChild(el);
+                });
+                
+                if (admin.case_study) {
+                    const caseStudyBtn = document.createElement('button');
+                    caseStudyBtn.className = 'mt-4 w-full text-left bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold p-3 rounded-lg border border-blue-200 transition';
+                    caseStudyBtn.textContent = `🔍 Read Case Study: ${admin.case_study.title.split(': ')[1]}`;
+                    caseStudyBtn.onclick = () => openModal(admin.case_study.title, admin.case_study.content);
+                    utilizationContainer.appendChild(caseStudyBtn);
+                }
+
+                document.querySelectorAll('.timeline-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.id === adminId);
+                });
+
+                updateChartHighlights(adminId);
+            }
+            
+            function updateChartHighlights(adminId) {
+                if(debtTrendChart) {
+                    const adminIndex = administrationsData.findIndex(a => a.id === adminId);
+                    debtTrendChart.data.datasets[0].pointBackgroundColor = debtTrendChart.data.datasets[0].data.map((_, i) => i === adminIndex + 1 ? '#3b82f6' : '#9ca3af');
+                    debtTrendChart.data.datasets[0].pointRadius = debtTrendChart.data.datasets[0].data.map((_, i) => i === adminIndex + 1 ? 7 : 4);
+                    debtTrendChart.update();
+                }
+
+                if(debtGdpChart) {
+                    debtGdpChart.data.datasets[0].backgroundColor = debtGdpChart.data.labels.map((_, i) => debtToGdpData[i].admin_id === adminId ? '#3b82f6' : '#9ca3af');
+                    debtGdpChart.update();
+                }
+            }
+
+            function createCharts() {
+                const debtCtx = document.getElementById('debtTrendChart').getContext('2d');
+                debtTrendChart = new Chart(debtCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Start', ...administrationsData.map(a => a.name.split(' ').pop())],
+                        datasets: [{
+                            label: 'External Debt (Billion USD)',
+                            data: [administrationsData[0].debt_start, ...administrationsData.map(a => a.debt_end)],
+                            borderColor: '#64748b', // slate-500
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.1,
+                            pointBackgroundColor: '#9ca3af', // gray-400
+                            pointRadius: 4,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value + 'B';
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45,
+                                }
+                            }
+                        }
+                    }
+                });
+
+                const gdpCtx = document.getElementById('debtGdpChart').getContext('2d');
+                debtGdpChart = new Chart(gdpCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: debtToGdpData.map(d => d.year),
+                        datasets: [{
+                            label: 'Debt to GDP Ratio (%)',
+                            data: debtToGdpData.map(d => d.ratio),
+                            backgroundColor: '#9ca3af', // gray-400
+                            borderColor: '#6b7280', // gray-500
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function openModal(title, content) {
+                document.getElementById('modal-title').textContent = title;
+                document.getElementById('modal-body').innerHTML = content;
+                const modal = document.getElementById('modal-container');
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.querySelector('.modal-content').classList.remove('scale-95');
+            }
+            
+            function closeModal() {
+                 const modal = document.getElementById('modal-container');
+                 modal.classList.add('opacity-0', 'pointer-events-none');
+                 modal.querySelector('.modal-content').classList.add('scale-95');
+            }
+
+            function init() {
+                administrationsData.forEach(admin => {
+                    const button = document.createElement('button');
+                    button.dataset.id = admin.id;
+                    button.textContent = admin.name;
+                    button.className = 'timeline-btn bg-white text-slate-700 text-xs sm:text-sm font-semibold py-2 px-3 sm:px-4 rounded-full shadow-sm border border-slate-300 hover:bg-slate-100';
+                    button.onclick = () => updateDashboard(admin.id);
+                    timelineContainer.appendChild(button);
+                });
+                
+                document.querySelectorAll('.theme-card').forEach(card => {
+                    card.onclick = () => {
+                        const theme = themeData[card.dataset.theme];
+                        openModal(theme.title, theme.content);
+                    };
+                });
+
+                document.getElementById('close-modal').onclick = closeModal;
+                document.getElementById('modal-container').onclick = (e) => {
+                    if (e.target.id === 'modal-container') closeModal();
+                };
+
+                createCharts();
+                updateDashboard('marcos_jr');
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>
